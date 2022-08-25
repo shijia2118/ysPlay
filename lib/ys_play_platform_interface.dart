@@ -14,7 +14,7 @@ abstract class YsPlayPlatform extends PlatformInterface {
   ///
   /// Defaults to [MethodChannelYsPlay].
   static YsPlayPlatform get instance => _instance;
-  
+
   /// Platform-specific implementations should set this with their own
   /// platform-specific class that extends [YsPlayPlatform] when
   /// they register themselves.
@@ -35,5 +35,10 @@ abstract class YsPlayPlatform extends PlatformInterface {
   ///设置accessToken
   Future<void> setAccessToken({required String accessToken}) {
     throw UnimplementedError('setAccessToken() has not been implemented.');
+  }
+
+  ///销毁
+  Future<void> dispose() {
+    throw UnimplementedError('dispose() has not been implemented.');
   }
 }

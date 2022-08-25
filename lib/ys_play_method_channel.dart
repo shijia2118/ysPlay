@@ -15,16 +15,19 @@ class MethodChannelYsPlay extends YsPlayPlatform {
     return version;
   }
 
-
   @override
-  Future<bool> init({required String appKey})async{
-    bool? result = await methodChannel.invokeMethod('init_sdk',{'app_key':appKey});
-    return result??false;
+  Future<bool> init({required String appKey}) async {
+    bool? result = await methodChannel.invokeMethod('init_sdk', {'app_key': appKey});
+    return result ?? false;
   }
 
+  @override
+  Future<void> setAccessToken({required String accessToken}) async {
+    await methodChannel.invokeMethod('set_access_token', {'access_token': accessToken});
+  }
 
   @override
-  Future<void> setAccessToken({required String accessToken})async{
-    await methodChannel.invokeMethod('set_access_token',{'access_token':accessToken});
+  Future<void> dispose() async {
+    await methodChannel.invokeMethod('dispose');
   }
 }

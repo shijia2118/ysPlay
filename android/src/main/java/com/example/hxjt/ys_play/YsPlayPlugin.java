@@ -39,6 +39,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
     } else if(call.method.equals("set_access_token")){
       String accessToken = call.argument("access_token");
       setAccessToken(accessToken);
+    } else if(call.method.equals("dispose")){
+      dispose();
     }
     else {
       result.notImplemented();
@@ -68,7 +70,15 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
   public void setAccessToken(String accessToken){
     if(accessToken!=null&&!accessToken.isEmpty()){
       EZOpenSDK.getInstance().setAccessToken(accessToken);
+      Log.i(TAG,"accessToken设置成功");
     }
+  }
+
+  /**
+   * 退出后销毁
+   */
+  public void dispose(){
+    EZOpenSDK.getInstance().logout();
   }
 
   @Override

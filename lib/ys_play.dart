@@ -1,4 +1,3 @@
-
 import 'ys_play_platform_interface.dart';
 
 class YsPlay {
@@ -7,13 +6,17 @@ class YsPlay {
   }
 
   ///初始化荧石SDK
-  Future<bool> initSDK({required String appKey})async{
-    return await YsPlayPlatform.instance.init(appKey:appKey)??false;
+  Future<bool> initSDK({required String appKey}) async {
+    return await YsPlayPlatform.instance.init(appKey: appKey) ?? false;
   }
 
-
   ///设置accessToken
-  Future<void> setAccessToken({required String accessToken})async{
+  Future<void> setAccessToken({required String accessToken}) async {
     YsPlayPlatform.instance.setAccessToken(accessToken: accessToken);
+  }
+
+  ///销毁
+  Future<void> dispose() async {
+    await YsPlayPlatform.instance.dispose();
   }
 }
