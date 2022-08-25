@@ -36,10 +36,10 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
+    //添加下面配置
+    packagingOptions {
+        pickFirst 'lib/armeabi-v7a/libgnustl_shared.so'
+        pickFirst 'lib/arm64-v8a/libgnustl_shared.so'
     }
 }
 
