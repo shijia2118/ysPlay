@@ -1,0 +1,47 @@
+group 'com.example.hxjt.ys_play'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 16
+        ndk {
+            abiFilters "arm64-v8a","armeabi-v7a" //自4.8.8版本开始支持arm64-v8a，按需使用
+        }
+    }
+}
+
+dependencies {
+    /*萤石SDK核心模块，必须依赖*/
+    implementation 'io.github.ezviz-open:ezviz-sdk:4.19.9'
+    // 4.19.0版本之后需要自行依赖okhttp和gson库
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+}
