@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'constants.dart';
 import 'ys_play_platform_interface.dart';
 
 /// An implementation of [YsPlayPlatform] that uses method channels.
@@ -8,7 +9,7 @@ class MethodChannelYsPlay extends YsPlayPlatform {
 
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel("com.example.hxjt.ys_play");
+  final methodChannel =  MethodChannel(Constants.METHOD_CHANNEL);
 
   @override
   Future<String?> getPlatformVersion() async {

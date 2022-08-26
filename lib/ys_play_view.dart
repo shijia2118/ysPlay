@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:ys_play/constants.dart';
 
 class YsPlayView extends StatelessWidget {
   const YsPlayView({Key? key}) : super(key: key);
@@ -8,9 +9,9 @@ class YsPlayView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isIOS) {
-      return const UiKitView(viewType: 'ys_play');
+      return  UiKitView(viewType: Constants.METHOD_CHANNEL);
     } else if (Platform.isAndroid) {
-      return const AndroidView(viewType: 'ys_play');
+      return  AndroidView(viewType: Constants.METHOD_CHANNEL);
     } else {
       throw UnimplementedError();
     }
