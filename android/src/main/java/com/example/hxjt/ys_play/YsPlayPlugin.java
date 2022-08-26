@@ -27,6 +27,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
     context = flutterPluginBinding.getApplicationContext();
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "ys_play");
     channel.setMethodCallHandler(this);
+    //注册原生视图
+    flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("ys_play",new YsPlayViewFactory(flutterPluginBinding.getBinaryMessenger()));
   }
 
   @Override
