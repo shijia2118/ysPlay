@@ -24,16 +24,21 @@ import io.flutter.plugin.common.StandardMessageCodec;
 public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
 
   private static String TAG = "YSPLAY_LOG====";
+  final String VIEW_ID = "com.example.hxjt.ys_play";
   private MethodChannel channel;
   private Context context;
+  private BinaryMessenger messenger;
+  private FlutterPluginBinding binding;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext();
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "ys_play");
     channel.setMethodCallHandler(this);
-    //注册原生视图
-    flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("ys_play",new YsPlayViewFactory(flutterPluginBinding.getBinaryMessenger()));
+
+    this.messenger = flutterPluginBinding.getBinaryMessenger();
+    this.binding = flutterPluginBinding;
+
   }
 
   @Override
@@ -49,6 +54,23 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
       //设置accessToken
       String accessToken = call.argument("access_token");
       setAccessToken(accessToken);
+    } else if(call.method.equals("create_player")){
+
+      //注册原生视图
+      binding.getPlatformViewRegistry().registerViewFactory(VIEW_ID,new YsPlayViewFactory(messenger));
+//      //初始化播放器
+//      String deviceSerial = call.argument("device_code");
+//      Integer cameraNo = call.argument("camera_no");
+//      if(cameraNo==null) cameraNo=-1;
+//      String verifyCode = call.argument("verify_code");
+//      YsPlayViewFactory viewFactory = (YsPlayViewFactory) new YsPlayViewFactory().create(context,deviceSerial,verifyCode,cameraNo, new OnResult() {
+//        @Override
+//        public void success(boolean success) {
+//          result.success(success);
+//        }
+//      });
+
+
     }
     else if(call.method.equals("dispose")){
       //销毁
