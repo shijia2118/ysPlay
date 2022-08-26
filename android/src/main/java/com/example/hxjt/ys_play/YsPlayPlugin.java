@@ -56,7 +56,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
     } else if(call.method.equals("create_player")){
 
       YsPlayViewFactory viewFactory = new YsPlayViewFactory(messenger);
-      viewFactory.create(context,Integer.parseInt(Constants.METHOD_CHANNEL),call.arguments);
+      viewFactory.create(context,1,call.arguments);
       //注册原生视图
       binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,viewFactory);
 //      //初始化播放器
