@@ -29,8 +29,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String platformVersion;
     try {
-      platformVersion =
-          await _ysPlayPlugin.getPlatformVersion() ?? 'Unknown platform version';
+      platformVersion = await _ysPlayPlugin.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -43,7 +42,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   ///初始化sdk
-  Future<void> initSDK({required String appKey})async{
+  Future<void> initSDK({required String appKey}) async {
     await _ysPlayPlugin.initSDK(appKey: appKey);
   }
 

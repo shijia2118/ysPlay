@@ -37,6 +37,11 @@ abstract class YsPlayPlatform extends PlatformInterface {
     throw UnimplementedError('setAccessToken() has not been implemented.');
   }
 
+  ///初始化播放器
+  Future<void> createPlayer({required String deviceCode,required String cameraNo,required String verifyCode}) {
+    throw UnimplementedError('createPlayer() has not been implemented.');
+  }
+
   ///销毁
   Future<void> dispose() {
     throw UnimplementedError('dispose() has not been implemented.');

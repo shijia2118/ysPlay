@@ -15,8 +15,14 @@ class YsPlay {
     YsPlayPlatform.instance.setAccessToken(accessToken: accessToken);
   }
 
+  ///初始化播放器
+  Future<void> createPlayer({required String deviceCode,required String cameraNo,required String verifyCode}) async {
+    YsPlayPlatform.instance.createPlayer(deviceCode: deviceCode, cameraNo: cameraNo, verifyCode: verifyCode);
+  }
+
   ///销毁
   Future<void> dispose() async {
     await YsPlayPlatform.instance.dispose();
   }
+
 }
