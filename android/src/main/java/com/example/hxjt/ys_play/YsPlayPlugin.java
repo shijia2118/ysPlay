@@ -54,7 +54,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
       String accessToken = call.argument("access_token");
       setAccessToken(accessToken);
     } else if(call.method.equals("create_player")){
-
+      Log.i(">>>>>>>","call.arguments:"+call.arguments);
       YsPlayViewFactory viewFactory = new YsPlayViewFactory(messenger);
       viewFactory.create(context,1,call.arguments);
       //注册原生视图
