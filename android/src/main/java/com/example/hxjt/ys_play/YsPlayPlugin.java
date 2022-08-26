@@ -24,7 +24,6 @@ import io.flutter.plugin.common.StandardMessageCodec;
 public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
 
   private static String TAG = "YSPLAY_LOG====";
-  final String METHOD_CHANNEL = "com.example.hxjt.ys_play.ys_play";
   private MethodChannel channel;
   private Context context;
   private BinaryMessenger messenger;
@@ -33,7 +32,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext();
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), METHOD_CHANNEL);
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), Constants.METHOD_CHANNEL);
     channel.setMethodCallHandler(this);
 
     this.messenger = flutterPluginBinding.getBinaryMessenger();
@@ -57,7 +56,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
     } else if(call.method.equals("create_player")){
 
       //注册原生视图
-      binding.getPlatformViewRegistry().registerViewFactory(METHOD_CHANNEL,new YsPlayViewFactory(messenger));
+      binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,new YsPlayViewFactory(messenger));
 //      //初始化播放器
 //      String deviceSerial = call.argument("device_code");
 //      Integer cameraNo = call.argument("camera_no");

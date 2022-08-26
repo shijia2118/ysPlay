@@ -4,13 +4,10 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Map;
 
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MessageCodec;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;

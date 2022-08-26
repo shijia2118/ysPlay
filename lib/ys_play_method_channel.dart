@@ -8,7 +8,7 @@ class MethodChannelYsPlay extends YsPlayPlatform {
 
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel("com.example.hxjt.ys_play.ys_play");
+  final methodChannel = const MethodChannel("com.example.hxjt.ys_play");
 
   @override
   Future<String?> getPlatformVersion() async {
