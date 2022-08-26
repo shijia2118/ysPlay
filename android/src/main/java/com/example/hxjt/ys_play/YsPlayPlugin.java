@@ -48,7 +48,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
       Integer cameraNo = call.argument("camera_no");
       if(cameraNo==null) cameraNo=-1;
       String verifyCode = call.argument("verify_code");
-      EZPlayer player  = EZOpenSDK.getInstance().createPlayer(deviceSerial,cameraNo);
       YsPlayView playView = new YsPlayView(context, deviceSerial, verifyCode, cameraNo, new OnResult() {
         @Override
         public void success(boolean success) {

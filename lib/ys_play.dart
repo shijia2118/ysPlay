@@ -16,7 +16,7 @@ class YsPlay {
   }
 
   ///初始化播放器
-  Future<void> createPlayer({required String deviceCode,required String cameraNo,required String verifyCode}) async {
+  Future<void> createPlayer({required String deviceCode,required int cameraNo,required String verifyCode}) async {
     YsPlayPlatform.instance.createPlayer(deviceCode: deviceCode, cameraNo: cameraNo, verifyCode: verifyCode);
   }
 

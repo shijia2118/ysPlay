@@ -38,7 +38,7 @@ abstract class YsPlayPlatform extends PlatformInterface {
   }
 
   ///初始化播放器
-  Future<void> createPlayer({required String deviceCode,required String cameraNo,required String verifyCode}) {
+  Future<void> createPlayer({required String deviceCode,required int cameraNo,required String verifyCode}) {
     throw UnimplementedError('createPlayer() has not been implemented.');
   }
 

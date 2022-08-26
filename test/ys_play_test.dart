@@ -22,6 +22,12 @@ class MockYsPlayPlatform with MockPlatformInterfaceMixin implements YsPlayPlatfo
   Future<void> dispose() {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> createPlayer(
+      {required String deviceCode, required String cameraNo, required String verifyCode}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

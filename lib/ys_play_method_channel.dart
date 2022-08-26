@@ -27,7 +27,7 @@ class MethodChannelYsPlay extends YsPlayPlatform {
   }
 
   @override
-  Future<void> createPlayer({required String deviceCode,required String cameraNo,required String verifyCode}) async {
+  Future<void> createPlayer({required String deviceCode,required int cameraNo,required String verifyCode}) async {
     await methodChannel.invokeMethod('create_player', {'device_code': deviceCode,'camera_no':cameraNo,'verify_code':verifyCode,});
   }
 
