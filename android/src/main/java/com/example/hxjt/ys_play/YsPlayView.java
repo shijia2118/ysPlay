@@ -27,19 +27,23 @@ public class YsPlayView implements PlatformView, MethodChannel.MethodCallHandler
     int cameraNo =-1;
 
     ///通过构造函数，获取相关参数值
-    public YsPlayView(Context context, BinaryMessenger messenger, int id, Map<String, Object> params){
+    public YsPlayView(Context context, BinaryMessenger messenger, String id, Map<String, Object> params){
         surfaceView = new SurfaceView(context);
         Log.i(">>>>>>>","params=="+params);
-        if(params.containsKey("device_code")){
-            deviceSerial = (String) params.get("device_code");
+        if(params!=null){
+            if(params.containsKey("device_code")){
+                deviceSerial = (String) params.get("device_code");
+            }
+            if(params.containsKey("verify_code")){
+                verifyCode = (String) params.get("verify_code");
+            }
+            if(params.containsKey("camera_no")){
+                Integer cn = (Integer) params.get("camera_no");
+                if(cn!=null) cameraNo=cn;
+            }
+
         }
-        if(params.containsKey("verify_code")){
-            verifyCode = (String) params.get("verify_code");
-        }
-        if(params.containsKey("camera_no")){
-            Integer cn = (Integer) params.get("camera_no");
-            if(cn!=null) cameraNo=cn;
-        }
+
 
         ezPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial,cameraNo);
         ezPlayer.setHandler(new YsPlayViewHandler());

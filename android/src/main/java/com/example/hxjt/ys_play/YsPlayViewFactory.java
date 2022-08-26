@@ -19,6 +19,7 @@ public class YsPlayViewFactory extends PlatformViewFactory {
     public YsPlayViewFactory(BinaryMessenger messenger) {
         super(StandardMessageCodec.INSTANCE);
         this.messenger=messenger;
+        Log.i(">>>>>>>>>>","构造函数");
     }
 
     @NonNull
@@ -26,6 +27,6 @@ public class YsPlayViewFactory extends PlatformViewFactory {
     public PlatformView create(Context context, int viewId, Object args) {
         Log.i(">>>>>>viewid==",""+viewId);
         Map<String, Object> params = (Map<String, Object>) args;
-        return new YsPlayView(context,messenger,viewId,params);
+        return new YsPlayView(context,messenger,Constants.METHOD_CHANNEL,params);
     }
 }
