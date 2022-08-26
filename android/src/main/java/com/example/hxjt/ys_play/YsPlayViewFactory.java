@@ -7,17 +7,19 @@ import androidx.annotation.Nullable;
 
 import java.util.Map;
 
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MessageCodec;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
 public class YsPlayViewFactory extends PlatformViewFactory {
-    /**
-     * @param createArgsCodec the codec used to decode the args parameter of {@link #create}.
-     */
-    public YsPlayViewFactory(@Nullable MessageCodec<Object> createArgsCodec) {
-        super(createArgsCodec);
+
+    public YsPlayViewFactory(@NonNull BinaryMessenger messenger) {
+        super(StandardMessageCodec.INSTANCE);
+        new MethodChannel(messenger, "ys_play");
+
     }
 
     @NonNull
