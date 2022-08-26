@@ -29,7 +29,7 @@ public class YsPlayView implements PlatformView, MethodChannel.MethodCallHandler
     ///通过构造函数，获取相关参数值
     public YsPlayView(Context context, BinaryMessenger messenger, String id, Map<String, Object> params){
         surfaceView = new SurfaceView(context);
-        Log.i(">>>>>>>","params=="+params);
+        Log.i(">>>>>>>","params=view="+params);
         if(params!=null){
             if(params.containsKey("device_code")){
                 deviceSerial = (String) params.get("device_code");
