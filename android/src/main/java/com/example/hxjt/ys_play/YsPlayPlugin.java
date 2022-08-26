@@ -39,7 +39,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
     this.binding = flutterPluginBinding;
 
     //注册原生视图
-    binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,new YsPlayViewFactory(messenger));
+//    binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,new YsPlayViewFactory(messenger));
 
   }
 
@@ -57,21 +57,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
       String accessToken = call.argument("access_token");
       setAccessToken(accessToken);
     } else if(call.method.equals("create_player")){
-      YsPlayViewFactory viewFactory = new YsPlayViewFactory(messenger);
-      viewFactory.create(context,1,call.arguments);
-
-//      //初始化播放器
-//      String deviceSerial = call.argument("device_code");
-//      Integer cameraNo = call.argument("camera_no");
-//      if(cameraNo==null) cameraNo=-1;
-//      String verifyCode = call.argument("verify_code");
-//      YsPlayViewFactory viewFactory = (YsPlayViewFactory) new YsPlayViewFactory().create(context,deviceSerial,verifyCode,cameraNo, new OnResult() {
-//        @Override
-//        public void success(boolean success) {
-//          result.success(success);
-//        }
-//      });
-
+      binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,new YsPlayViewFactory(messenger));
 
     }
     else if(call.method.equals("dispose")){
