@@ -4,16 +4,21 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZPlayer;
 
+import java.nio.ByteBuffer;
+
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.StandardMessageCodec;
 
 /** YsPlayPlugin */
 public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
@@ -44,20 +49,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
       //设置accessToken
       String accessToken = call.argument("access_token");
       setAccessToken(accessToken);
-    } else if(call.method.equals("create_player")){
-      //初始化播放器
-      String deviceSerial = call.argument("device_code");
-      Integer cameraNo = call.argument("camera_no");
-      if(cameraNo==null) cameraNo=-1;
-      String verifyCode = call.argument("verify_code");
-      YsPlayView playView = new YsPlayView(context, deviceSerial, verifyCode, cameraNo, new OnResult() {
-        @Override
-        public void success(boolean success) {
-          Log.i(TAG,"view回调结果:"+success);
-          result.success(success);
-        }
-      });
-
     }
     else if(call.method.equals("dispose")){
       //销毁
