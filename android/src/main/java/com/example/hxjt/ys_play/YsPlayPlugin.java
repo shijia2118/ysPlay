@@ -56,9 +56,9 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
     } else if(call.method.equals("create_player")){
 
       YsPlayViewFactory viewFactory = new YsPlayViewFactory(messenger);
-      //注册原生视图
-      binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,new YsPlayViewFactory(messenger));
       viewFactory.create(context,Integer.parseInt(Constants.METHOD_CHANNEL),call.arguments);
+      //注册原生视图
+      binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,viewFactory);
 //      //初始化播放器
 //      String deviceSerial = call.argument("device_code");
 //      Integer cameraNo = call.argument("camera_no");
