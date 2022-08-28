@@ -57,6 +57,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodCallHandler {
       String accessToken = call.argument("access_token");
       setAccessToken(accessToken);
     } else if(call.method.equals("create_player")){
+      Log.i(">>>>>>>>","messenger=="+messenger);
       binding.getPlatformViewRegistry().registerViewFactory(Constants.METHOD_CHANNEL,new YsPlayViewFactory(messenger));
 
     }
