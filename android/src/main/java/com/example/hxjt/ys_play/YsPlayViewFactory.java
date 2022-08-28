@@ -26,6 +26,8 @@ public class YsPlayViewFactory extends PlatformViewFactory {
     @Override
     public PlatformView create(Context context, int viewId, Object args) {
         Log.i(">>>>>>viewid1==",""+viewId);
+        Log.i(">>>>>>paras1==",""+args);
+
         Map<String, Object> params = (Map<String, Object>) args;
         return new YsPlayView(context,messenger,viewId,params);
     }
