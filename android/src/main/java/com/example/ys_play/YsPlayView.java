@@ -20,7 +20,7 @@ import io.flutter.plugin.platform.PlatformView;
 
 public class YsPlayView implements PlatformView{
     private final SurfaceView surfaceView;
-    private final EZPlayer ezPlayer;
+    private  EZPlayer ezPlayer;
     private String deviceSerial;
     private String verifyCode;
     Integer cameraNo;
@@ -38,39 +38,39 @@ public class YsPlayView implements PlatformView{
                 cameraNo = (Integer)creationParams.get("cameraNo");
                 if(cameraNo==null) cameraNo = -1;
             }
+
+            ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
+
+            ezPlayer.setHandler(new YsPlayViewHandler());
+            ezPlayer.setSurfaceHold(surfaceView.getHolder());
+            //设置播放器的显示Surface
+            surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+                @Override
+                public void surfaceCreated(@NonNull SurfaceHolder holder) {
+                    ezPlayer.setSurfaceHold(holder);
+                }
+
+                @Override
+                public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+
+                }
+
+                @Override
+                public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+                    ezPlayer.setSurfaceHold(null);
+
+                }
+            });
+            ezPlayer.setSurfaceHold(surfaceView.getHolder());
+
+            ezPlayer.setPlayVerifyCode(verifyCode);
+
+            if(onSurfaceViewCreated!=null){
+                onSurfaceViewCreated.createPlayer(ezPlayer);
+                onSurfaceViewCreated.result(true);
+            }
         }
-        Log.i(">>>>>>>>createparams===",""+creationParams);
-        ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
-        ezPlayer.setHandler(new YsPlayViewHandler());
-        ezPlayer.setSurfaceHold(surfaceView.getHolder());
-        //设置播放器的显示Surface
-        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                ezPlayer.setSurfaceHold(holder);
-            }
-
-            @Override
-            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-
-            }
-
-            @Override
-            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                ezPlayer.setSurfaceHold(null);
-
-            }
-        });
-        ezPlayer.setSurfaceHold(surfaceView.getHolder());
-
-        ezPlayer.setPlayVerifyCode(verifyCode);
-        Log.i(">>>>>>>>",">>>>>>onsuerface");
-
-        if(onSurfaceViewCreated!=null){
-            onSurfaceViewCreated.createPlayer(ezPlayer);
-            onSurfaceViewCreated.result(true);
-        }
 
     }
 

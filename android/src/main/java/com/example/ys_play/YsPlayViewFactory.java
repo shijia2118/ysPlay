@@ -20,7 +20,6 @@ public class YsPlayViewFactory extends PlatformViewFactory{
         this.onSurfaceViewCreated=onSurfaceViewCreated;
     }
 
-
     @NonNull
     @Override
     public PlatformView create(Context context, int id, Object args) {
