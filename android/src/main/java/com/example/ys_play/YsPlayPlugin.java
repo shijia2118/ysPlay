@@ -74,6 +74,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     @Override
                     public void createPlayer(EZPlayer player) {
                         ezPlayer = player;
+                        Log.i(">>>>>>>>ezplayer==",""+ezPlayer);
                         Log.d(TAG, "播放器注册成功");
                     }
 
@@ -164,6 +165,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
             }
             case "stopPlayback":
                 /// 停止回放
+                Log.i(">>>>>>>>ezplayer2==",""+ezPlayer);
                 boolean stopPlayback = ezPlayer.stopPlayback();
                 Log.d(TAG, "停止回放"+(stopPlayback?"成功":"失败"));
                 result.success(stopPlayback);

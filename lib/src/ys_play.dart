@@ -54,20 +54,20 @@ class YsPlay {
 
   // 设置 accessToken
   static Future<bool> setAccessToken(String accessToken) async {
-    await _channel.invokeMethod("set_access_token", {
+    bool result = await _channel.invokeMethod("set_access_token", {
       'accessToken': accessToken,
     });
-    return true;
+    return result;
   }
 
   // 初始化播放器
   static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo) async {
-    await _channel.invokeMethod("EZPlayer_init", {
+    bool result = await _channel.invokeMethod("EZPlayer_init", {
       'deviceSerial': deviceSerial,
       'verifyCode': verifyCode,
       'cameraNo': cameraNo,
     });
-    return true;
+    return result;
   }
 
   // 释放
