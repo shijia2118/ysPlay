@@ -80,6 +80,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
                     @Override
                     public void result(boolean isSuccess) {
+                        Log.i(">>>>>>>>>","result=="+isSuccess);
                         result.success(isSuccess);
                     }
 
@@ -101,7 +102,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
             case "release":
                 ///释放资源
                 ezPlayer.release();
-                result.success("success");
+                result.success(true);
                 break;
             case "queryPlayback": {
                 ///查询远程SD卡存储录像信息列表
