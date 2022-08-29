@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class YsPlayView extends StatelessWidget {
-  final Map<String, dynamic> creationParams;
+  final Map<String, dynamic>? creationParams;
   final Function(int)? onPlatformViewCreated;
   const YsPlayView({
     Key? key,
-    required this.creationParams,
+    this.creationParams,
     this.onPlatformViewCreated,
   }) : super(key: key);
 
