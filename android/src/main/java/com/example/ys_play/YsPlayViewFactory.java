@@ -18,14 +18,12 @@ public class YsPlayViewFactory extends PlatformViewFactory{
     public YsPlayViewFactory(@NonNull BinaryMessenger messenger,OnSurfaceViewCreated onSurfaceViewCreated) {
         super(StandardMessageCodec.INSTANCE);
         this.onSurfaceViewCreated=onSurfaceViewCreated;
-        Log.i(">>>>>>>>",">>>>>>ysplayfactory");
     }
 
     @NonNull
     @Override
     public PlatformView create(Context context, int id, Object args) {
         final Map<String, Object> creationParams = (Map<String, Object>) args;
-        Log.i(">>>>>>>args>",""+args);
         if(args!=null){
             return new YsPlayView(context, id, creationParams,onSurfaceViewCreated);
         }

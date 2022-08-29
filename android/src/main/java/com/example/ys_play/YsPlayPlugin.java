@@ -74,13 +74,12 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     @Override
                     public void createPlayer(EZPlayer player) {
                         ezPlayer = player;
-                        Log.i(">>>>>>>>ezplayer==",""+ezPlayer);
                         Log.d(TAG, "播放器注册成功");
                     }
 
                     @Override
                     public void result(boolean isSuccess) {
-                        Log.i(">>>>>>>>>","result=="+isSuccess);
+                        if(call.hasArgument("EZPlayer_init"))
                         result.success(isSuccess);
                     }
 
