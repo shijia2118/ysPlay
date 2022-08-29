@@ -39,6 +39,7 @@ public class YsPlayView implements PlatformView{
                 if(cameraNo==null) cameraNo = -1;
             }
         }
+        Log.i(">>>>>>>>createparams===",""+creationParams);
         ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
         ezPlayer.setHandler(new YsPlayViewHandler());
