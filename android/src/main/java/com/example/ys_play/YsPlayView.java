@@ -18,7 +18,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-public class YsPlayView implements PlatformView, MethodChannel.MethodCallHandler{
+public class YsPlayView implements PlatformView{
     private final SurfaceView surfaceView;
     private final EZPlayer ezPlayer;
     private String deviceSerial;
@@ -65,13 +65,9 @@ public class YsPlayView implements PlatformView, MethodChannel.MethodCallHandler
 
         ezPlayer.setPlayVerifyCode(verifyCode);
 
-        MethodChannel methodChannel = new MethodChannel(messenger, ""+ id);
-        methodChannel.setMethodCallHandler(this);
-
-        Log.i(">>>>>>>>>ezPlayer",""+ezPlayer);
-
         if(onSurfaceViewCreated!=null){
-            onSurfaceViewCreated.result(ezPlayer);
+            onSurfaceViewCreated.createPlayer(ezPlayer);
+            onSurfaceViewCreated.result(true);
         }
 
     }
@@ -90,10 +86,5 @@ public class YsPlayView implements PlatformView, MethodChannel.MethodCallHandler
     }
 
 
-    @Override
-    public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        if(call.method.equals("EZPlayer_init")){
 
-        }
-    }
 }

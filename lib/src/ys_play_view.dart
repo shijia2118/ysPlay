@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 
 class YsPlayView extends StatelessWidget {
   final Map<String, dynamic> creationParams;
+  final Function(int)? onPlatformViewCreated;
   const YsPlayView({
     Key? key,
     required this.creationParams,
+    this.onPlatformViewCreated,
   }) : super(key: key);
 
   @override
@@ -22,6 +24,7 @@ class YsPlayView extends StatelessWidget {
           viewType: viewType,
           creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
+          onPlatformViewCreated: onPlatformViewCreated,
         ),
       );
     } else if (Platform.isAndroid) {
@@ -33,6 +36,7 @@ class YsPlayView extends StatelessWidget {
           viewType: viewType,
           creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
+          onPlatformViewCreated: onPlatformViewCreated,
         ),
       );
     } else {

@@ -23,7 +23,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 
-public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler,OnSurfaceViewCreated {
+public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
 
     String TAG = "YSPLAY_LOG====>";
 
@@ -72,10 +72,17 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 Log.d(TAG, "开始注册播放器");
                 binding.getPlatformViewRegistry().registerViewFactory(Constants.CHANNEL, new YsPlayViewFactory(messenger, new OnSurfaceViewCreated() {
                     @Override
-                    public void result(EZPlayer player) {
+                    public void createPlayer(EZPlayer player) {
                         ezPlayer = player;
                         Log.d(TAG, "播放器注册成功");
                     }
+
+                    @Override
+                    public void result(boolean isSuccess) {
+                        result.success(isSuccess);
+                    }
+
+
                 }));
                 break;
             case "startRealPlay":
@@ -207,10 +214,4 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         channel.setMethodCallHandler(null);
     }
 
-
-    @Override
-    public void result(EZPlayer ezPlayer) {
-        Log.i(TAG,"ezplayer=="+ezPlayer);
-        this.ezPlayer = ezPlayer;
-    }
 }
