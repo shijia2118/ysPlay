@@ -13,12 +13,10 @@ import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
 public class YsPlayViewFactory extends PlatformViewFactory{
-    @NonNull private final BinaryMessenger messenger;
     OnSurfaceViewCreated onSurfaceViewCreated;
 
     public YsPlayViewFactory(@NonNull BinaryMessenger messenger,OnSurfaceViewCreated onSurfaceViewCreated) {
         super(StandardMessageCodec.INSTANCE);
-        this.messenger = messenger;
         this.onSurfaceViewCreated=onSurfaceViewCreated;
     }
 
@@ -27,7 +25,7 @@ public class YsPlayViewFactory extends PlatformViewFactory{
     @Override
     public PlatformView create(Context context, int id, Object args) {
         final Map<String, Object> creationParams = (Map<String, Object>) args;
-        return new YsPlayView(context, id, creationParams,this.messenger,onSurfaceViewCreated);
+        return new YsPlayView(context, id, creationParams,onSurfaceViewCreated);
     }
 
 }
