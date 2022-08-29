@@ -1,6 +1,6 @@
 # ys_play
 
-A new Flutter project for play
+A new Flutter project.
 
 ## Getting Started
 

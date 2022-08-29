@@ -1,4 +1,4 @@
-group 'com.example.hxjt.ys_play'
+group 'com.example.ys_play'
 version '1.0'
 
 buildscript {
@@ -32,16 +32,20 @@ android {
     defaultConfig {
         minSdkVersion 16
         ndk {
-            abiFilters "arm64-v8a,armeabi-v7a" //自4.8.8版本开始支持arm64-v8a，按需使用
+            abiFilters "armeabi-v7a", "arm64-v8a"
         }
     }
 
-    
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
     /*萤石SDK核心模块，必须依赖*/
-    implementation 'io.github.ezviz-open:ezviz-sdk:4.19.9'
+    implementation 'io.github.ezviz-open:ezviz-sdk:4.20.1'
     // 4.19.0版本之后需要自行依赖okhttp和gson库
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.google.code.gson:gson:2.8.5'

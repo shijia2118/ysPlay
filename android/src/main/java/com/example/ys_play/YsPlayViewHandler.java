@@ -1,22 +1,21 @@
-package com.example.hxjt.ys_play;
+package com.example.ys_play;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.openapi.EZConstants;
 
-public class YsPlayViewHandler extends Handler {
-    private static String TAG = "YSPLAY_LOG====";
+import io.flutter.Log;
 
+class YsPlayViewHandler extends Handler {
     @Override
     public void handleMessage(@NonNull Message msg) {
         switch (msg.what) {
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_SUCCESS:
-                Log.d(TAG,"播放成功");
+                Log.d("ys7","播放成功");
                 //播放成功
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_FAIL:
@@ -30,7 +29,6 @@ public class YsPlayViewHandler extends Handler {
                 String description = errorinfo.description;
                 //得到播放失败解决方方案
                 String sulution = errorinfo.sulution;
-                Log.d(TAG,""+errorinfo.description);
                 break;
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
@@ -39,7 +37,6 @@ public class YsPlayViewHandler extends Handler {
                     String[] strings = temp.split(":");
                     int mVideoWidth = Integer.parseInt(strings[0]);
                     int mVideoHeight = Integer.parseInt(strings[1]);
-                    Log.d(TAG,"视频分辨率为:"+"宽:"+mVideoWidth+";"+"高:"+mVideoHeight);
                     //解析出视频分辨率
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -50,4 +47,3 @@ public class YsPlayViewHandler extends Handler {
         }
     }
 }
-

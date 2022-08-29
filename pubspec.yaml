@@ -1,7 +1,8 @@
 name: ys_play
-description: A new Flutter project for play
+description: A new Flutter project.
 version: 0.0.1
 homepage:
+repository: https://github.com/shijia2118/ysPlay.git
 
 environment:
   sdk: ">=2.17.5 <3.0.0"
@@ -10,9 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_web_plugins:
-    sdk: flutter
   plugin_platform_interface: ^2.0.2
+
+  dio: ^4.0.6 #网络请求
 
 dev_dependencies:
   flutter_test:
@@ -37,13 +38,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.hxjt.ys_play
+        package: com.example.ys_play
         pluginClass: YsPlayPlugin
       ios:
         pluginClass: YsPlayPlugin
-      web:
-        pluginClass: YsPlayWeb
-        fileName: ys_play_web.dart
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

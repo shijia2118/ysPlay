@@ -1,4 +1,4 @@
-package com.example.hxjt.ys_play_example;
+package com.example.ys_play_example;
 
 import io.flutter.embedding.android.FlutterActivity;
 

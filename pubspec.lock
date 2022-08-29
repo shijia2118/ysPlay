@@ -43,6 +43,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.16.0"
+  dio:
+    dependency: "direct main"
+    description:
+      name: dio
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.0.6"
   fake_async:
     dependency: transitive
     description:
@@ -67,18 +74,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_web_plugins:
-    dependency: "direct main"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
-  js:
+  http_parser:
     dependency: transitive
     description:
-      name: js
+      name: http_parser
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.6.4"
+    version: "4.0.1"
   lints:
     dependency: transitive
     description:
@@ -168,6 +170,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.9"
+  typed_data:
+    dependency: transitive
+    description:
+      name: typed_data
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.3.1"
   vector_math:
     dependency: transitive
     description:
