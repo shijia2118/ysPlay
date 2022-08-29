@@ -27,6 +27,7 @@ public class YsPlayView implements PlatformView{
 
     public YsPlayView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams, BinaryMessenger messenger,OnSurfaceViewCreated onSurfaceViewCreated) {
         surfaceView = new SurfaceView(context);
+
         if(creationParams !=null){
             if(creationParams.containsKey("deviceSerial")){
                 deviceSerial=(String) creationParams.get("deviceSerial");

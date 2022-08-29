@@ -52,7 +52,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 String appKey = call.argument("appKey");
                 Log.d(TAG, "appKey = " + appKey);
                 boolean initResult = EZOpenSDK.initLib(application, appKey);
-                Log.d(TAG, "SDK初始化" + (initResult ? "成功" : "失败"));
+                Log.d(TAG, "萤石SDK初始化" + (initResult ? "成功" : "失败"));
                 result.success(initResult);
                 break;
             case "set_access_token":
