@@ -42,7 +42,6 @@ public class YsPlayView implements PlatformView{
             ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
             ezPlayer.setHandler(new YsPlayViewHandler());
-            ezPlayer.setSurfaceHold(surfaceView.getHolder());
             //设置播放器的显示Surface
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
@@ -64,7 +63,7 @@ public class YsPlayView implements PlatformView{
 
                 }
             });
-
+            ezPlayer.setSurfaceHold(surfaceView.getHolder());
             ezPlayer.setPlayVerifyCode(verifyCode);
 
             if(onSurfaceViewCreated!=null){
