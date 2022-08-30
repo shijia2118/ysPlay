@@ -60,10 +60,10 @@ public class YsPlayView implements PlatformView{
                 @Override
                 public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
                     ezPlayer.setSurfaceHold(null);
+                    Log.d(">>>>>>>>","surfacecDestroyed");
 
                 }
             });
-            ezPlayer.setSurfaceHold(surfaceView.getHolder());
 
             ezPlayer.setPlayVerifyCode(verifyCode);
 
