@@ -1,6 +1,7 @@
 package com.example.ys_play;
 
 import android.content.Context;
+import android.os.Looper;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -41,7 +42,7 @@ public class YsPlayView implements PlatformView{
 
             ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
-            ezPlayer.setHandler(new YsPlayViewHandler());
+            ezPlayer.setHandler(new YsPlayViewHandler(Looper.getMainLooper()));
             //设置播放器的显示Surface
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override

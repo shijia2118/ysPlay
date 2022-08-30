@@ -1,6 +1,7 @@
 package com.example.ys_play;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,11 @@ import com.videogo.openapi.EZConstants;
 import io.flutter.Log;
 
 class YsPlayViewHandler extends Handler {
+
+    YsPlayViewHandler(Looper looper){
+        super(looper);
+    }
+
     @Override
     public void handleMessage(@NonNull Message msg) {
         final String TAG = "SPLAY_LOG====>";
