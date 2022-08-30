@@ -13,14 +13,14 @@ import io.flutter.Log;
 class YsPlayViewHandler extends Handler {
     @Override
     public void handleMessage(@NonNull Message msg) {
-        Log.d(">>>>>>>>",""+msg);
+        final String TAG = "SPLAY_LOG====>";
 
         switch (msg.what) {
-            case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_SUCCESS:
-                Log.d("ys7","播放成功");
+            case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
+                Log.d(TAG,"回放播放成功");
                 //播放成功
                 break;
-            case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_FAIL:
+            case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_FAIL:
                 //播放失败,得到失败信息
                 ErrorInfo errorinfo = (ErrorInfo) msg.obj;
                 //得到播放失败错误码
@@ -39,6 +39,7 @@ class YsPlayViewHandler extends Handler {
                     String[] strings = temp.split(":");
                     int mVideoWidth = Integer.parseInt(strings[0]);
                     int mVideoHeight = Integer.parseInt(strings[1]);
+                    Log.i(TAG,"width:"+mVideoWidth+";"+"height:"+mVideoHeight);
                     //解析出视频分辨率
                 } catch (Exception e) {
                     e.printStackTrace();
