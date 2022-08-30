@@ -48,10 +48,12 @@ public class YsPlayView implements PlatformView{
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder holder) {
                     ezPlayer.setSurfaceHold(holder);
+                    Log.d(">>>>>>>>","surfacecCreated");
                 }
 
                 @Override
                 public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+                    Log.d(">>>>>>>>","surfacecChanged");
 
                 }
 

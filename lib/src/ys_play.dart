@@ -116,10 +116,10 @@ class YsPlay {
   }
 
   // 开始回放
-  static Future<bool> startPlayback(YsViewRequestEntity ys7videoRequestEntity) async {
+  static Future<bool> startPlayback(YsViewRequestEntity ysViewRequestEntity) async {
     await _channel.invokeMethod("startPlayback", {
-      'startTime': ys7videoRequestEntity.startTime,
-      'endTime': ys7videoRequestEntity.endTime,
+      'startTime': ysViewRequestEntity.startTime,
+      'endTime': ysViewRequestEntity.endTime,
     });
     return true;
   }
