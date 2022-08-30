@@ -15,7 +15,7 @@ A new Flutter project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'EZOpenSDK' ,'4.20.1'
-  s.platform = :ios, 11.0'
+  s.platform = :ios, '11.0'
   s.static_framework = true
 
   # Flutter.framework does not contain a i386 slice.
