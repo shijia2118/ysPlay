@@ -167,6 +167,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 /// 停止回放
                 boolean stopPlayback = ezPlayer.stopPlayback();
                 Log.d(TAG, "停止回放"+(stopPlayback?"成功":"失败"));
+                Log.d(TAG, "stopPlayback:"+stopPlayback);
                 result.success(stopPlayback);
                 break;
             case "sound":
