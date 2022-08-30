@@ -43,34 +43,40 @@ public class YsPlayView implements PlatformView{
             ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
             ezPlayer.setHandler(new YsPlayViewHandler(Looper.getMainLooper()));
+
             //设置播放器的显示Surface
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                    ezPlayer.setSurfaceHold(holder);
-                    Log.d(">>>>>>>>","surfacecCreated");
+                    if(ezPlayer!=null){
+                        ezPlayer.setSurfaceHold(holder);
+                    }
+                    if(onSurfaceViewCreated!=null){
+                        onSurfaceViewCreated.createPlayer(ezPlayer);
+                        onSurfaceViewCreated.result(true);
+                    }
                 }
 
                 @Override
                 public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-                    Log.d(">>>>>>>>","surfacecChanged");
-
+                    Log.i(">>>>>","width:"+width+";"+"height:"+height);
+                    if(onSurfaceViewCreated!=null){
+                        onSurfaceViewCreated.createPlayer(ezPlayer);
+                        onSurfaceViewCreated.result(true);
+                    }
                 }
 
                 @Override
                 public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                    ezPlayer.setSurfaceHold(null);
-                    Log.d(">>>>>>>>","surfacecDestroyed");
-
+                    if(ezPlayer!=null){
+                        ezPlayer.setSurfaceHold(null);
+                    }
                 }
             });
             ezPlayer.setSurfaceHold(surfaceView.getHolder());
             ezPlayer.setPlayVerifyCode(verifyCode);
 
-            if(onSurfaceViewCreated!=null){
-                onSurfaceViewCreated.createPlayer(ezPlayer);
-                onSurfaceViewCreated.result(true);
-            }
+
         }
 
 
