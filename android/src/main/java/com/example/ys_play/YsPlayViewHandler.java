@@ -13,6 +13,8 @@ import io.flutter.Log;
 class YsPlayViewHandler extends Handler {
     @Override
     public void handleMessage(@NonNull Message msg) {
+        Log.d(">>>>>>>>",""+msg);
+
         switch (msg.what) {
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_SUCCESS:
                 Log.d("ys7","播放成功");
