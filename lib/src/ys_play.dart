@@ -47,8 +47,9 @@ class YsPlay {
   static void playerStatusListener(Function(YsPlayerStatus) onResult){
     _playerStatus.setMessageHandler((message)async {
       print('>>>>>>>>onresult==${message.runtimeType}');
-      if(message!=null&&message is Map<String,dynamic> &&message.isNotEmpty){
-        onResult(YsPlayerStatus.fromJson(message));
+      if(message!=null&&message is String &&message.isNotEmpty){
+        Map<String, dynamic> msg = json.decode(message);
+        onResult(YsPlayerStatus.fromJson(msg));
       }
     });
   }

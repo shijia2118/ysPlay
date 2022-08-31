@@ -6,6 +6,8 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
+import com.example.ys_play.Entity.PlayerStatusEntity;
+import com.google.gson.Gson;
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.openapi.EZConstants;
 
@@ -19,7 +21,7 @@ import io.flutter.plugin.common.StandardMessageCodec;
 
 class YsPlayViewHandler extends Handler {
     BasicMessageChannel<Object> playerStatus;
-    Map<String,Object> playerMap = new HashMap<>();
+    PlayerStatusEntity playerStatusEntity = new PlayerStatusEntity();
 
 
     YsPlayViewHandler(Looper looper, @NonNull BinaryMessenger messenger){
@@ -34,10 +36,8 @@ class YsPlayViewHandler extends Handler {
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 Log.d(TAG,"回放播放成功");
-                playerMap.put("success",true) ;
-                //向Flutter端发送消息
-                playerStatus.send(playerMap);
-                //播放成功
+                playerStatusEntity.setSuccess(true);
+
                 break;
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_FAIL:
                 //播放失败,得到失败信息
@@ -50,10 +50,8 @@ class YsPlayViewHandler extends Handler {
                 String description = errorinfo.description;
                 //得到播放失败解决方方案
                 String sulution = errorinfo.sulution;
-                playerMap.put("success",false) ;
-                playerMap.put("description",description);
-                //向Flutter端发送消息
-                playerStatus.send(playerMap);
+                playerStatusEntity.setSuccess(false);
+                playerStatusEntity.setDescription(description);
                 break;
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
@@ -72,6 +70,7 @@ class YsPlayViewHandler extends Handler {
             default:
                 break;
         }
-
+        //向Flutter端发送消息
+        playerStatus.send(new Gson().toJson(playerStatusEntity));
     }
 }
