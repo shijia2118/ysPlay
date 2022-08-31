@@ -32,7 +32,7 @@ public class YsPlayView implements PlatformView {
     private String verifyCode;
     private Integer cameraNo;
 
-    private InitPlayerEntity initPlayerEntity;
+    private final InitPlayerEntity initPlayerEntity = new InitPlayerEntity();
 
     public YsPlayView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams, BinaryMessenger messenger,@NonNull InitPlayerCallback playerCallback) {
         this.playerCallback = playerCallback;
