@@ -43,7 +43,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
         this.binding=binding;
         this.messenger=binding.getBinaryMessenger();
-        nativeToYsPlay = new BasicMessageChannel<>(messenger, Constants.CHANNEL, new StandardMessageCodec());
+        nativeToYsPlay = new BasicMessageChannel<>(messenger, Constants.RECORD_FILE_CHANNEL, new StandardMessageCodec());
     }
 
     @Override

@@ -10,12 +10,17 @@ import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.openapi.EZConstants;
 
 import io.flutter.Log;
+import io.flutter.plugin.common.BasicMessageChannel;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.StandardMessageCodec;
 
 class YsPlayViewHandler extends Handler {
-    private InitPlayerCallback initPlayerCallback;
+    BasicMessageChannel<Object> playerStatus;
 
-    YsPlayViewHandler(Looper looper){
+
+    YsPlayViewHandler(Looper looper, @NonNull BinaryMessenger messenger){
         super(looper);
+        playerStatus = new BasicMessageChannel<>(messenger, Constants.RECORD_FILE_CHANNEL, new StandardMessageCodec());
     }
 
     @Override
@@ -26,6 +31,7 @@ class YsPlayViewHandler extends Handler {
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 Log.d(TAG,"回放播放成功");
+                playerStatus.send("success");
                 //播放成功
                 break;
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_FAIL:

@@ -2,7 +2,6 @@ package com.example.ys_play;
 
 import android.content.Context;
 import android.os.Looper;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -15,16 +14,13 @@ import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZPlayer;
 import java.util.Map;
 
-import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 
 public class YsPlayView implements PlatformView {
 
     private SurfaceView surfaceView = null;
     private EZPlayer ezPlayer = null;
-    BasicMessageChannel<Object> nativeToFlutter;
 
     @NonNull InitPlayerCallback playerCallback;
 
@@ -33,11 +29,12 @@ public class YsPlayView implements PlatformView {
     private Integer cameraNo;
 
     private final InitPlayerEntity initPlayerEntity = new InitPlayerEntity();
+    @NonNull private final BinaryMessenger messenger;
 
     public YsPlayView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams, BinaryMessenger messenger,@NonNull InitPlayerCallback playerCallback) {
         this.playerCallback = playerCallback;
+        this.messenger = messenger;
 
-        nativeToFlutter = new BasicMessageChannel<>(messenger, "nativeToFlutter", new StandardMessageCodec());
         surfaceView = new SurfaceView(context);
 
         if(creationParams!=null){
@@ -53,7 +50,7 @@ public class YsPlayView implements PlatformView {
             if(cameraNo==null) cameraNo=-1;
 
             ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
-            ezPlayer.setHandler(new YsPlayViewHandler(Looper.getMainLooper()));
+            ezPlayer.setHandler(new YsPlayViewHandler(Looper.getMainLooper(),messenger));
             ezPlayer.setSurfaceHold(surfaceView.getHolder());
             ezPlayer.setPlayVerifyCode(verifyCode);
 

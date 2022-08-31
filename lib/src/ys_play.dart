@@ -8,7 +8,11 @@ class YsPlay {
   static const _channel = MethodChannel("com.example.ys_play");
 
   static const BasicMessageChannel<dynamic> _nativeYs =
-      BasicMessageChannel("nativeToFlutterYs7", StandardMessageCodec());
+      BasicMessageChannel("com.example.ys_play/record_file", StandardMessageCodec());
+
+  static const BasicMessageChannel<dynamic> _playerStatus =
+  BasicMessageChannel("com.example.ys_play/player_status", StandardMessageCodec());
+
   static final Map<int, Function> _callBackFuncMap = {};
 
   static void initMessageHandler() {
@@ -38,6 +42,13 @@ class YsPlay {
     );
   }
 
+  ///播放状态
+  static void playerStatusMsgHandler(){
+    _playerStatus.setMessageHandler((message)async {
+      print('>>>>>>>>>>播放状态:'+message);
+    },);
+  }
+
   //  *  @param appKey 账号appKey
   static Future<bool> initSdk(String appKey) async {
     YsPlay.initMessageHandler();
@@ -62,6 +73,7 @@ class YsPlay {
 
   // 初始化播放器
   static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo) async {
+    YsPlay.playerStatusMsgHandler();
     bool result = await _channel.invokeMethod("EZPlayer_init", {
       'deviceSerial': deviceSerial,
       'verifyCode': verifyCode,
