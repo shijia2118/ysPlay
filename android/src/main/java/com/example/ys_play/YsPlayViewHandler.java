@@ -14,7 +14,7 @@ import io.flutter.Log;
 class YsPlayViewHandler extends Handler {
     private InitPlayerCallback initPlayerCallback;
 
-    YsPlayViewHandler(Looper looper,){
+    YsPlayViewHandler(Looper looper){
         super(looper);
     }
 
