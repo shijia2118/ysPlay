@@ -9,6 +9,9 @@ import androidx.annotation.NonNull;
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.openapi.EZConstants;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.flutter.Log;
 import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -16,6 +19,7 @@ import io.flutter.plugin.common.StandardMessageCodec;
 
 class YsPlayViewHandler extends Handler {
     BasicMessageChannel<Object> playerStatus;
+    Map<String,Object> playerMap = new HashMap<>();
 
 
     YsPlayViewHandler(Looper looper, @NonNull BinaryMessenger messenger){
@@ -30,7 +34,7 @@ class YsPlayViewHandler extends Handler {
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 Log.d(TAG,"回放播放成功");
-                playerStatus.send("success");
+                playerMap.put("success",true) ;
                 //播放成功
                 break;
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_FAIL:
@@ -44,6 +48,8 @@ class YsPlayViewHandler extends Handler {
                 String description = errorinfo.description;
                 //得到播放失败解决方方案
                 String sulution = errorinfo.sulution;
+                playerMap.put("success",false) ;
+                playerMap.put("description",description);
                 break;
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
@@ -58,8 +64,11 @@ class YsPlayViewHandler extends Handler {
                     e.printStackTrace();
                 }
                 break;
+
             default:
                 break;
         }
+        //向Flutter端发送消息
+        playerStatus.send(playerMap);
     }
 }

@@ -43,9 +43,10 @@ class YsPlay {
   }
 
   ///播放状态
-  static void playerStatusMsgHandler(){
+  static void playerStatusListener(){
     _playerStatus.setMessageHandler((message)async {
-      print('>>>>>>>>>>播放状态:'+message);
+      print('>>>>>>>Mes==$message');
+
     },);
   }
 
@@ -73,7 +74,7 @@ class YsPlay {
 
   // 初始化播放器
   static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo) async {
-    YsPlay.playerStatusMsgHandler();
+    YsPlay.playerStatusListener();
     bool result = await _channel.invokeMethod("EZPlayer_init", {
       'deviceSerial': deviceSerial,
       'verifyCode': verifyCode,
