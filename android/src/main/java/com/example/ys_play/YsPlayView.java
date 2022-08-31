@@ -64,6 +64,7 @@ public class YsPlayView implements PlatformView, MethodChannel.MethodCallHandler
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+        Log.i(">>>>>>>>>>>","playview");
         if(call.method.equals("startRealPlay")) { //开启直播
             boolean value = ezPlayer.startRealPlay();
             result.success(value);
