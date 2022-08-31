@@ -1,4 +1,4 @@
-package com.example.ys_play;
+package com.example.ys_play.Entity;
 
 public class YsPlayEntity {
     private String code;
