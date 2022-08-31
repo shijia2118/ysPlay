@@ -62,6 +62,7 @@ public class YsPlayView implements PlatformView {
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
                     if(ezPlayer!=null){
+                        ezPlayer.setSurfaceHold(surfaceHolder);
                         initPlayerEntity.setPlayer(ezPlayer);
                         playerCallback.data(initPlayerEntity);
                     }
@@ -69,10 +70,6 @@ public class YsPlayView implements PlatformView {
 
                 @Override
                 public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-                    if(ezPlayer!=null){
-                        initPlayerEntity.setPlayer(ezPlayer);
-                        playerCallback.data(initPlayerEntity);
-                    }
                 }
 
                 @Override

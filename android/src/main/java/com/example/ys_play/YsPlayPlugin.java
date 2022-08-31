@@ -159,8 +159,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
 //            EZOpenSDK.enableP2P(true);
 //            EZOpenSDK.showSDKLog(true);
-                Log.d(TAG, "startTime:"+startTime);
-                Log.d(TAG, "endTime:"+endTime);
 
                 final Calendar startCalendar = Calendar.getInstance();
                 startCalendar.setTimeInMillis(startTime);
