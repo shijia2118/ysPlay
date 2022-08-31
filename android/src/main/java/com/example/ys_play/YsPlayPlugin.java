@@ -78,15 +78,11 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 binding.getPlatformViewRegistry().registerViewFactory(Constants.CHANNEL,new YsPlayViewFactory(messenger, new InitPlayerCallback() {
                     @Override
                     public void data(InitPlayerEntity playerEntity) {
-                        android.util.Log.i(">>>>>>>","ezplayer2=="+playerEntity.getPlayer());
-
-                        if(playerEntity!=null){
-                            if(playerEntity.getPlayer()!=null){
-                                ezPlayer = playerEntity.getPlayer();
-                            }
-                            Log.d(TAG, "注册播放器成功");
-                            result.success(true);
+                        if(playerEntity.getPlayer()!=null){
+                            ezPlayer = playerEntity.getPlayer();
                         }
+                        Log.d(TAG, "注册播放器成功");
+                        result.success(true);
                     }
                 }));
                 break;
@@ -163,6 +159,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
 //            EZOpenSDK.enableP2P(true);
 //            EZOpenSDK.showSDKLog(true);
+                Log.d(TAG, "startTime:"+startTime);
+                Log.d(TAG, "endTime:"+endTime);
 
                 final Calendar startCalendar = Calendar.getInstance();
                 startCalendar.setTimeInMillis(startTime);

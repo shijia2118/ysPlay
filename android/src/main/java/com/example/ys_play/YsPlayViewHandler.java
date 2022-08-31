@@ -20,7 +20,8 @@ class YsPlayViewHandler extends Handler {
 
     @Override
     public void handleMessage(@NonNull Message msg) {
-        final String TAG = "SPLAY_LOG====>";
+        final String TAG = "萤石LOG======>";
+        Log.d(TAG,""+msg);
 
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:

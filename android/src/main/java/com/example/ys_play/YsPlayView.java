@@ -39,7 +39,6 @@ public class YsPlayView implements PlatformView {
 
         nativeToFlutter = new BasicMessageChannel<>(messenger, "nativeToFlutter", new StandardMessageCodec());
         surfaceView = new SurfaceView(context);
-        Log.i(">>>>>>>","param1=="+creationParams);
 
         if(creationParams!=null){
             if(creationParams.containsKey("deviceSerial")){
@@ -65,7 +64,6 @@ public class YsPlayView implements PlatformView {
                     if(ezPlayer!=null){
                         initPlayerEntity.setPlayer(ezPlayer);
                         playerCallback.data(initPlayerEntity);
-                        Log.i(">>>>>>>","ezplayer=="+initPlayerEntity.getPlayer());
                     }
                 }
 
