@@ -35,6 +35,8 @@ class YsPlayViewHandler extends Handler {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 Log.d(TAG,"回放播放成功");
                 playerMap.put("success",true) ;
+                //向Flutter端发送消息
+                playerStatus.send(playerMap);
                 //播放成功
                 break;
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_FAIL:
@@ -50,6 +52,8 @@ class YsPlayViewHandler extends Handler {
                 String sulution = errorinfo.sulution;
                 playerMap.put("success",false) ;
                 playerMap.put("description",description);
+                //向Flutter端发送消息
+                playerStatus.send(playerMap);
                 break;
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
@@ -68,7 +72,6 @@ class YsPlayViewHandler extends Handler {
             default:
                 break;
         }
-        //向Flutter端发送消息
-        playerStatus.send(playerMap);
+
     }
 }
