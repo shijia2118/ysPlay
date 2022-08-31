@@ -20,13 +20,12 @@ class YsPlayViewHandler extends Handler {
 
     YsPlayViewHandler(Looper looper, @NonNull BinaryMessenger messenger){
         super(looper);
-        playerStatus = new BasicMessageChannel<>(messenger, Constants.RECORD_FILE_CHANNEL, new StandardMessageCodec());
+        playerStatus = new BasicMessageChannel<>(messenger, Constants.PLAYER_STATUS_CHANNEL, new StandardMessageCodec());
     }
 
     @Override
     public void handleMessage(@NonNull Message msg) {
         final String TAG = "萤石LOG======>";
-        Log.d(TAG,""+msg);
 
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
@@ -51,9 +50,9 @@ class YsPlayViewHandler extends Handler {
                 try {
                     String temp = (String) msg.obj;
                     String[] strings = temp.split(":");
-                    int mVideoWidth = Integer.parseInt(strings[0]);
-                    int mVideoHeight = Integer.parseInt(strings[1]);
-                    Log.i(TAG,"width:"+mVideoWidth+";"+"height:"+mVideoHeight);
+//                    int mVideoWidth = Integer.parseInt(strings[0]);
+//                    int mVideoHeight = Integer.parseInt(strings[1]);
+//                    Log.i(TAG,"width:"+mVideoWidth+";"+"height:"+mVideoHeight);
                     //解析出视频分辨率
                 } catch (Exception e) {
                     e.printStackTrace();
