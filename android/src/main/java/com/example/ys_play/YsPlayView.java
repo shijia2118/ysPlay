@@ -2,6 +2,7 @@ package com.example.ys_play;
 
 import android.content.Context;
 import android.os.Looper;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -38,6 +39,7 @@ public class YsPlayView implements PlatformView {
 
         nativeToFlutter = new BasicMessageChannel<>(messenger, "nativeToFlutter", new StandardMessageCodec());
         surfaceView = new SurfaceView(context);
+        Log.i(">>>>>>>","param1=="+creationParams);
 
         if(creationParams!=null){
             if(creationParams.containsKey("deviceSerial")){
@@ -53,6 +55,8 @@ public class YsPlayView implements PlatformView {
 
             ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
             ezPlayer.setHandler(new YsPlayViewHandler(Looper.getMainLooper()));
+            ezPlayer.setSurfaceHold(surfaceView.getHolder());
+            ezPlayer.setPlayVerifyCode(verifyCode);
 
             //设置播放器的显示Surface
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -61,6 +65,7 @@ public class YsPlayView implements PlatformView {
                     if(ezPlayer!=null){
                         initPlayerEntity.setPlayer(ezPlayer);
                         playerCallback.data(initPlayerEntity);
+                        Log.i(">>>>>>>","ezplayer=="+initPlayerEntity.getPlayer());
                     }
                 }
 
@@ -79,8 +84,7 @@ public class YsPlayView implements PlatformView {
                     }
                 }
             });
-            ezPlayer.setSurfaceHold(surfaceView.getHolder());
-            ezPlayer.setPlayVerifyCode(verifyCode);
+
         }
 
 
