@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:ys_play/src/entity/ys_player_status.dart';
 import 'package:ys_play/ys.dart';
 
 class YsPlay {
@@ -43,11 +44,12 @@ class YsPlay {
   }
 
   ///播放状态
-  static void playerStatusListener(){
+  static void playerStatusListener(Function(YsPlayerStatus status) onResult){
     _playerStatus.setMessageHandler((message)async {
-      print('>>>>>>>Mes==$message');
-
-    },);
+      if(message!=null&&message is Map<String,dynamic> &&message.isNotEmpty){
+        onResult(YsPlayerStatus.fromJson(message));
+      }
+    });
   }
 
   //  *  @param appKey 账号appKey
@@ -73,8 +75,8 @@ class YsPlay {
   }
 
   // 初始化播放器
-  static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo) async {
-    YsPlay.playerStatusListener();
+  static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo,{required Function(YsPlayerStatus) onPlayerListener}) async {
+    YsPlay.playerStatusListener(onPlayerListener);
     bool result = await _channel.invokeMethod("EZPlayer_init", {
       'deviceSerial': deviceSerial,
       'verifyCode': verifyCode,
