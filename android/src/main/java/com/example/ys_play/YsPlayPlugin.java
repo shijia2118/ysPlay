@@ -78,6 +78,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 binding.getPlatformViewRegistry().registerViewFactory(Constants.CHANNEL,new YsPlayViewFactory(messenger, new InitPlayerCallback() {
                     @Override
                     public void data(InitPlayerEntity playerEntity) {
+                        android.util.Log.i(">>>>>>>>>ezplayer2",">>>>>"+ezPlayer);
+
                         if(playerEntity.getPlayer()!=null){
                             ezPlayer = playerEntity.getPlayer();
                         }
@@ -173,6 +175,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
             /// 停止回放
             case "stopPlayback":{
+                android.util.Log.i(">>>>>>>>>ezplayer3",">>>>>"+ezPlayer);
                 boolean value = ezPlayer.stopPlayback();
                 Log.d(TAG, "停止回放:"+value);
                 result.success(value);

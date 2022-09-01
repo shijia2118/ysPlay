@@ -2,6 +2,7 @@ package com.example.ys_play;
 
 import android.content.Context;
 import android.os.Looper;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -58,6 +59,7 @@ public class YsPlayView implements PlatformView {
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
+                    Log.i(">>>>>>>>>ezplayer",">>>>>"+ezPlayer);
                     if(ezPlayer!=null){
                         ezPlayer.setSurfaceHold(surfaceHolder);
                         initPlayerEntity.setPlayer(ezPlayer);
