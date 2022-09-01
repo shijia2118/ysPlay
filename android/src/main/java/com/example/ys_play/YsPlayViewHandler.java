@@ -32,8 +32,10 @@ class YsPlayViewHandler extends Handler {
     @Override
     public void handleMessage(@NonNull Message msg) {
         final String TAG = "萤石LOG======>";
+        Log.d(TAG,">>>回放播放成功");
 
         switch (msg.what) {
+
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 Log.d(TAG,"回放播放成功");
                 playerStatusEntity.setStatus(msg.what);
