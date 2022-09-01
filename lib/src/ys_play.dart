@@ -46,7 +46,6 @@ class YsPlay {
   ///播放状态
   static void playerStatusListener(Function(YsPlayerStatus) onResult){
     _playerStatus.setMessageHandler((message)async {
-      print('>>>>>>>>onresult==${message.runtimeType}');
       if(message!=null&&message is String &&message.isNotEmpty){
         Map<String, dynamic> msg = json.decode(message);
         onResult(YsPlayerStatus.fromJson(msg));
@@ -77,8 +76,8 @@ class YsPlay {
   }
 
   // 初始化播放器
-  static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo,{required Function(YsPlayerStatus) onPlayerListener}) async {
-    YsPlay.playerStatusListener(onPlayerListener);
+  static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo,{required Function(YsPlayerStatus) playerStatus}) async {
+    YsPlay.playerStatusListener(playerStatus);
     bool result = await _channel.invokeMethod("EZPlayer_init", {
       'deviceSerial': deviceSerial,
       'verifyCode': verifyCode,

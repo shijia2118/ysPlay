@@ -36,7 +36,7 @@ class YsPlayViewHandler extends Handler {
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 Log.d(TAG,"回放播放成功");
-                playerStatusEntity.setSuccess(true);
+                playerStatusEntity.setStatus(msg.what);
                 //向Flutter端发送消息
                 playerStatus.send(new Gson().toJson(playerStatusEntity));
                 break;
@@ -51,8 +51,8 @@ class YsPlayViewHandler extends Handler {
                 String description = errorinfo.description;
                 //得到播放失败解决方方案
                 String sulution = errorinfo.sulution;
-                playerStatusEntity.setSuccess(false);
-                playerStatusEntity.setDescription(description);
+                playerStatusEntity.setStatus(msg.what);
+                playerStatusEntity.setErrorInfo(errorinfo);
                 //向Flutter端发送消息
                 playerStatus.send(new Gson().toJson(playerStatusEntity));
                 break;
