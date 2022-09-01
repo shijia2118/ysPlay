@@ -22,16 +22,12 @@ public class YsPlayViewFactory extends PlatformViewFactory {
         super(StandardMessageCodec.INSTANCE);
         this.messenger = messenger;
         this.playerCallback = playerCallback;
-        Log.i(">>>>>>>>>factory","");
-
     }
 
     @NonNull
     @Override
     public PlatformView create(Context context, int id, Object args) {
         final Map<String, Object> creationParams = (Map<String, Object>) args;
-        Log.i(">>>>>>>>>factory1",""+args);
-
         return new YsPlayView(context, id, creationParams,this.messenger,playerCallback);
 
     }

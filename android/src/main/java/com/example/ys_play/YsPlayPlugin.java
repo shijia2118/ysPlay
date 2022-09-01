@@ -78,8 +78,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 binding.getPlatformViewRegistry().registerViewFactory(Constants.CHANNEL,new YsPlayViewFactory(messenger, new InitPlayerCallback() {
                     @Override
                     public void data(InitPlayerEntity playerEntity) {
-                        android.util.Log.i(">>>>>>>>>ezplayer2",">>>>>"+ezPlayer);
-
                         if(playerEntity.getPlayer()!=null){
                             ezPlayer = playerEntity.getPlayer();
                         }

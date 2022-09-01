@@ -37,8 +37,6 @@ public class YsPlayView implements PlatformView {
         this.messenger = messenger;
 
         surfaceView = new SurfaceView(context);
-        Log.i(">>>>>>>>>view0",""+creationParams);
-
         if(creationParams!=null){
             if(creationParams.containsKey("deviceSerial")){
                 deviceSerial = (String) creationParams.get("deviceSerial");
@@ -50,23 +48,16 @@ public class YsPlayView implements PlatformView {
                 cameraNo = (Integer) creationParams.get("cameraNo");
             }
             if(cameraNo==null) cameraNo=-1;
-            Log.i(">>>>>>>>>view",""+creationParams);
 
             ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
-            Log.i(">>>>>>>>>view2","");
-
             ezPlayer.setHandler(new YsPlayViewHandler(Looper.getMainLooper(),messenger));
-            Log.i(">>>>>>>>>view3","");
-
             ezPlayer.setSurfaceHold(surfaceView.getHolder());
-
             ezPlayer.setPlayVerifyCode(verifyCode);
 
             //设置播放器的显示Surface
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
-                    Log.i(">>>>>>>>>ezplayer",">>>>>"+ezPlayer);
                     if(ezPlayer!=null){
                         ezPlayer.setSurfaceHold(surfaceHolder);
                         initPlayerEntity.setPlayer(ezPlayer);
