@@ -36,42 +36,13 @@ class YsPlayView extends StatelessWidget {
         decoration: const BoxDecoration(
           color: Colors.black,
         ),
-        child: PlatformViewLink(
+        child: AndroidView(
           viewType: viewType,
-          surfaceFactory: (
-              BuildContext context,
-              PlatformViewController controller,
-              ) {
-            return AndroidViewSurface(
-              controller: controller as AndroidViewController,
-              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-            );
-          },
-          onCreatePlatformView:(PlatformViewCreationParams params) {
-            final AndroidViewController controller =PlatformViewsService.initExpensiveAndroidView(
-              id: params.id,
-              viewType: viewType,
-              layoutDirection: TextDirection.ltr,
-              creationParams: creationParams,
-              creationParamsCodec: const StandardMessageCodec(),
-              onFocus: () => params.onFocusChanged(true),
-            );
-            controller.addOnPlatformViewCreatedListener(
-              params.onPlatformViewCreated,
-            );
-            controller.addOnPlatformViewCreatedListener(
-              onPlatformViewCreated,
-            );
-            return controller;
-          },
+          onPlatformViewCreated: onPlatformViewCreated,
+          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          creationParams: creationParams,
+          creationParamsCodec: const StandardMessageCodec(),
         ),
-        // AndroidView(
-        //   viewType: viewType,
-        //   creationParams: creationParams,
-        //   creationParamsCodec: const StandardMessageCodec(),
-        //   onPlatformViewCreated: onPlatformViewCreated,
-        // ),
       );
     } else {
       throw UnimplementedError();
