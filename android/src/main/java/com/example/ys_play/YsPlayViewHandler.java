@@ -26,6 +26,7 @@ class YsPlayViewHandler extends Handler {
 
     YsPlayViewHandler(Looper looper, @NonNull BinaryMessenger messenger){
         super(looper);
+        android.util.Log.i(">>>>>>>>>handler","");
         playerStatus = new BasicMessageChannel<>(messenger, Constants.PLAYER_STATUS_CHANNEL, new StandardMessageCodec());
     }
 

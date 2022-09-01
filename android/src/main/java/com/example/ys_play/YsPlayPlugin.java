@@ -175,10 +175,11 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
             /// 停止回放
             case "stopPlayback":{
-                android.util.Log.i(">>>>>>>>>ezplayer3",">>>>>"+ezPlayer);
-                boolean value = ezPlayer.stopPlayback();
-                Log.d(TAG, "停止回放:"+value);
-                result.success(value);
+                if(ezPlayer!=null){
+                    boolean value = ezPlayer.stopPlayback();
+                    Log.d(TAG, "停止回放:"+value);
+                    result.success(value);
+                }
                 break;
             }
 

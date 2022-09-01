@@ -1,6 +1,7 @@
 package com.example.ys_play;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -27,6 +28,7 @@ public class YsPlayViewFactory extends PlatformViewFactory {
     @Override
     public PlatformView create(Context context, int id, Object args) {
         final Map<String, Object> creationParams = (Map<String, Object>) args;
+        Log.i(">>>>>>>>>factory",""+args);
         return new YsPlayView(context, id, creationParams,this.messenger,playerCallback);
     }
 }
