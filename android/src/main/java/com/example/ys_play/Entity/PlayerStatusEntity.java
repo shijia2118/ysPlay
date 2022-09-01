@@ -3,22 +3,22 @@ package com.example.ys_play.Entity;
 import com.videogo.errorlayer.ErrorInfo;
 
 public class PlayerStatusEntity {
-    private int status;
-    private ErrorInfo errorInfo;
+    private boolean isSuccess;
+    private String description;
 
-    public void setErrorInfo(ErrorInfo errorInfo) {
-        this.errorInfo = errorInfo;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public ErrorInfo getErrorInfo() {
-        return errorInfo;
+    public String getDescription() {
+        return description;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setSuccess(boolean success) {
+        isSuccess = success;
     }
 
-    public int getStatus() {
-        return status;
+    public boolean isSuccess() {
+        return isSuccess;
     }
 }
