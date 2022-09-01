@@ -37,6 +37,7 @@ public class YsPlayView implements PlatformView {
         this.messenger = messenger;
 
         surfaceView = new SurfaceView(context);
+        Log.i(">>>>>>>>>view0",""+creationParams);
 
         if(creationParams!=null){
             if(creationParams.containsKey("deviceSerial")){
