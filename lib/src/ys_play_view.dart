@@ -1,15 +1,18 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class YsPlayView extends StatelessWidget {
   final Map<String, dynamic>? creationParams;
-  final Function(int)? onPlatformViewCreated;
+  final Function(int) onPlatformViewCreated;
   const YsPlayView({
     Key? key,
     this.creationParams,
-    this.onPlatformViewCreated,
+    required this.onPlatformViewCreated,
   }) : super(key: key);
 
   @override
@@ -33,12 +36,42 @@ class YsPlayView extends StatelessWidget {
         decoration: const BoxDecoration(
           color: Colors.black,
         ),
-        child: AndroidView(
+        child: PlatformViewLink(
           viewType: viewType,
-          creationParams: creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
-          onPlatformViewCreated: onPlatformViewCreated,
+          surfaceFactory: (
+              BuildContext context,
+              PlatformViewController controller,
+              ) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+            );
+          },
+          onCreatePlatformView:(PlatformViewCreationParams params) {
+            final AndroidViewController controller =PlatformViewsService.initExpensiveAndroidView(
+              id: params.id,
+              viewType: 'plugins.flutter.io/mapbox_gl',
+              layoutDirection: TextDirection.ltr,
+              creationParams: creationParams,
+              creationParamsCodec: const StandardMessageCodec(),
+              onFocus: () => params.onFocusChanged(true),
+            );
+            controller.addOnPlatformViewCreatedListener(
+              params.onPlatformViewCreated,
+            );
+            controller.addOnPlatformViewCreatedListener(
+              onPlatformViewCreated,
+            );
+            return controller;
+          },
         ),
+        // AndroidView(
+        //   viewType: viewType,
+        //   creationParams: creationParams,
+        //   creationParamsCodec: const StandardMessageCodec(),
+        //   onPlatformViewCreated: onPlatformViewCreated,
+        // ),
       );
     } else {
       throw UnimplementedError();
