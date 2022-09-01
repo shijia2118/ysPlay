@@ -51,7 +51,7 @@ class YsPlayView extends StatelessWidget {
           onCreatePlatformView:(PlatformViewCreationParams params) {
             final AndroidViewController controller =PlatformViewsService.initExpensiveAndroidView(
               id: params.id,
-              viewType: 'plugins.flutter.io/mapbox_gl',
+              viewType: viewType,
               layoutDirection: TextDirection.ltr,
               creationParams: creationParams,
               creationParamsCodec: const StandardMessageCodec(),
