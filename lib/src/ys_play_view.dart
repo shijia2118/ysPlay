@@ -15,6 +15,7 @@ class YsPlayView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const String viewType = 'com.example.ys_play';
+    if(creationParams==null||creationParams!.isEmpty) return Container(color: Colors.black);
     if (Platform.isIOS) {
       return Container(
         decoration: const BoxDecoration(
