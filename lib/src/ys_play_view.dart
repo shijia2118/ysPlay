@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +16,7 @@ class YsPlayView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const String viewType = 'com.example.ys_play';
-    if(creationParams==null||creationParams!.isEmpty) return Container(color: Colors.black);
+    if (creationParams == null || creationParams!.isEmpty) return Container(color: Colors.black);
     if (Platform.isIOS) {
       return Container(
         decoration: const BoxDecoration(

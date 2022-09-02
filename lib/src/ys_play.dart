@@ -12,7 +12,7 @@ class YsPlay {
       BasicMessageChannel("com.example.ys_play/record_file", StandardMessageCodec());
 
   static const BasicMessageChannel<dynamic> _playerStatus =
-  BasicMessageChannel("com.example.ys_play/player_status", StandardMessageCodec());
+      BasicMessageChannel("com.example.ys_play/player_status", StandardMessageCodec());
 
   static final Map<int, Function> _callBackFuncMap = {};
 
@@ -33,9 +33,8 @@ class YsPlay {
               try {
                 var func = _callBackFuncMap.remove(data['callBackFuncId']);
                 if (func != null) func(recordFileList);
-              } catch (e) {
-                print('ys_play error: $e');
-              }
+                // ignore: empty_catches
+              } catch (e) {}
             }
           }
         }
@@ -44,11 +43,10 @@ class YsPlay {
   }
 
   ///播放状态
-  static void playerStatusListener(Function(YsPlayerStatus) onResult){
-    _playerStatus.setMessageHandler((message)async {
-      if(message!=null&&message is String &&message.isNotEmpty){
+  static void playerStatusListener(Function(YsPlayerStatus) onResult) {
+    _playerStatus.setMessageHandler((message) async {
+      if (message != null && message is String && message.isNotEmpty) {
         Map<String, dynamic> msg = json.decode(message);
-        print('>>>>>>msg===$msg');
         onResult(YsPlayerStatus.fromJson(msg));
       }
     });
@@ -77,7 +75,8 @@ class YsPlay {
   }
 
   // 初始化播放器
-  static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo,{required Function(YsPlayerStatus) playerStatus}) async {
+  static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo,
+      {required Function(YsPlayerStatus) playerStatus}) async {
     YsPlay.playerStatusListener(playerStatus);
     bool result = await _channel.invokeMethod("EZPlayer_init", {
       'deviceSerial': deviceSerial,

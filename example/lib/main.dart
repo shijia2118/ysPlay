@@ -126,7 +126,12 @@ class _MyViewState extends State<MyView> {
         children: [
           SizedBox(
             height: 200,
-            child: isSurfaceCreated ? YsPlayView(creationParams: creationParams) : Container(),
+            child: isSurfaceCreated
+                ? YsPlayView(
+                    creationParams: creationParams,
+                    onPlatformViewCreated: (i) {},
+                  )
+                : Container(),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -148,11 +153,11 @@ class _MyViewState extends State<MyView> {
               MyButton2(
                 onTapAction: (str) {
                   YsPlay.setAccessToken(accessToken);
-                  YsPlay.initEZPlayer(deviceSerial, verifyCode, cameraNo);
+                  YsPlay.initEZPlayer(deviceSerial, verifyCode, cameraNo,
+                      playerStatus: (status) {});
                   setState(() {
                     isSurfaceCreated = true;
                   });
-                  print('>>>>>>>>>>$isSurfaceCreated');
                 },
                 contentWidget: Container(
                   height: 50.0,
@@ -317,9 +322,7 @@ class _MyViewState extends State<MyView> {
                   request.startTime = 1630368000000;
                   request.endTime = 1630425600000;
 
-                  YsPlay.queryPlayback(request, (data) {
-                    print("hello world");
-                  });
+                  YsPlay.queryPlayback(request, (data) {});
                 },
                 contentWidget: Container(
                   height: 50.0,
@@ -333,19 +336,15 @@ class _MyViewState extends State<MyView> {
               ),
               MyButton2(
                 onTapAction: (str) async {
-                  print('MyButton was tapped!');
-
                   DatePicker.showDateTimePicker(
                     context,
                     // 是否展示顶部操作按钮
                     showTitleActions: true,
                     onChanged: (date) {
                       // change事件
-                      print('change $date');
                     },
                     onConfirm: (DateTime date) async {
                       // 确定事件
-                      print('confirm $date');
                       setState(() {
                         backTime = date.toString().substring(0, 19);
                       });
@@ -414,7 +413,6 @@ class _MyViewState extends State<MyView> {
                 onTapDown: (tapDown) async {
                   startPlayTime?.cancel();
                   backTimeTmp = DateTime.parse(backTime).millisecondsSinceEpoch;
-                  print('当前时间 = $backTimeTmp');
 
                   if (timeId != null) timeId!.cancel();
                   timeId = Timer.periodic(const Duration(milliseconds: 100), (timer) {
@@ -430,7 +428,6 @@ class _MyViewState extends State<MyView> {
                   if (timeId != null) {
                     timeId!.cancel();
                   }
-                  print('当前时间 = $backTimeTmp');
 
                   await YsPlay.stopPlayback();
 
@@ -454,7 +451,6 @@ class _MyViewState extends State<MyView> {
                 onTapDown: (tapDown) {
                   startPlayTime?.cancel();
                   backTimeTmp = DateTime.parse(backTime).millisecondsSinceEpoch;
-                  print('当前时间 = $backTimeTmp');
 
                   if (timeId != null) timeId?.cancel();
                   timeId = Timer.periodic(const Duration(milliseconds: 100), (timer) {
@@ -470,7 +466,6 @@ class _MyViewState extends State<MyView> {
                   if (timeId != null) {
                     timeId!.cancel();
                   }
-                  print('当前时间 = $backTimeTmp');
 
                   await YsPlay.stopPlayback();
 
