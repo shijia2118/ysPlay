@@ -78,7 +78,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 binding.getPlatformViewRegistry().registerViewFactory(Constants.CHANNEL,new YsPlayViewFactory(messenger, new InitPlayerCallback() {
                     @Override
                     public void data(InitPlayerEntity playerEntity) {
-                        if(playerEntity.getPlayer()!=null){
+                        if(ezPlayer==null){
                             ezPlayer = playerEntity.getPlayer();
                         }
                         Log.d(TAG, "注册播放器成功");
