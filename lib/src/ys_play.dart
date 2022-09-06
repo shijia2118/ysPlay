@@ -83,6 +83,7 @@ class YsPlay {
       'verifyCode': verifyCode,
       'cameraNo': cameraNo,
     });
+    print('>>>>>>>result===$result');
     return result;
   }
 
