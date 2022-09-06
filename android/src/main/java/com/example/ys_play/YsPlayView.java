@@ -28,6 +28,7 @@ public class YsPlayView implements PlatformView {
     private String deviceSerial;
     private String verifyCode;
     private Integer cameraNo;
+    private final InitPlayerEntity initPlayerEntity = new InitPlayerEntity();
 
 
     public YsPlayView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams, BinaryMessenger messenger,@NonNull InitPlayerCallback playerCallback) {
@@ -36,7 +37,6 @@ public class YsPlayView implements PlatformView {
 
 
         if(creationParams!=null){
-            final InitPlayerEntity initPlayerEntity = new InitPlayerEntity();
 
             if(creationParams.containsKey("deviceSerial")){
                 deviceSerial = (String) creationParams.get("deviceSerial");
@@ -74,6 +74,7 @@ public class YsPlayView implements PlatformView {
                     if (ezPlayer != null) {
                         ezPlayer.setSurfaceHold(null);
                         surfaceView=null;
+                        ezPlayer=null;
                     }
                 }
             });
@@ -93,6 +94,7 @@ public class YsPlayView implements PlatformView {
     public void dispose() {
         if(null != ezPlayer) {
             ezPlayer.release();
+            ezPlayer=null;
         }
     }
 
