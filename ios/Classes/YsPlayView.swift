@@ -73,28 +73,33 @@ class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
 
             player.setPlayerView(_view)
             player.startRealPlay()
-            result("开始播放")
+            print("荧石SDK=====>开始直播*")
+            result(true)
         }
         else if call.method == "end" {
             player.stopRealPlay()
             player.destoryPlayer()
-            result("停止播放")
+            print("荧石SDK=====>停止直播*")
+            result(true)
         }  else if call.method == "queryPlayback" {
 //            let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
-
-            result("回放查询")
+            print("荧石SDK=====>回放查询")
+            result(true)
         }
         else if call.method == "startRealPlay" {
             player.startRealPlay()
-            result("success")
+            print("荧石SDK=====>开始直播")
+            result(true)
         }
         else if call.method == "stopRealPlay" {
             player.stopRealPlay()
-            result("success")
+            print("荧石SDK=====>停止直播")
+            result(true)
         }
         else if call.method == "release" {
             player.destoryPlayer()
-            result("success")
+            print("荧石SDK=====>release")
+            result(true)
         }
         else if call.method == "queryPlayback" {
 //            player.destoryPlayer()
@@ -117,7 +122,8 @@ class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
             }
 
             player.setPlayerView(_view)
-            result("success")
+            print("荧石SDK=====>注册播放器成功")
+            result(true)
         }
         else if call.method == "startPlayback" {
             let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
@@ -142,25 +148,32 @@ class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
             print(nowDate.timeIntervalSince1970)
             
             let bool = player.startPlayback(fromDevice: recordFile)
+        
+            print("荧石SDK=====>开始回放")
             result(bool)
         }
         else if call.method == "stopPlayback" {
             player.stopPlayback()
-            result("success")
+            print("荧石SDK=====>停止回放")
+
+            result(true)
         }
         else if call.method == "getOSDTime" {
             let odsTime = player.getOSDTime()
             let resultNum = Int(odsTime?.timeIntervalSince1970 ?? 0) * 1000;
+            print("荧石SDK=====>获取播放节点成功")
             result(resultNum)
         }
         else if call.method == "sound" {
             let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
             if(data?["Sound"] as! Bool) {
                 player.openSound();
+                print("荧石SDK=====>打开声音")
             } else {
                 player.closeSound();
+                print("荧石SDK=====>关闭声音")
             }
-            result("success")
+            result(true)
         }
         else {
             result(FlutterMethodNotImplemented)
