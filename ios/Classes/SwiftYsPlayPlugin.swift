@@ -5,8 +5,6 @@
 //  Created by UI Seeyou on 2022/9/6.
 //
 
-import Foundation
-
 import Flutter
 import UIKit
 import EZOpenSDKFramework

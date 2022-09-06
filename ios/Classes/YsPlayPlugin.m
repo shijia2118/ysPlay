@@ -3,7 +3,7 @@
 #import <ys_play/ys_play-Swift.h>
 #else
 
-#import "ys_play-swift.swift"
+#import "ys_play-swift.h"
 #endif
 
 @implementation YsPlayPlugin
