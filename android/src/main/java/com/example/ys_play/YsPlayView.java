@@ -73,6 +73,7 @@ public class YsPlayView implements PlatformView {
                 public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
                     if (ezPlayer != null) {
                         ezPlayer.setSurfaceHold(null);
+                        surfaceView=null;
                     }
                 }
             });
