@@ -1,20 +1,13 @@
 #import "YsPlayPlugin.h"
+#if __has_include(<ys_play/ys_play-Swift.h>)
+#import <ys_play/ys_play-Swift.h>
+#else
+
+#import "ys_play-swift.swift"
+#endif
 
 @implementation YsPlayPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"ys_play"
-            binaryMessenger:[registrar messenger]];
-  YsPlayPlugin* instance = [[YsPlayPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
+    [SwiftYsPlayPlugin registerWithRegistrar:registrar];
 }
-
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  if ([@"getPlatformVersion" isEqualToString:call.method]) {
-    result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
-}
-
 @end

@@ -1,12 +1,3 @@
-//
-//  SwiftYsPlayPlugin.swift
-//  ys_play
-//
-//  Created by UI Seeyou on 2022/9/6.
-//
-
-import Foundation
-
 import Flutter
 import UIKit
 import EZOpenSDKFramework
@@ -41,4 +32,3 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin {
 
   }
 }
-

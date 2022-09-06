@@ -59,9 +59,9 @@ public class YsPlayView implements PlatformView {
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
                     if(ezPlayer!=null){
-                        ezPlayer.setSurfaceHold(surfaceHolder);
-                        initPlayerEntity.setPlayer(ezPlayer);
-                        playerCallback.data(initPlayerEntity);
+                            ezPlayer.setSurfaceHold(surfaceHolder);
+                            initPlayerEntity.setPlayer(ezPlayer);
+                            playerCallback.data(initPlayerEntity);
                     }
                 }
 
