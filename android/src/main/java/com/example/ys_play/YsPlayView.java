@@ -29,15 +29,15 @@ public class YsPlayView implements PlatformView {
     private String verifyCode;
     private Integer cameraNo;
 
-    private final InitPlayerEntity initPlayerEntity = new InitPlayerEntity();
-    @NonNull private final BinaryMessenger messenger;
 
     public YsPlayView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams, BinaryMessenger messenger,@NonNull InitPlayerCallback playerCallback) {
         this.playerCallback = playerCallback;
-        this.messenger = messenger;
-
         surfaceView = new SurfaceView(context);
+
+
         if(creationParams!=null){
+            final InitPlayerEntity initPlayerEntity = new InitPlayerEntity();
+
             if(creationParams.containsKey("deviceSerial")){
                 deviceSerial = (String) creationParams.get("deviceSerial");
             }
