@@ -62,6 +62,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
             ///绑定账号
             case "set_access_token":
                 String AccessToken = call.argument("accessToken");
+                Log.d(TAG, "token=="+AccessToken);
                 EZOpenSDK.getInstance().setAccessToken(AccessToken);
                 Log.d(TAG, "token设置成功");
                 result.success(true);
