@@ -77,7 +77,7 @@ class YsPlay {
   // 初始化播放器
   static Future<bool> initEZPlayer(String deviceSerial, String verifyCode, int cameraNo,
       {required Function(YsPlayerStatus) playerStatus}) async {
-    YsPlay.playerStatusListener(playerStatus);
+    // YsPlay.playerStatusListener(playerStatus);
     bool result = await _channel.invokeMethod("EZPlayer_init", {
       'deviceSerial': deviceSerial,
       'verifyCode': verifyCode,
