@@ -71,6 +71,8 @@ public class YsPlayView implements PlatformView {
 
                 @Override
                 public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
+                    Log.d(">>>>>>>>","ezPlayer=="+ezPlayer);
+
                     if (ezPlayer != null) {
                         Log.d(">>>>>>>>","退出页面");
                         ezPlayer.setSurfaceHold(null);
