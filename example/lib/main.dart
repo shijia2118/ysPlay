@@ -1,12 +1,11 @@
+// 萤石云参数
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ys_play/ys.dart';
-// ignore: depend_on_referenced_packages
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:ys_play/ys.dart';
 
-// 萤石云参数
 String appKey = '9ddc4fb7c0ef4996b04dd90156368f7c';
 String accessToken = 'ra.anwc4gsd1u2s5zfm1kbi677pb9rf2yue-4ua2byabn1-1a9no9q-qm91aih37';
 String deviceSerial = 'C63167422';
@@ -74,7 +73,6 @@ class MyButton2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        // print('MyButton was tapped!');
         if (onTapAction != null) {
           onTapAction!('myButton was hello world');
         }

@@ -31,6 +31,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
+
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
@@ -49,5 +50,4 @@ dependencies {
     // 4.19.0版本之后需要自行依赖okhttp和gson库
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.google.code.gson:gson:2.8.5'
-
 }
