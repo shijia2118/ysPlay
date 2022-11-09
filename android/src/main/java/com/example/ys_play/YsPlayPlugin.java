@@ -60,7 +60,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 Constants.CHANNEL,
                 new YsPlayViewFactory((surfaceView) -> {
                     this.surfaceView = surfaceView;
-                    Log.d(TAG,"surfaceView:"+surfaceView);
                     //设置播放器的显示Surface
                     surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                         @Override

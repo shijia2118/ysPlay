@@ -1,6 +1,7 @@
 package com.example.ys_play;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 
@@ -15,7 +16,7 @@ import io.flutter.plugin.platform.PlatformView;
 
 public class YsPlayView implements PlatformView{
 
-    private EZPlayer ezPlayer = null;
+    private final EZPlayer ezPlayer = null;
     private final SurfaceView surfaceView;
     static String TAG = "===========>";
 
@@ -32,6 +33,7 @@ public class YsPlayView implements PlatformView{
 
     @Override
     public void dispose() {
+        Log.d(TAG,"====dispose");
         if(null != ezPlayer) {
             ezPlayer.release();
         }
