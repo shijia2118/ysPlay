@@ -203,6 +203,10 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
             case "release":
                 /// 释放资源
+                if(ezPlayer!=null){
+                    ezPlayer.setSurfaceHold(null);
+                    surfaceView=null;
+                }
                 ezPlayer.release();
                 break;
             case "ptz":
