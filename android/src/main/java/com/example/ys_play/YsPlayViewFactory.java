@@ -35,6 +35,6 @@ public class YsPlayViewFactory extends PlatformViewFactory {
     public PlatformView create(Context context, int id, Object args) {
         Map<String, Object> creationParams = (Map<String, Object>) args;
         Log.i(TAG,""+creationParams);
-        return new YsPlayView(context,this.messenger,onViewCreated);
+        return new YsPlayView(context,onViewCreated);
     }
 }
