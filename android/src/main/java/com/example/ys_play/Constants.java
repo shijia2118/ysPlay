@@ -4,6 +4,7 @@ public class Constants {
 
     ///渠道名称
     static String CHANNEL = "com.example.ys_play";
+
     ///截图
     static String RECORD_FILE_CHANNEL = "com.example.ys_play/record_file";
 
