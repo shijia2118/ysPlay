@@ -57,7 +57,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         /// 注册播放视图
         binding.getPlatformViewRegistry().registerViewFactory(
                 Constants.CHANNEL,
-                new YsPlayViewFactory(binding.getBinaryMessenger(), application, (surfaceView) -> {
+                new YsPlayViewFactory((surfaceView) -> {
                     this.surfaceView = surfaceView;
                     Log.d(TAG,"surfaceView:"+surfaceView);
                     //设置播放器的显示Surface

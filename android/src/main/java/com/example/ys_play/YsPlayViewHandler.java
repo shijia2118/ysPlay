@@ -16,7 +16,6 @@ class YsPlayViewHandler extends Handler {
 
     public YsPlayViewHandler(PlayerStatusListener playerStatusListener){
         this.playerStatusListener = playerStatusListener;
-
     }
 
     @Override
