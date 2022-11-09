@@ -5,23 +5,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class YsPlayView extends StatelessWidget {
-  final Map<String, dynamic>? creationParams;
   final Function(int) onPlatformViewCreated;
   const YsPlayView({
     Key? key,
-    this.creationParams,
     required this.onPlatformViewCreated,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     const String viewType = 'com.example.ys_play';
-    // if (creationParams == null || creationParams!.isEmpty) {
-    //   return Container(
-    //     color: Colors.black,
-    //     height: 200,
-    //   );
-    // }
     if (Platform.isIOS) {
       return Container(
         decoration: const BoxDecoration(
@@ -29,7 +21,6 @@ class YsPlayView extends StatelessWidget {
         ),
         child: UiKitView(
           viewType: viewType,
-          creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
           onPlatformViewCreated: onPlatformViewCreated,
         ),
@@ -43,7 +34,6 @@ class YsPlayView extends StatelessWidget {
           viewType: viewType,
           onPlatformViewCreated: onPlatformViewCreated,
           hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
         ),
       );
