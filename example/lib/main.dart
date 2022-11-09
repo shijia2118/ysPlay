@@ -95,7 +95,6 @@ class _MyAppState extends State<MyApp> {
                 child: Stack(
                   children: [
                     YsPlayView(
-                      creationParams: creationParams,
                       onPlatformViewCreated: (i) {},
                     ),
                     Visibility(
