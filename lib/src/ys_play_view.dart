@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class YsPlayView extends StatelessWidget {
-  final Function(int) onPlatformViewCreated;
+  final Function(int)? onPlatformViewCreated;
   const YsPlayView({
     Key? key,
     required this.onPlatformViewCreated,
