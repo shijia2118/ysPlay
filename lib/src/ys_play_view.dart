@@ -8,7 +8,7 @@ class YsPlayView extends StatelessWidget {
   final Function(int)? onPlatformViewCreated;
   const YsPlayView({
     Key? key,
-    required this.onPlatformViewCreated,
+     this.onPlatformViewCreated,
   }) : super(key: key);
 
   @override
