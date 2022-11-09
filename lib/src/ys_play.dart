@@ -204,4 +204,9 @@ class YsPlay {
   static Future<void> dispose() async {
     await _channel.invokeMethod("release");
   }
+
+  // 关闭sdk
+  static Future<void> destoryLib() async {
+    await _channel.invokeMethod('destoryLib');
+  }
 }

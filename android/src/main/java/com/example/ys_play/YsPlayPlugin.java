@@ -273,6 +273,9 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 Log.d(TAG,"停止录像"+(stopRecordResult?"成功":"失败"));
                 result.success(stopRecordResult);
                 break;
+            case "destoryLib":
+                /// 关闭sdk
+                EZOpenSDK.finiLib();
             default:
                 result.notImplemented();
                 break;
