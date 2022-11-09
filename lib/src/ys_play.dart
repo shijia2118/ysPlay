@@ -62,8 +62,8 @@ class YsPlay {
   }
 
   /// 应用退出时，销毁萤石SDK
-  static Future<void> destoryLib() async {
-    await _channel.invokeMethod("destoryLib");
+  static Future<void> destroyLib() async {
+    await _channel.invokeMethod("destroyLib");
   }
 
   /// 设置accessToken
@@ -205,8 +205,5 @@ class YsPlay {
     await _channel.invokeMethod("release");
   }
 
-  // 关闭sdk
-  static Future<void> destoryLib() async {
-    await _channel.invokeMethod('destoryLib');
-  }
+
 }
