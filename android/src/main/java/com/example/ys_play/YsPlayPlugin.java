@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
+import io.flutter.BuildConfig;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -102,6 +103,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
             case "init_sdk":
+                EZOpenSDK.showSDKLog(BuildConfig.DEBUG);
                 String appKey = call.argument("appKey");
                 boolean initResult = EZOpenSDK.initLib(this.application, appKey);
                 Log.d(TAG,"初始化"+(initResult?"成功":"失败"));
@@ -206,8 +208,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 if(ezPlayer!=null){
                     ezPlayer.setSurfaceHold(null);
                     surfaceView=null;
+                    ezPlayer.release();
                 }
-                ezPlayer.release();
                 break;
             case "ptz":
                 /// 云台控制
