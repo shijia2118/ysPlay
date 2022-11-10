@@ -1,14 +1,19 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class YsPlayView extends StatelessWidget {
   final Function(int)? onPlatformViewCreated;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
   const YsPlayView({
     Key? key,
      this.onPlatformViewCreated,
+    this.gestureRecognizers,
   }) : super(key: key);
 
   @override
@@ -21,6 +26,7 @@ class YsPlayView extends StatelessWidget {
         ),
         child: UiKitView(
           viewType: viewType,
+          gestureRecognizers: gestureRecognizers,
           creationParamsCodec: const StandardMessageCodec(),
           onPlatformViewCreated: onPlatformViewCreated,
         ),
@@ -32,6 +38,7 @@ class YsPlayView extends StatelessWidget {
         ),
         child: AndroidView(
           viewType: viewType,
+          gestureRecognizers: gestureRecognizers,
           onPlatformViewCreated: onPlatformViewCreated,
           hitTestBehavior: PlatformViewHitTestBehavior.opaque,
           creationParamsCodec: const StandardMessageCodec(),
