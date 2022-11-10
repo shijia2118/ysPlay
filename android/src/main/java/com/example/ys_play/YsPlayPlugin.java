@@ -22,10 +22,14 @@ import com.videogo.openapi.EZConstants;
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZPlayer;
 
+import org.json.JSONObject;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.flutter.BuildConfig;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -48,7 +52,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
 
     private String deviceSerial;
-    private int cameraNo = -1;
+    private Integer cameraNo;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
@@ -120,9 +124,11 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 break;
             case "EZPlayer_init":
                 //初始化播放器
-                 deviceSerial = call.argument("deviceSerial");
+                deviceSerial = call.argument("deviceSerial");
                 String verifyCode = call.argument("verifyCode");
-                 cameraNo = call.argument("cameraNo");
+                cameraNo = call.argument("cameraNo");
+                if(cameraNo==null) cameraNo=-1;
+
                 ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
                 ezPlayer.setHandler(new YsPlayViewHandler(playerStatusListener));
@@ -222,18 +228,15 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     if(speed==null) speed = 1;
 
                     EZConstants.EZPTZCommand ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandUp;
-                    switch (command){
-                        case 1: ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandDown;
-                        break;
-                        case 2: ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandLeft;
-                        break;
-                        case 3: ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandRight;
-                        break;
-                        case 8: ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandZoomIn;
-                        break;
-                        case 9: ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandZoomOut;
-                        break;
-                        default:break;
+                    switch (command) {
+                        case 1:
+                            ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandDown;
+                            break;
+                        case 2:ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandLeft;break;
+                        case 3 :ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandRight;break;
+                        case 8 :ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandZoomIn;break;
+                        case 9 :ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandZoomOut;break;
+                        default :break;
                     }
 
                     EZConstants.EZPTZAction ezptzAction = EZConstants.EZPTZAction.EZPTZActionSTART;
@@ -292,7 +295,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         public void onSuccess() {
             Log.d(TAG,"播放成功");
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
-            entity.setSuccess(true);
+            entity.setIsSuccess(true);
             playerStatusResult.send(new Gson().toJson(entity));
         }
 
@@ -300,7 +303,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         public void onError(String errorInfo) {
             Log.d(TAG,"播放失败:"+errorInfo);
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
-            entity.setSuccess(false);
+            entity.setIsSuccess(false);
             entity.setErrorInfo(errorInfo);
             playerStatusResult.send(new Gson().toJson(entity));
         }

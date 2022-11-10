@@ -33,7 +33,6 @@ public class YsPlayView implements PlatformView{
 
     @Override
     public void dispose() {
-        Log.d(TAG,"====dispose");
         if(null != ezPlayer) {
             ezPlayer.release();
         }
