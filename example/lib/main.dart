@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:ys_play/ys.dart';
-import 'package:ys_play_example/button_common.dart';
+import 'package:ys_play_example/home_page.dart';
 import 'package:ys_play_example/utils/permission_util.dart';
 
 String appKey = '9ddc4fb7c0ef4996b04dd90156368f7c';
@@ -63,69 +63,10 @@ class _MyAppState extends State<MyApp> {
   int command = 0;
 
   @override
-  void initState() {
-    super.initState();
-    YsPlay.playerStatusListener(
-      (status) {
-        if (status.isSuccess == true) {
-          setState(() {
-            isPlayerStarted = true;
-          });
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    YsPlay.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return OKToast(
       child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(title: const Text('萤石SDK功能测试')),
-          body: Column(
-            children: [
-              Container(
-                height: 200,
-                child: Stack(
-                  children: [
-                    YsPlayView(
-                      onPlatformViewCreated: (i) {},
-                    ),
-                    Visibility(
-                      visible: !isPlayerStarted,
-                      child: Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: GridView.count(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  crossAxisCount: 3,
-                  childAspectRatio: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  children: btnList.map((e) {
-                    if (e.isEmpty) return Container();
-                    return ButtonCommon(
-                      onPressed: () => itemClickedHandle(e),
-                      text: e,
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
+        home: HomePage(),
       ),
     );
   }
@@ -143,7 +84,6 @@ class _MyAppState extends State<MyApp> {
         initPlayer();
         break;
       case '开始回放':
-        startPlayback();
         break;
       case '停止回放':
         stopPlayback();
@@ -218,17 +158,6 @@ class _MyAppState extends State<MyApp> {
       verifyCode,
       cameraNo,
     );
-    print('>>>>>>p0==$result');
-  }
-
-  ///开始回放
-  void startPlayback() async {
-    DateTime endTime = DateTime.now();
-    DateTime startTime = DateTime.now().add(const Duration(days: -700));
-    YsViewRequestEntity requestEntity = YsViewRequestEntity();
-    requestEntity.startTime = startTime.millisecondsSinceEpoch;
-    requestEntity.endTime = endTime.millisecondsSinceEpoch;
-    await YsPlay.startPlayback(requestEntity);
   }
 
   ///停止回放

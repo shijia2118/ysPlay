@@ -46,7 +46,6 @@ class YsPlay {
   static void playerStatusListener(Function(YsPlayerStatus) onResult) {
     _playerStatus.setMessageHandler((message) async {
       if (message != null && message is String && message.isNotEmpty) {
-        print('>>>>>>msg==$message');
         Map<String, dynamic> msg = json.decode(message);
         onResult(YsPlayerStatus.fromJson(msg));
       }
@@ -122,10 +121,10 @@ class YsPlay {
   }
 
   // 开始回放
-  static Future<bool> startPlayback(YsViewRequestEntity ysViewRequestEntity) async {
+  static Future<bool> startPlayback(int startDt, int endDt) async {
     bool result = await _channel.invokeMethod("startPlayback", {
-      'startTime': ysViewRequestEntity.startTime,
-      'endTime': ysViewRequestEntity.endTime,
+      'startTime': startDt,
+      'endTime': endDt,
     });
     return result;
   }
@@ -134,6 +133,18 @@ class YsPlay {
   static Future<bool> stopPlayback() async {
     await _channel.invokeMethod("stopPlayback");
     return true;
+  }
+
+  // 暂停回放
+  static Future<bool> pausePlayback() async {
+    bool result = await _channel.invokeMethod("pause_play_back");
+    return result;
+  }
+
+  // 恢复回放
+  static Future<bool> resumePlayback() async {
+    bool result = await _channel.invokeMethod("resume_play_back");
+    return result;
   }
 
   // 查询录制视频(只实现了android)
@@ -172,6 +183,23 @@ class YsPlay {
     return result;
   }
 
+  // 设置视频清晰度
+  static Future<bool> setVideoLevel({
+    required String deviceSerial,
+    int cameraNo = 1,
+    int videoLevel = 2,
+  }) async {
+    var result = await _channel.invokeMethod(
+      "set_video_level",
+      {
+        "deviceSerial": deviceSerial,
+        "cameraNo": cameraNo,
+        "videoLevel": videoLevel,
+      },
+    );
+    return result;
+  }
+
   /// 云台控制PTZ
   /// command:摄像头旋转方向 0-up 1-down 2-left 3-right 8-zoomin(镜头拉近) 9-zoomout(镜头拉远)
   /// action:0-开始 1-停止
@@ -205,6 +233,4 @@ class YsPlay {
   static Future<void> dispose() async {
     await _channel.invokeMethod("release");
   }
-
-
 }
