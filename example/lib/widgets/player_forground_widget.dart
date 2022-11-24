@@ -13,7 +13,6 @@ class PlayerForgroundWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('>>>>>>>isVisible===$isVisible');
     if (errorInfo != null) {
       return GestureDetector(
         onTap: onRePlay,

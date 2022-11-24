@@ -14,4 +14,20 @@ class PermissionUtils {
       }
     }
   }
+
+  ///权限申请:定位
+  static location(
+    BuildContext context, {
+    required Function action,
+  }) async {
+    PermissionStatus status = await Permission.location.status;
+    if (status.isGranted) {
+      await action();
+    } else {
+      status = await Permission.location.request();
+      if (status.isGranted) {
+        await action();
+      }
+    }
+  }
 }

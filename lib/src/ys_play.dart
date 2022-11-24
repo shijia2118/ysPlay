@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:ys_play/src/entity/ys_player_status.dart';
+import 'package:ys_play/src/entity/ys_pw_result.dart';
 import 'package:ys_play/ys.dart';
 
 class YsPlay {
@@ -13,6 +14,10 @@ class YsPlay {
 
   static const BasicMessageChannel<dynamic> _playerStatus =
       BasicMessageChannel("com.example.ys_play/player_status", StandardMessageCodec());
+
+  /// 配网结果渠道
+  static const BasicMessageChannel<dynamic> _pwResultChannel =
+      BasicMessageChannel("com.example.ys_play/pei_wang", StandardMessageCodec());
 
   static final Map<int, Function> _callBackFuncMap = {};
 
@@ -48,6 +53,16 @@ class YsPlay {
       if (message != null && message is String && message.isNotEmpty) {
         Map<String, dynamic> msg = json.decode(message);
         onResult(YsPlayerStatus.fromJson(msg));
+      }
+    });
+  }
+
+  ///配网结果监听
+  static void peiwangResultListener(Function(YsPwResult) onResult) {
+    _pwResultChannel.setMessageHandler((message) async {
+      if (message != null && message is String && message.isNotEmpty) {
+        Map<String, dynamic> msg = json.decode(message);
+        onResult(YsPwResult.fromJson(msg));
       }
     });
   }
@@ -232,5 +247,61 @@ class YsPlay {
   // 释放资源
   static Future<void> dispose() async {
     await _channel.invokeMethod("release");
+  }
+
+  // 获取设备信息
+  static Future<void> probeDeviceInfo({String? deviceSerial, String? deviceType}) async {
+    await _channel.invokeMethod(
+      "probe_device_info",
+      {
+        'deviceSerial': deviceSerial,
+        'deviceType': deviceType,
+      },
+    );
+  }
+
+  /// 无线配网模式
+  /// mode: wifi-wifi配网 wave-声波配网
+  static Future<void> startConfigWifi({
+    required String deviceSerial,
+    required String ssid,
+    String? password,
+    String? mode,
+  }) async {
+    await _channel.invokeMethod(
+      "start_config_wifi",
+      {
+        'deviceSerial': deviceSerial,
+        'ssid': ssid,
+        'password': password,
+        'mode': mode,
+      },
+    );
+  }
+
+  /// 热点配网模式
+  static Future<void> startConfigAP({
+    required String deviceSerial,
+    required String ssid,
+    String? password,
+    String? verifyCode,
+    String? routerName,
+  }) async {
+    await _channel.invokeMethod(
+      "start_config_ap",
+      {
+        'deviceSerial': deviceSerial,
+        'ssid': ssid,
+        'password': password,
+        'verifyCode': verifyCode,
+        'routerName': routerName,
+      },
+    );
+  }
+
+  /// 停止配网
+  static Future<bool> stopConfigPw({required String mode}) async {
+    bool result = await _channel.invokeMethod('stop_config', {'mode': mode});
+    return result;
   }
 }

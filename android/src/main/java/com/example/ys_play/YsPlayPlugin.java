@@ -14,16 +14,26 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 
+import com.example.ys_play.Entity.PeiwangResultEntity;
 import com.example.ys_play.Entity.YsPlayerStatusEntity;
 import com.example.ys_play.Interface.PlayerStatusListener;
 import com.example.ys_play.utils.TimeUtils;
+import com.ezviz.sdk.configwifi.EZConfigWifiErrorEnum;
+import com.ezviz.sdk.configwifi.EZConfigWifiInfoEnum;
+import com.ezviz.sdk.configwifi.EZWiFiConfigManager;
+import com.ezviz.sdk.configwifi.ap.ApConfigParam;
+import com.ezviz.sdk.configwifi.common.EZConfigWifiCallback;
 import com.google.gson.Gson;
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZConstants;
 import com.videogo.openapi.EZOpenSDK;
+import com.videogo.openapi.EZOpenSDKListener;
 import com.videogo.openapi.EZPlayer;
+import com.videogo.openapi.bean.EZProbeDeviceInfoResult;
+import com.videogo.wificonfig.APWifiConfig;
 
 import org.json.JSONObject;
 
@@ -34,6 +44,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import io.flutter.BuildConfig;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -51,6 +62,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     private EZPlayer ezPlayer;
     private SurfaceView surfaceView;
     BasicMessageChannel<Object> playerStatusResult;
+    BasicMessageChannel<Object> pwResult; //配网结果通道
 
     private String deviceSerial;
     private Integer cameraNo;
@@ -97,6 +109,10 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
         /// 播放器状态改变时，传递消息到flutter端
         playerStatusResult =  new BasicMessageChannel<>(messenger, Constants.PLAYER_STATUS_CHANNEL, new StandardMessageCodec());
+
+        /// 配网结果改变时，传递消息给flutter端
+        pwResult =  new BasicMessageChannel<>(messenger, Constants.PEI_WANG_CHANNEL, new StandardMessageCodec());
+
     }
 
     @Override
@@ -184,7 +200,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                  break;
             case "startRealPlay":
                 ///开启直播
-                if(ezPlayer==null) return;
                 if(ezPlayer!=null){
                     boolean realStartResult = ezPlayer.startRealPlay();
                     Log.d(TAG,"开始直播"+(realStartResult?"成功":"失败"));
@@ -348,6 +363,155 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     }
                 }
                 break;
+            case "probe_device_info":
+                String deviceSerial = call.argument("deviceSerial");
+                String deviceType = call.argument("deviceType");
+                if(deviceSerial!=null||deviceType!=null){
+                    new Thread(){
+                        public void run(){
+                            Looper.prepare();
+                            new Handler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final EZProbeDeviceInfoResult deviceInfoResult = EZOpenSDK.getInstance().probeDeviceInfo(deviceSerial,deviceType);
+                                    if (deviceInfoResult.getBaseException() == null){
+                                        //查询成功，添加设备
+                                        return;
+                                    }else{
+                                        switch (deviceInfoResult.getBaseException().getErrorCode()){
+                                            case 120023:
+                                                // TODO: 2018/6/25  设备不在线，未被用户添加 （这里需要网络配置）
+                                                Toast.makeText(application, "设备不在线，未被用户添加", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 120002:
+                                                // TODO: 2018/6/25  设备不存在，未被用户添加 （这里需要网络配置）
+                                                Toast.makeText(application, "设备不存在，未被用户添加", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 120029:
+                                                // TODO: 2018/6/25  设备不在线，已经被自己添加 (这里需要网络配置)
+                                                Toast.makeText(application, "设备不在线，已经被自己添加", Toast.LENGTH_SHORT).show();
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (deviceInfoResult.getEZProbeDeviceInfo() == null){
+                                                            // 未查询到设备信息，不确定设备支持的配网能力,需要用户根据指示灯判断
+                                                            //若设备指示灯红蓝闪烁，请选择smartconfig配网
+                                                            //若设备指示灯蓝色闪烁，请选择设备热点配网
+                                                        }else{
+                                                            // 查询到设备信息，根据能力级选择配网方式
+                                                            if (deviceInfoResult.getEZProbeDeviceInfo().getSupportAP() == 2) {
+                                                                //选择设备热单配网
+                                                            }
+                                                            if (deviceInfoResult.getEZProbeDeviceInfo().getSupportWifi() == 3) {
+                                                                //选择smartconfig配网
+                                                            }
+                                                            if (deviceInfoResult.getEZProbeDeviceInfo().getSupportSoundWave() == 1) {
+                                                                //选择声波配网
+                                                            }
+                                                        }
+
+                                                    }
+                                                }).start();
+                                                break;
+                                            case 120020:
+                                                // TODO: 2018/6/25 设备在线，已经被自己添加 (给出提示)
+                                                Toast.makeText(application, "设备在线，已经被自己添加", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 120022:
+                                                // TODO: 2018/6/25  设备在线，已经被别的用户添加 (给出提示)
+                                                Toast.makeText(application, "设备在线，已经被别的用户添加", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 120024:
+                                                // TODO: 2018/6/25  设备不在线，已经被别的用户添加 (给出提示)
+                                                Toast.makeText(application, "设备不在线，已经被别的用户添加", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            default:
+                                                // TODO: 2018/6/25 请求异常
+                                                Toast.makeText(application, ""+deviceInfoResult.getBaseException().getErrorCode(), Toast.LENGTH_SHORT).show();
+                                                break;
+                                        }
+                                    }
+                                }
+                            });
+                            Looper.loop();
+                        }
+                    }.start();
+                }
+                break;
+            case "start_config_wifi":
+                /*
+                 * 开始WiFi配置
+                 * @since 4.8.3
+                 * @param context  应用 activity context
+                 * @param deviceSerial   配置设备序列号
+                 * @param ssid  连接WiFi SSID
+                 * @param password  连接  WiFi 密码
+                 * @param mode      配网的方式，EZWiFiConfigMode中列举的模式进行任意组合
+                 *                  EZWiFiConfigMode.EZWiFiConfigSmart:普通配网(WiFi)；
+                 *                  EZWiFiConfigMode.EZWiFiConfigWave：声波配网(Wave)
+                 * @param back     配置回调
+                 */
+                deviceSerial = call.argument("deviceSerial");
+                String ssid = call.argument("ssid");
+                String password = call.argument("password");
+                String mode = call.argument("mode");
+                int configMode=EZConstants.EZWiFiConfigMode.EZWiFiConfigSmart;//默认wifi配网
+                if(Objects.equals(mode,"wave")){
+                    // 声波配网
+                    configMode = EZConstants.EZWiFiConfigMode.EZWiFiConfigWave;
+                }
+                EZOpenSDK.getInstance().startConfigWifi(
+                        application.getApplicationContext(),
+                        deviceSerial,
+                        ssid,
+                        password,
+                        configMode,
+                        mEZStartConfigWifiCallback
+                );
+                break;
+            case "start_config_ap":
+                /*
+                 * AP配网接口(热点配网)
+                 * @param ssid WiFi的ssid
+                 * @param password WiFi的密码
+                 * @param deviceSerial 设备序列号
+                 * @param verifyCode 设备验证码
+                 * @param routerName 设备热点名称，可传空，默认为"EZVIZ_"+设备序列号
+                 * @param routerPassword 设备热点密码,可传空，默认为"EZVIZ_"+设备验证码
+                 * @param isAutoConnectDeviceHotSpot 是否自动连接设备热点,需要获取可扫描wifi的权限；如果开发者已经确认手机连接到设备热点，则传false
+                 * @param apConfigCallback 结果回调
+                 */
+                ssid = call.argument("ssid");
+                password = call.argument("password");
+                deviceSerial = call.argument("deviceSerial");
+                verifyCode = call.argument("verifyCode");
+
+                EZOpenSDK.getInstance().startAPConfigWifiWithSsid(
+                        ssid,
+                        password,
+                        deviceSerial,
+                        verifyCode,
+                        "EZVIZ_"+deviceSerial,
+                "EZVIZ_"+ verifyCode,
+                 true,
+                        apConfigCallback
+                );
+                break;
+            case "stop_config":
+                mode = call.argument("mode");
+                if(Objects.equals(mode, "wave") || Objects.equals(mode, "wifi")){
+                  boolean stopConfigResult =  EZOpenSDK.getInstance().stopConfigWiFi();
+                  Log.d(TAG,"停止配网:"+(stopConfigResult?"成功":"失败"));
+                  result.success(stopConfigResult);
+                }else if(Objects.equals(mode,"ap")){
+                    //热点
+                    EZOpenSDK.getInstance().stopAPConfigWifiWithSsid();
+                    Log.d(TAG,"停止配网:成功");
+                    result.success(true);
+                }else{
+                    result.success(false);
+                }
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -373,6 +537,120 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
             entity.setIsSuccess(false);
             entity.setErrorInfo(errorInfo);
             playerStatusResult.send(new Gson().toJson(entity));
+        }
+    };
+
+    /**
+     * 配网回调
+     */
+    EZOpenSDKListener.EZStartConfigWifiCallback mEZStartConfigWifiCallback =
+            new EZOpenSDKListener.EZStartConfigWifiCallback() {
+                @Override
+                public void onStartConfigWifiCallback(String deviceSerial, EZConstants.EZWifiConfigStatus status) {
+                    new Thread(){
+                        public void run(){
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    PeiwangResultEntity entity = new PeiwangResultEntity();
+                                    if (status == EZConstants.EZWifiConfigStatus.DEVICE_WIFI_CONNECTED) {
+                                        //设备wifi连接成功
+                                        //停止Wifi配置
+                                        entity.setIsSuccess(true);
+                                        entity.setMsg("设备WiFi连接成功");
+                                    } else if (status == EZConstants.EZWifiConfigStatus.DEVICE_PLATFORM_REGISTED) {
+                                        //停止Wifi配置
+                                        //设备注册到平台成功，可以调用添加设备接口添加设备
+                                        entity.setIsSuccess(true);
+                                        entity.setMsg("设备注册成功");
+                                    } else {
+                                        //停止Wifi配置
+                                        entity.setIsSuccess(false);
+                                        entity.setMsg(status.description);
+                                    }
+                                    EZOpenSDK.getInstance().stopConfigWiFi();
+                                    pwResult.send(new Gson().toJson(entity));
+                                };
+                            });
+                        }
+                    }.start();
+                }
+            };
+
+    /// AP配网结果回调
+    APWifiConfig.APConfigCallback apConfigCallback = new APWifiConfig.APConfigCallback() {
+        @Override
+        public void onSuccess() {
+            // TODO: 2018/6/28 配网成功
+            new Thread(){
+                public void run(){
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "配网成功");
+                            PeiwangResultEntity entity = new PeiwangResultEntity();
+                            entity.setIsSuccess(true);
+                            entity.setMsg("热点配网成功");
+                            pwResult.send(new Gson().toJson(entity));
+                            EZOpenSDK.getInstance().stopAPConfigWifiWithSsid();
+                        };
+                    });
+                }
+            }.start();
+        }
+
+//        @Override
+//        public void reportInfo(EZConfigWifiInfoEnum info) {
+//            super.reportInfo(info);
+//            if (info == EZConfigWifiInfoEnum.CONNECTED_TO_PLATFORM) {
+//                onSuccess();
+//            }
+//        }
+
+        @Override
+        public void OnError(int code) {
+            // TODO: 2018/6/28 配网失败
+            new Thread(){
+                public void run(){
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "配网失败");
+                            PeiwangResultEntity entity = new PeiwangResultEntity();
+                            entity.setIsSuccess(false);
+                            switch (code) {
+                                case 15:
+                                    // TODO: 2018/7/24 超时
+                                    entity.setMsg("配网超时");
+                                    break;
+                                case 1:
+                                    // TODO: 2018/7/24 参数错误
+                                    entity.setMsg("参数错误");
+                                    break;
+                                case 2:
+                                    // TODO: 2018/7/24 设备ap热点密码错误
+                                    entity.setMsg("设备ap热点密码错误");
+                                    break;
+                                case 3:
+                                    // TODO: 2018/7/24  连接ap热点异常
+                                    entity.setMsg("连接ap热点异常");
+                                    break;
+                                case 4:
+                                    // TODO: 2018/7/24 搜索WiFi热点错误
+                                    entity.setMsg("搜索WiFi热点错误");
+                                    break;
+                                default:
+                                    // TODO: 2018/7/24 未知错误
+                                    entity.setMsg("未知错误:"+code);
+                                    // 更多错误码请见枚举类 EZConfigWifiErrorEnum 相关说明
+                                    break;
+                            }
+                            pwResult.send(new Gson().toJson(entity));
+                            EZOpenSDK.getInstance().stopAPConfigWifiWithSsid();
+                        };
+                    });
+                }
+            }.start();
         }
     };
 
