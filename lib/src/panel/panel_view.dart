@@ -53,7 +53,7 @@ class _PanelViewState extends State<PanelView> {
           onTapDown: _onTapDown,
           onTapUp: (d) => _cancel(),
           onTapCancel: _cancel,
-          child: Container(
+          child: SizedBox(
             width: outerRadius * 2,
             height: outerRadius * 2,
             child: CustomPaint(
@@ -105,7 +105,7 @@ class _PanelViewState extends State<PanelView> {
 
   /// 获取方向箭头url
   Future<ui.Image> getArrowUrl(String url) async {
-    AssetImage assetImage = AssetImage("assets/url.png");
+    AssetImage assetImage = const AssetImage("assets/url.png");
     ImageStream stream = assetImage.resolve(createLocalImageConfiguration(context));
     Completer<ui.Image> completer = Completer();
     stream.addListener(ImageStreamListener((image, _) {

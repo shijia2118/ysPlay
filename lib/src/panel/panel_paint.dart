@@ -31,12 +31,12 @@ class PanelPaint extends CustomPainter {
     Offset center = Offset(size.width / 2, size.height / 2); //中心点
 
     // 外圆
-    Rect out_circle = Rect.fromCircle(center: center, radius: outerRadius);
-    canvas.drawArc(out_circle, 0.0, 2 * pi, false, paint..style = PaintingStyle.stroke);
+    Rect outCircle = Rect.fromCircle(center: center, radius: outerRadius);
+    canvas.drawArc(outCircle, 0.0, 2 * pi, false, paint..style = PaintingStyle.stroke);
 
     // 内圆
-    Rect inner_circle = Rect.fromCircle(center: center, radius: innerRadius);
-    canvas.drawArc(inner_circle, 0.0, 2 * pi, false, paint);
+    Rect innerCircle = Rect.fromCircle(center: center, radius: innerRadius);
+    canvas.drawArc(innerCircle, 0.0, 2 * pi, false, paint);
 
     /// 左侧扇形
     /// 注：因为圆周的取值范围是-pi~pi.

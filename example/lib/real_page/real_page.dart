@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ys_play/ys.dart';
-import 'package:ys_play_example/ys_player.dart';
 
 import '../main.dart';
+import '../ys_player.dart';
 
 class RealPage extends StatefulWidget {
   const RealPage({Key? key}) : super(key: key);

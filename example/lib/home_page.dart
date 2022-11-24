@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:ys_play/ys.dart';
 import 'package:ys_play_example/main.dart';
 import 'package:ys_play_example/peiwang/peiwang_page.dart';
