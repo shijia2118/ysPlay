@@ -304,4 +304,10 @@ class YsPlay {
     bool result = await _channel.invokeMethod('stop_config', {'mode': mode});
     return result;
   }
+  
+  /// 对讲能力支持
+  static Future<bool> isSupportTalk({required String deviceSerial})async{
+    bool result = await _channel.invokeMethod('is_support_talk',{'deviceSerial':deviceSerial});
+    return result;
+  }
 }

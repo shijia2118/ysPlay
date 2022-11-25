@@ -27,11 +27,13 @@ import com.ezviz.sdk.configwifi.EZWiFiConfigManager;
 import com.ezviz.sdk.configwifi.ap.ApConfigParam;
 import com.ezviz.sdk.configwifi.common.EZConfigWifiCallback;
 import com.google.gson.Gson;
+import com.videogo.device.DeviceInfo;
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZConstants;
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZOpenSDKListener;
 import com.videogo.openapi.EZPlayer;
+import com.videogo.openapi.bean.EZDeviceInfo;
 import com.videogo.openapi.bean.EZProbeDeviceInfoResult;
 import com.videogo.wificonfig.APWifiConfig;
 
@@ -95,7 +97,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
                         @Override
                         public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                            Log.d(TAG,"surfaceDestroyed");
+                            Log.d(TAG,"surfcreatePlayeraceDestroyed");
                             if (ezPlayer != null) {
                                 ezPlayer.setSurfaceHold(null);
                             }
@@ -509,6 +511,33 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     Log.d(TAG,"停止配网:成功");
                     result.success(true);
                 }else{
+                    result.success(false);
+                }
+                break;
+            case "is_support_talk":  /// 对讲能力支持
+                deviceSerial = call.argument("deviceSerial");
+                if(ezPlayer!=null){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                EZConstants.EZTalkbackCapability talkbackCapability
+                                        = EZOpenSDK.getInstance().getDeviceInfo(deviceSerial).isSupportTalk();
+                                if(talkbackCapability==EZConstants.EZTalkbackCapability.EZTalkbackNoSupport){
+                                    // 不支持对讲
+                                    result.success(false);
+                                }else{
+                                    result.success(true);
+                                }
+                            } catch (BaseException e) {
+                                e.printStackTrace();
+                                result.success(false);
+                                Toast.makeText(application, ""+e.getErrorInfo(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }).start();
+                }else{
+                    Toast.makeText(application, "请先注册播放器", Toast.LENGTH_SHORT).show();
                     result.success(false);
                 }
                 break;
