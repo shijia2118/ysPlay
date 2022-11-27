@@ -12,6 +12,7 @@ class YsPlay {
   static const BasicMessageChannel<dynamic> _nativeYs =
       BasicMessageChannel("com.example.ys_play/record_file", StandardMessageCodec());
 
+  /// 播放状态
   static const BasicMessageChannel<dynamic> _playerStatus =
       BasicMessageChannel("com.example.ys_play/player_status", StandardMessageCodec());
 
@@ -304,10 +305,27 @@ class YsPlay {
     bool result = await _channel.invokeMethod('stop_config', {'mode': mode});
     return result;
   }
-  
+
   /// 对讲能力支持
-  static Future<bool> isSupportTalk({required String deviceSerial})async{
-    bool result = await _channel.invokeMethod('is_support_talk',{'deviceSerial':deviceSerial});
+  static Future<bool> isSupportTalk({required String deviceSerial}) async {
+    bool result = await _channel.invokeMethod('is_support_talk', {'deviceSerial': deviceSerial});
+    return result;
+  }
+
+  /// 开始对讲
+  static Future<bool> startVoiceTalk({
+    required String deviceSerial,
+    String? verifyCode,
+    int cameraNo = 1,
+    bool isTalk = true,
+  }) async {
+    Map<String, dynamic> argsParam = {
+      "deviceSerial": deviceSerial,
+      "verifyCode": verifyCode,
+      "cameraNo": cameraNo,
+      "isTalk": isTalk,
+    };
+    bool result = await _channel.invokeMethod("start_voice_talk", argsParam);
     return result;
   }
 }

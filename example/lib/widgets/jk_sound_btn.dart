@@ -20,7 +20,7 @@ class JkSoundBtn extends StatefulWidget {
 }
 
 class _JkSoundBtnState extends State<JkSoundBtn> {
-  bool isOpen = true;
+  bool isOpen = false;
   late String openIcon;
   late String closeIcon;
   EdgeInsets? padding;

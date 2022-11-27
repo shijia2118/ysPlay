@@ -54,9 +54,11 @@ class YsPlayerState extends State<YsPlayer> {
       isPlayerSuccess = true;
     }
 
+    /// 播放结果监听
     YsPlay.playerStatusListener((status) async {
       if (status.isSuccess == true) {
         isPlayerSuccess = true;
+        print('>>>>>>>>>${status}');
         if (mounted) setState(() {});
       } else {
         errorInfo = status.errorInfo;

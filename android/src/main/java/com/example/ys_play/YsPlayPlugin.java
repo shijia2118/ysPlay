@@ -2,50 +2,31 @@ package com.example.ys_play;
 
 import android.app.Application;
 import android.content.Intent;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 
 import com.example.ys_play.Entity.PeiwangResultEntity;
 import com.example.ys_play.Entity.YsPlayerStatusEntity;
 import com.example.ys_play.Interface.PlayerStatusListener;
 import com.example.ys_play.utils.TimeUtils;
-import com.ezviz.sdk.configwifi.EZConfigWifiErrorEnum;
-import com.ezviz.sdk.configwifi.EZConfigWifiInfoEnum;
-import com.ezviz.sdk.configwifi.EZWiFiConfigManager;
-import com.ezviz.sdk.configwifi.ap.ApConfigParam;
-import com.ezviz.sdk.configwifi.common.EZConfigWifiCallback;
 import com.google.gson.Gson;
-import com.videogo.device.DeviceInfo;
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZConstants;
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZOpenSDKListener;
 import com.videogo.openapi.EZPlayer;
-import com.videogo.openapi.bean.EZDeviceInfo;
 import com.videogo.openapi.bean.EZProbeDeviceInfoResult;
 import com.videogo.wificonfig.APWifiConfig;
 
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import io.flutter.BuildConfig;
@@ -54,7 +35,6 @@ import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.StandardMessageCodec;
 
 public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
@@ -62,6 +42,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     final String TAG = "萤石LOG=========>";
     private Application application;
     private EZPlayer ezPlayer;
+    private EZPlayer talk;
+
     private SurfaceView surfaceView;
     BasicMessageChannel<Object> playerStatusResult;
     BasicMessageChannel<Object> pwResult; //配网结果通道
@@ -69,10 +51,14 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     private String deviceSerial;
     private Integer cameraNo;
 
+    private YsPlayViewHandler mHandler;
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         application = (Application) binding.getApplicationContext();
         BinaryMessenger messenger = binding.getBinaryMessenger();
+
+        mHandler = new YsPlayViewHandler(playerStatusListener);
 
         /// 注册播放视图
         binding.getPlatformViewRegistry().registerViewFactory(
@@ -150,7 +136,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
                 ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
-                ezPlayer.setHandler(new YsPlayViewHandler(playerStatusListener));
+                ezPlayer.setHandler(mHandler);
                 ezPlayer.setSurfaceHold(surfaceView.getHolder());
                 ezPlayer.setPlayVerifyCode(verifyCode);
                 Log.d(TAG,"播放器初始化成功");
@@ -222,14 +208,12 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 /// 打开声音
                 if(ezPlayer==null) return;
                 boolean openResult = ezPlayer.openSound();
-                Log.d(TAG,"打开声音"+(openResult?"成功":"失败"));
                 result.success(openResult);
                 break;
             case "closeSound":
                 /// 关闭声音
                 if(ezPlayer==null) return;
                 boolean closeResult = ezPlayer.closeSound();
-                Log.d(TAG,"关闭声音"+(closeResult?"成功":"失败"));
                 result.success(closeResult);
                 break;
             case "capturePicture":
@@ -366,7 +350,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 }
                 break;
             case "probe_device_info":
-                String deviceSerial = call.argument("deviceSerial");
+                deviceSerial = call.argument("deviceSerial");
                 String deviceType = call.argument("deviceType");
                 if(deviceSerial!=null||deviceType!=null){
                     new Thread(){
@@ -524,7 +508,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                                 EZConstants.EZTalkbackCapability talkbackCapability
                                         = EZOpenSDK.getInstance().getDeviceInfo(deviceSerial).isSupportTalk();
                                 if(talkbackCapability==EZConstants.EZTalkbackCapability.EZTalkbackNoSupport){
-                                    // 不支持对讲
+                                    /// 不支持对讲
+                                    Toast.makeText(application, "您的设备暂不支持对讲哦", Toast.LENGTH_SHORT).show();
                                     result.success(false);
                                 }else{
                                     result.success(true);
@@ -541,6 +526,45 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     result.success(false);
                 }
                 break;
+            case "start_voice_talk": /// 开始对讲
+                // 获取参数
+//                deviceSerial = call.argument("deviceSerial");
+//                verifyCode = call.argument("verifyCode");
+//                cameraNo = call.argument("cameraNo");
+//                if(cameraNo==null) cameraNo=1;
+//                boolean isTalk = Boolean.TRUE.equals(call.argument("isTalk"));
+//                if(talk==null) talk  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
+//                talk.setPlayVerifyCode(verifyCode); // 设备加密的需要传入密码
+//                talk.setHandler(mHandler); //设置Handler, 该handler将被用于从播放器向handler传递消息
+//
+//                isSuccess = ezPlayer.startVoiceTalk(); // 开始对讲
+//                talk.setVoiceTalkStatus(isTalk); // isTalk:true 手机端说，设备端听
+//
+//                Log.d(TAG,"开始对讲"+(isSuccess?"成功":"失败"));
+//                result.success(isSuccess);
+                if (talk != null) {
+                    //声音开关
+                    ezPlayer.openSound();
+                    //手机端听，设备端说
+                    talk.setVoiceTalkStatus(false);
+                    //关闭对讲
+                    talk.stopVoiceTalk();
+                }
+                deviceSerial = call.argument("deviceSerial");
+                verifyCode = call.argument("verifyCode");
+                talk = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+                //设置Handler, 该handler将被用于从播放器向handler传递消息
+                talk.setHandler(mHandler);
+                //设备加密的需要传入密码
+                talk.setPlayVerifyCode(verifyCode);
+                //开启对讲
+                talk.startVoiceTalk();
+                break;
+            case "stop_voice_talk": /// 停止对讲
+                isSuccess = ezPlayer.stopVoiceTalk();
+                Log.d(TAG,"停止对讲"+(isSuccess?"成功":"失败"));
+                result.success(isSuccess);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -553,15 +577,14 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     PlayerStatusListener playerStatusListener = new PlayerStatusListener() {
         @Override
         public void onSuccess() {
-            Log.d(TAG,"播放成功");
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
             entity.setIsSuccess(true);
+            if(talk!=null) talk.setVoiceTalkStatus(true);//设备端听，手机端说
             playerStatusResult.send(new Gson().toJson(entity));
         }
 
         @Override
         public void onError(String errorInfo) {
-            Log.d(TAG,"播放失败:"+errorInfo);
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
             entity.setIsSuccess(false);
             entity.setErrorInfo(errorInfo);
