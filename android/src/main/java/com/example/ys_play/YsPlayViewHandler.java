@@ -5,66 +5,56 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import com.example.ys_play.Interface.PlayerStatusListener;
+import com.example.ys_play.Interface.YsResultListener;
+import com.example.ys_play.utils.LogUtils;
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.exception.ErrorCode;
 import com.videogo.openapi.EZConstants;
 
-import io.flutter.Log;
-
 class YsPlayViewHandler extends Handler {
-    private final PlayerStatusListener playerStatusListener;
-    private ErrorInfo errorinfo=null;
+    private final YsResultListener ysResult;
 
-    public YsPlayViewHandler(PlayerStatusListener playerStatusListener){
-        this.playerStatusListener = playerStatusListener;
+    public YsPlayViewHandler(YsResultListener ysResult){
+        this.ysResult = ysResult;
     }
 
     @Override
     public void handleMessage(@NonNull Message msg) {
-        final String TAG = "萤石LOG======>";
+        ErrorInfo errorinfo = (ErrorInfo) msg.obj;
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
-                Log.d(TAG,"回放播放成功");
-                playerStatusListener.onSuccess();
+                LogUtils.d("回放播放成功");
+                ysResult.onPlayBackSuccess();
                 break;
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_FAIL:
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_FAIL:
-                //播放失败,得到失败信息
-                 errorinfo = (ErrorInfo) msg.obj;
                 //得到播放失败描述
                 String description = errorinfo.description;
                 //错误信息回调
-                playerStatusListener.onError(description);
+                ysResult.onError(description);
                 break;
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
                 try {
                     String temp = (String) msg.obj;
-                    String[] strings = temp.split(":");
-                    int mVideoWidth = Integer.parseInt(strings[0]);
-                    int mVideoHeight = Integer.parseInt(strings[1]);
-                    Log.i(TAG,"width:"+mVideoWidth+";"+"height:"+mVideoHeight);
                     //解析出视频分辨率
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_SUCCESS:
-                Log.d(TAG,"直播播放成功");
-                playerStatusListener.onSuccess();
+                LogUtils.d("直播播放成功");
+                ysResult.onRealPlaySuccess();
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_VOICETALK_FAIL:
-                //得到播放失败描述
-                errorinfo = (ErrorInfo) msg.obj;
                 handleVoiceTalkFailed(errorinfo);
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_VOICETALK_SUCCESS:
-                Log.d(TAG,"对讲成功");
-                playerStatusListener.onSuccess();
+                LogUtils.d("对讲成功");
+                ysResult.onTalkBackSuccess();
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_VOICETALK_STOP:
-                Log.d(TAG,"停止对讲");
+                LogUtils.d("停止对讲");
                 break;
             default:
                 break;
@@ -107,7 +97,7 @@ class YsPlayViewHandler extends Handler {
                 errorDes = "" + errorInfo.errorCode;
                 break;
         }
-        playerStatusListener.onError(errorDes);
+        ysResult.onError(errorDes);
     }
 
 

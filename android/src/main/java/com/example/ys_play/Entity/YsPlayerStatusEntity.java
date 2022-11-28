@@ -23,4 +23,7 @@ public class YsPlayerStatusEntity {
     public void setErrorInfo(String errorInfo) {
         this.errorInfo = errorInfo;
     }
+
+
+
 }

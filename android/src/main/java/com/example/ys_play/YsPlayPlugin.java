@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
@@ -15,7 +14,8 @@ import androidx.annotation.NonNull;
 
 import com.example.ys_play.Entity.PeiwangResultEntity;
 import com.example.ys_play.Entity.YsPlayerStatusEntity;
-import com.example.ys_play.Interface.PlayerStatusListener;
+import com.example.ys_play.Interface.YsResultListener;
+import com.example.ys_play.utils.LogUtils;
 import com.example.ys_play.utils.TimeUtils;
 import com.google.gson.Gson;
 import com.videogo.exception.BaseException;
@@ -39,13 +39,12 @@ import io.flutter.plugin.common.StandardMessageCodec;
 
 public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
 
-    final String TAG = "萤石LOG=========>";
     private Application application;
     private EZPlayer ezPlayer;
     private EZPlayer talk;
 
     private SurfaceView surfaceView;
-    BasicMessageChannel<Object> playerStatusResult;
+    BasicMessageChannel<Object> ysResult;
     BasicMessageChannel<Object> pwResult; //配网结果通道
 
     private String deviceSerial;
@@ -58,7 +57,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         application = (Application) binding.getApplicationContext();
         BinaryMessenger messenger = binding.getBinaryMessenger();
 
-        mHandler = new YsPlayViewHandler(playerStatusListener);
+        mHandler = new YsPlayViewHandler(ysResultListener);
 
         /// 注册播放视图
         binding.getPlatformViewRegistry().registerViewFactory(
@@ -69,7 +68,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                         @Override
                         public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                            Log.d(TAG,"surfaceCreated");
+                            LogUtils.d("surfaceCreated");
                             if (ezPlayer != null) {
                                 ezPlayer.setSurfaceHold(holder);
                             }
@@ -77,13 +76,12 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
                         @Override
                         public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-                            Log.d(TAG,"surfaceChanged");
-
+                            LogUtils.d("surfaceChanged");
                         }
 
                         @Override
                         public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                            Log.d(TAG,"surfcreatePlayeraceDestroyed");
+                            LogUtils.d("surfaceDestroyed");
                             if (ezPlayer != null) {
                                 ezPlayer.setSurfaceHold(null);
                             }
@@ -96,7 +94,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         new MethodChannel(messenger, Constants.CHANNEL).setMethodCallHandler(this);
 
         /// 播放器状态改变时，传递消息到flutter端
-        playerStatusResult =  new BasicMessageChannel<>(messenger, Constants.PLAYER_STATUS_CHANNEL, new StandardMessageCodec());
+        ysResult =  new BasicMessageChannel<>(messenger, Constants.PLAYER_STATUS_CHANNEL, new StandardMessageCodec());
 
         /// 配网结果改变时，传递消息给flutter端
         pwResult =  new BasicMessageChannel<>(messenger, Constants.PEI_WANG_CHANNEL, new StandardMessageCodec());
@@ -114,13 +112,14 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 EZOpenSDK.showSDKLog(BuildConfig.DEBUG);
                 String appKey = call.argument("appKey");
                 boolean initResult = EZOpenSDK.initLib(this.application, appKey);
-                Log.d(TAG,"初始化"+(initResult?"成功":"失败"));
+                LogUtils.d("初始化"+(initResult?"成功":"失败"));
+
                 result.success(initResult);
                 break;
             case "set_access_token":
                 String accessToken = call.argument("accessToken");
                 EZOpenSDK.getInstance().setAccessToken(accessToken);
-                Log.d(TAG,"token设置成功");
+                LogUtils.d("token设置成功");
                 result.success(true);
                 break;
             case "destroyLib":
@@ -139,7 +138,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 ezPlayer.setHandler(mHandler);
                 ezPlayer.setSurfaceHold(surfaceView.getHolder());
                 ezPlayer.setPlayVerifyCode(verifyCode);
-                Log.d(TAG,"播放器初始化成功");
+                LogUtils.d("播放器初始化成功");
                 result.success(true);
                 break;
             case "startPlayback":
@@ -149,7 +148,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     Long startTime = call.argument("startTime");
                     Long endTime = call.argument("endTime");
                     if(startTime==null||endTime==null){
-                        Log.d(TAG,"startTime或endTime均不能为空");
+                        LogUtils.d("startTime或endTime均不能为空");
                         result.success(false);
                     }else{
                         final Calendar startCalendar = Calendar.getInstance();
@@ -157,11 +156,11 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                         final Calendar endCalendar = Calendar.getInstance();
                         endCalendar.setTimeInMillis(endTime);
                         boolean isSuccess = ezPlayer.startPlayback(startCalendar, endCalendar);
-                        Log.d(TAG,"开启回放"+(isSuccess?"成功":"失败"));
+                        LogUtils.d("开启回放"+(isSuccess?"成功":"失败"));
                         result.success(isSuccess);
                     }
                 }else {
-                    Log.d(TAG,"startTime或endTime均不能为空");
+                    LogUtils.d("startTime或endTime均不能为空");
                     result.success(false);
                 }
                 break;
@@ -169,31 +168,31 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 /// 暂停回放
                 if(ezPlayer==null) return;
                 boolean isPause = ezPlayer.pausePlayback();
-                Log.d(TAG,"暂停回放"+(isPause?"成功":"失败"));
+                LogUtils.d("暂停回放"+(isPause?"成功":"失败"));
                 result.success(isPause);
                 break;
             case "resume_play_back":
                 /// 恢复回放
                 if(ezPlayer==null) return;
                 boolean isResume = ezPlayer.resumePlayback();
-                Log.d(TAG,"恢复回放"+(isResume?"成功":"失败"));
+                LogUtils.d("恢复回放"+(isResume?"成功":"失败"));
                 result.success(isResume);
                 break;
             case "stopPlayback":
                  /// 停止回放
                 if(ezPlayer==null) return;
                 boolean isSuccess = ezPlayer.stopPlayback();
-                 Log.d(TAG,"停止回放"+(isSuccess?"成功":"失败"));
-                 result.success(isSuccess);
+                LogUtils.d("停止回放"+(isSuccess?"成功":"失败"));
+                result.success(isSuccess);
                  break;
             case "startRealPlay":
                 ///开启直播
                 if(ezPlayer!=null){
                     boolean realStartResult = ezPlayer.startRealPlay();
-                    Log.d(TAG,"开始直播"+(realStartResult?"成功":"失败"));
+                    LogUtils.d("开始直播"+(realStartResult?"成功":"失败"));
                     result.success(realStartResult);
                 }else{
-                    Log.d(TAG,"ezPlayer不能为空");
+                    LogUtils.d("ezPlayer不能为空");
                     result.success(false);
                 }
                 break;
@@ -201,7 +200,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 ///停止直播
                 if(ezPlayer==null) return;
                 boolean stopRealResult = ezPlayer.stopRealPlay();
-                Log.d(TAG,"停止直播"+(stopRealResult?"成功":"失败"));
+                LogUtils.d("停止直播"+(stopRealResult?"成功":"失败"));
                 result.success(stopRealResult);
                 break;
             case "openSound":
@@ -281,7 +280,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                                         boolean  ptzResult =  EZOpenSDK.getInstance().controlPTZ(deviceSerial,cameraNo, finalEzptzCommand, finalEzptzAction, finalSpeed);
                                         result.success(ptzResult);
                                     } catch ( BaseException e) {
-                                        Log.i(TAG,""+e);
+                                        LogUtils.d(""+e);
                                         Toast.makeText(application, e.toString(), Toast.LENGTH_SHORT).show();
                                         result.success(false);
                                     }
@@ -299,7 +298,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 String recordFile = Environment.getExternalStorageDirectory().getPath() + "/DCIM/" + TimeUtils.dateToString(TimeUtils.getTimeStame(), "yyyyMMddHHmmss") + ".mp4";
 
                 boolean recordResult = ezPlayer.startLocalRecordWithFile(recordFile);
-                Log.d(TAG,"开启录像"+(recordResult?"成功":"失败"));
+                LogUtils.d("开启录像"+(recordResult?"成功":"失败"));
                 if(recordResult){
                     application.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + recordFile)));
                 }
@@ -309,7 +308,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 /// 停止录像
                 if(ezPlayer==null) return;
                 boolean stopRecordResult = ezPlayer.stopLocalRecord();
-                Log.d(TAG,"停止录像"+(stopRecordResult?"成功":"失败"));
+                LogUtils.d("停止录像"+(stopRecordResult?"成功":"失败"));
                 result.success(stopRecordResult);
                 break;
             case "set_video_level":
@@ -337,7 +336,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                                            boolean vlResult =  EZOpenSDK.getInstance().setVideoLevel(deviceSerial, finalCameraNo, finalVideoLevel);
                                            result.success(vlResult);
                                        } catch ( BaseException e) {
-                                           Log.i(TAG,""+e);
+                                           LogUtils.d(""+e);
                                            Toast.makeText(application, e.toString(), Toast.LENGTH_SHORT).show();
                                            result.success(false);
                                        }
@@ -487,12 +486,12 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 mode = call.argument("mode");
                 if(Objects.equals(mode, "wave") || Objects.equals(mode, "wifi")){
                   boolean stopConfigResult =  EZOpenSDK.getInstance().stopConfigWiFi();
-                  Log.d(TAG,"停止配网:"+(stopConfigResult?"成功":"失败"));
-                  result.success(stopConfigResult);
+                    LogUtils.d("停止配网:"+(stopConfigResult?"成功":"失败"));
+                    result.success(stopConfigResult);
                 }else if(Objects.equals(mode,"ap")){
                     //热点
                     EZOpenSDK.getInstance().stopAPConfigWifiWithSsid();
-                    Log.d(TAG,"停止配网:成功");
+                    LogUtils.d("停止配网:成功");
                     result.success(true);
                 }else{
                     result.success(false);
@@ -527,21 +526,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 }
                 break;
             case "start_voice_talk": /// 开始对讲
-                // 获取参数
-//                deviceSerial = call.argument("deviceSerial");
-//                verifyCode = call.argument("verifyCode");
-//                cameraNo = call.argument("cameraNo");
-//                if(cameraNo==null) cameraNo=1;
-//                boolean isTalk = Boolean.TRUE.equals(call.argument("isTalk"));
-//                if(talk==null) talk  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
-//                talk.setPlayVerifyCode(verifyCode); // 设备加密的需要传入密码
-//                talk.setHandler(mHandler); //设置Handler, 该handler将被用于从播放器向handler传递消息
-//
-//                isSuccess = ezPlayer.startVoiceTalk(); // 开始对讲
-//                talk.setVoiceTalkStatus(isTalk); // isTalk:true 手机端说，设备端听
-//
-//                Log.d(TAG,"开始对讲"+(isSuccess?"成功":"失败"));
-//                result.success(isSuccess);
                 if (talk != null) {
                     //声音开关
                     ezPlayer.openSound();
@@ -552,7 +536,9 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 }
                 deviceSerial = call.argument("deviceSerial");
                 verifyCode = call.argument("verifyCode");
-                talk = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+                cameraNo = call.argument("cameraNo");
+                if(cameraNo==null) cameraNo=1;
+                talk = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
                 //设置Handler, 该handler将被用于从播放器向handler传递消息
                 talk.setHandler(mHandler);
                 //设备加密的需要传入密码
@@ -562,7 +548,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 break;
             case "stop_voice_talk": /// 停止对讲
                 isSuccess = ezPlayer.stopVoiceTalk();
-                Log.d(TAG,"停止对讲"+(isSuccess?"成功":"失败"));
+                LogUtils.d("停止对讲"+(isSuccess?"成功":"失败"));
                 result.success(isSuccess);
                 break;
             default:
@@ -574,13 +560,25 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     /**
      * 播放器状态监听回调
      */
-    PlayerStatusListener playerStatusListener = new PlayerStatusListener() {
+    YsResultListener ysResultListener = new YsResultListener() {
         @Override
-        public void onSuccess() {
+        public void onRealPlaySuccess() {
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
             entity.setIsSuccess(true);
-            if(talk!=null) talk.setVoiceTalkStatus(true);//设备端听，手机端说
-            playerStatusResult.send(new Gson().toJson(entity));
+            ysResult.send(new Gson().toJson(entity));
+        }
+
+        @Override
+        public void onPlayBackSuccess() {
+            YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
+            entity.setIsSuccess(true);
+            ysResult.send(new Gson().toJson(entity));
+        }
+
+        @Override
+        public void onTalkBackSuccess() {
+            //设备端听，手机端说
+            if(talk!=null) talk.setVoiceTalkStatus(true);
         }
 
         @Override
@@ -588,7 +586,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
             entity.setIsSuccess(false);
             entity.setErrorInfo(errorInfo);
-            playerStatusResult.send(new Gson().toJson(entity));
+            ysResult.send(new Gson().toJson(entity));
         }
     };
 
@@ -639,7 +637,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d(TAG, "配网成功");
+                            LogUtils.d("配网成功");
                             PeiwangResultEntity entity = new PeiwangResultEntity();
                             entity.setIsSuccess(true);
                             entity.setMsg("热点配网成功");
@@ -667,7 +665,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d(TAG, "配网失败");
+                            LogUtils.d("配网失败");
                             PeiwangResultEntity entity = new PeiwangResultEntity();
                             entity.setIsSuccess(false);
                             switch (code) {

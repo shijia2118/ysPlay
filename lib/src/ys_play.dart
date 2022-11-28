@@ -49,7 +49,7 @@ class YsPlay {
   }
 
   ///播放状态监听
-  static void playerStatusListener(Function(YsPlayerStatus) onResult) {
+  static void onResultListener(Function(YsPlayerStatus) onResult) {
     _playerStatus.setMessageHandler((message) async {
       if (message != null && message is String && message.isNotEmpty) {
         Map<String, dynamic> msg = json.decode(message);
