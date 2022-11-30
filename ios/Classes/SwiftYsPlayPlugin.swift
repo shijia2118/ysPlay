@@ -21,15 +21,14 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-//     result("iOS " + UIDevice.current.systemVersion)
     if call.method == "init_sdk" {
-        let data:Optional<Dictionary> = call.arguments as! Dictionary<String, String>
-        EZOpenSDK.initLib(withAppKey: data?["appKey"])
+        let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
+        let res = EZOpenSDK.initLib(withAppKey: data?["appKey"])
         print("荧石SDK初始化成功")
-        result(true)
+        result(res as Bool)
     } else if call.method == "set_access_token" {
-        let data:Optional<Dictionary> = call.arguments as! Dictionary<String, String>
-        EZOpenSDK.setAccessToken(data?["accessToken"] as! String)
+        let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
+        EZOpenSDK.setAccessToken(data?["accessToken"] as? String)
         print("accessToken设置成功")
         result(true)
     } else if call.method == "destoryLib" {

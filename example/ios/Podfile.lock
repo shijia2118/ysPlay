@@ -1,12 +1,21 @@
 PODS:
+  - "app_settings (3.0.0+1)":
+    - Flutter
   - EZOpenSDK (4.20.1)
   - Flutter (1.0.0)
+  - network_info_plus (0.0.1):
+    - Flutter
+  - permission_handler_apple (9.0.4):
+    - Flutter
   - ys_play (0.0.1):
     - EZOpenSDK (= 4.20.1)
     - Flutter
 
 DEPENDENCIES:
+  - app_settings (from `.symlinks/plugins/app_settings/ios`)
   - Flutter (from `Flutter`)
+  - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - ys_play (from `.symlinks/plugins/ys_play/ios`)
 
 SPEC REPOS:
@@ -14,16 +23,25 @@ SPEC REPOS:
     - EZOpenSDK
 
 EXTERNAL SOURCES:
+  app_settings:
+    :path: ".symlinks/plugins/app_settings/ios"
   Flutter:
     :path: Flutter
+  network_info_plus:
+    :path: ".symlinks/plugins/network_info_plus/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   ys_play:
     :path: ".symlinks/plugins/ys_play/ios"
 
 SPEC CHECKSUMS:
+  app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
   EZOpenSDK: 25bd449e0f443f82c8778f841b04abce6502bb97
-  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   ys_play: 9f651bdf7a94d0ae853e76174b4f3bef25106111
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: 663715e941f9adb426e33bf9376914006f9ea95b
 
 COCOAPODS: 1.11.3
