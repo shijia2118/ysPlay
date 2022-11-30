@@ -10,7 +10,7 @@ import Flutter
 import UIKit
 import EZOpenSDKFramework
 
-class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
+class YsPlayView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
     private var _view: UIView
     private var messenger: FlutterBinaryMessenger
     var player: EZPlayer
@@ -53,20 +53,22 @@ class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
       // Note: this method is invoked on the UI thread.
       // Handle battery messages.
         if call.method == "start" {
-            let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            if data != nil {
+                print(data!)
+            }
 
-            print(data)
             print(type(of:data))
 
-            EZOpenSDK.setAccessToken(data?["token"] as! String)
+            EZOpenSDK.setAccessToken(data?["token"] as? String)
 
-            player = EZOpenSDK.createPlayer(withDeviceSerial: data?["deviceSerial"] as! String, cameraNo: data?["cameraNo"] as! Int)
+            player = EZOpenSDK.createPlayer(withDeviceSerial: data?["deviceSerial"] as? String, cameraNo: data?["cameraNo"] as! Int)
 //            player.delegate = self
 
 
             let verifyCode = data?["verifyCode"] as? String
             if(verifyCode != nil) {
-                player.setPlayVerifyCode(data?["verifyCode"] as! String)
+                player.setPlayVerifyCode(data?["verifyCode"] as? String)
             } else {
                 print("verifyCode is null !!!")
             }
@@ -106,17 +108,19 @@ class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
             result("success")
         }
         else if call.method == "EZPlayer_init" {
-            let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
-
-            print(data)
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            if data != nil {
+                print(data!)
+            }
+        
             print(type(of:data))
 
-            player = EZOpenSDK.createPlayer(withDeviceSerial: data?["deviceSerial"] as! String, cameraNo: data?["cameraNo"] as! Int)
+            player = EZOpenSDK.createPlayer(withDeviceSerial: data?["deviceSerial"] as? String, cameraNo: data?["cameraNo"] as! Int)
 //            player.delegate = self
 
             let verifyCode = data?["verifyCode"] as? String
             if(verifyCode != nil) {
-                player.setPlayVerifyCode(data?["verifyCode"] as! String)
+                player.setPlayVerifyCode(data?["verifyCode"] as? String)
             } else {
                 print("verifyCode is null !!!")
             }
@@ -126,7 +130,7 @@ class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
             result(true)
         }
         else if call.method == "startPlayback" {
-            let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             
             let startTime = data?["startTime"] as! Int
             let endTime = data?["endTime"] as! Int
@@ -165,7 +169,7 @@ class EZUIPlayerView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
             result(resultNum)
         }
         else if call.method == "sound" {
-            let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             if(data?["Sound"] as! Bool) {
                 player.openSound();
                 print("荧石SDK=====>打开声音")
