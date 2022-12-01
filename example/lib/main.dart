@@ -3,7 +3,7 @@ import 'package:oktoast/oktoast.dart';
 import 'package:ys_play_example/home_page.dart';
 
 String appKey = '9ddc4fb7c0ef4996b04dd90156368f7c';
-String accessToken = 'ra.5y7ofqwtappsevfm3bghryf9b5tcuuw6-7smg45m6aj-1i101vz-4wfkl0aex';
+String accessToken = 'ra.a6523z0d8cvgkihu7dgs40lh5sgbthba-7zpo9y077u-1tblek5-g3rdgxc33';
 String deviceSerial = 'C63167422';
 String verifyCode = 'PDSWCZ';
 int cameraNo = 1;
