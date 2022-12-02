@@ -10,12 +10,18 @@ import Flutter
 import UIKit
 import EZOpenSDKFramework
 
-class YsPlayView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
+class YsPlayView: NSObject, FlutterPlatformView{
     
-    var _view = UIView()
+    var nativeView : UIView
+    
+    override init(){
+        nativeView = UIView()
+        nativeView.frame = CGRect(x: 0, y: 0, width: 720, height: 1280)
+        super.init()
+    }
     
     func view() -> UIView {
-        return _view;
+        return nativeView;
     }
 
 
@@ -78,39 +84,8 @@ class YsPlayView: NSObject, FlutterPlatformView, EZPlayerDelegate  {
 //            result("success")
 //        }
 
-//        else if call.method == "startPlayback" {
-//            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
 //
-//            let startTime = data?["startTime"] as! Int
-//            let endTime = data?["endTime"] as! Int
-//
-//            let recordFile = EZDeviceRecordFile()
-//            recordFile.type = 1;
-//            recordFile.channelType = "D";
-//            let startDate = Date(timeIntervalSince1970: TimeInterval(startTime)/1000)
-//            recordFile.startTime = startDate
-//
-//            let endDate = Date(timeIntervalSince1970: TimeInterval(endTime)/1000)
-//            recordFile.stopTime = endDate
-//            print(startTime)
-//            print("ios startTime")
-//            print(TimeInterval(startTime))
-//
-//            let nowDate = Date()
-//            print("ios nowDate")
-//            print(nowDate.timeIntervalSince1970)
-//
-//            let bool = player.startPlayback(fromDevice: recordFile)
-//
-//            print("荧石SDK=====>开始回放")
-//            result(bool)
-//        }
-//        else if call.method == "stopPlayback" {
-//            player.stopPlayback()
-//            print("荧石SDK=====>停止回放")
-//
-//            result(true)
-//        }
+//        
 //        else if call.method == "getOSDTime" {
 //            let odsTime = player.getOSDTime()
 //            let resultNum = Int(odsTime?.timeIntervalSince1970 ?? 0) * 1000;
