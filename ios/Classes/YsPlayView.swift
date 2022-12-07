@@ -10,101 +10,69 @@ import Flutter
 import UIKit
 import EZOpenSDKFramework
 
-class YsPlayView: NSObject, FlutterPlatformView{
+
+class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     
     var nativeView : UIView
+    var callback: ((_ tmpView:UIView)->())?
+    var ezPlayer:EZPlayer
+    private var messenger:FlutterBinaryMessenger
     
-    override init(){
+    let TAG = "荧石SDK=======>"
+    
+     init(
+        binaryMessenger:FlutterBinaryMessenger
+        
+    ){
+        ezPlayer = EZOpenSDK.createPlayer(withDeviceSerial: "123", cameraNo: 1)
         nativeView = UIView()
-        nativeView.frame = CGRect(x: 0, y: 0, width: 720, height: 1280)
+
+        self.messenger = binaryMessenger
         super.init()
+        let channel = FlutterMethodChannel(name: Constants.CHANNEL, binaryMessenger: messenger)
+        channel.setMethodCallHandler(self.callMessage)
+        ezPlayer.destoryPlayer()
     }
     
+
     func view() -> UIView {
         return nativeView;
     }
+    
+  
 
 
-//    func callMessage (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void {
-//      // Note: this method is invoked on the UI thread.
-//      // Handle battery messages.
-//        if call.method == "start" {
-//            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
-//            if data != nil {
-//                print(data!)
-//            }
-//
-//            print(type(of:data))
-//
-//            EZOpenSDK.setAccessToken(data?["token"] as? String)
-//
-//            player = EZOpenSDK.createPlayer(withDeviceSerial: data?["deviceSerial"] as? String, cameraNo: data?["cameraNo"] as! Int)
-////            player.delegate = self
-//
-//
-//            let verifyCode = data?["verifyCode"] as? String
-//            if(verifyCode != nil) {
-//                player.setPlayVerifyCode(data?["verifyCode"] as? String)
-//            } else {
-//                print("verifyCode is null !!!")
-//            }
-//
-//            player.setPlayerView(_view)
-//            player.startRealPlay()
-//            print("荧石SDK=====>开始直播*")
-//            result(true)
-//        }
-//        else if call.method == "end" {
-//            player.stopRealPlay()
-//            player.destoryPlayer()
-//            print("荧石SDK=====>停止直播*")
-//            result(true)
-//        }  else if call.method == "queryPlayback" {
-////            let data:Optional<Dictionary> = call.arguments as! Dictionary<String, Any>
-//            print("荧石SDK=====>回放查询")
-//            result(true)
-//        }
-//        else if call.method == "startRealPlay" {
-//            player.startRealPlay()
-//            print("荧石SDK=====>开始直播")
-//            result(true)
-//        }
-//        else if call.method == "stopRealPlay" {
-//            player.stopRealPlay()
-//            print("荧石SDK=====>停止直播")
-//            result(true)
-//        }
-//        else if call.method == "release" {
-//            player.destoryPlayer()
-//            print("荧石SDK=====>release")
-//            result(true)
-//        }
-//        else if call.method == "queryPlayback" {
-////            player.destoryPlayer()
-//            result("success")
-//        }
+    func callMessage (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void {
+        if call.method == "set_access_token" {
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
+            EZOpenSDK.setAccessToken(data?["accessToken"] as? String)
+            print("accessToken设置成功")
+            result(true)
+        } else if call.method == "EZPlayer_init" {
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            
+            let deviceSerial:String? = data?["deviceSerial"] as? String
+            let cameraNo:Int? = data?["cameraNo"] as? Int
+            let verifyCode:String? = data?["verifyCode"] as? String
+            
+            ezPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
+            ezPlayer.setPlayVerifyCode(verifyCode)
+            ezPlayer.delegate = self
 
-//
-//        
-//        else if call.method == "getOSDTime" {
-//            let odsTime = player.getOSDTime()
-//            let resultNum = Int(odsTime?.timeIntervalSince1970 ?? 0) * 1000;
-//            print("荧石SDK=====>获取播放节点成功")
-//            result(resultNum)
-//        }
-//        else if call.method == "sound" {
-//            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
-//            if(data?["Sound"] as! Bool) {
-//                player.openSound();
-//                print("荧石SDK=====>打开声音")
-//            } else {
-//                player.closeSound();
-//                print("荧石SDK=====>关闭声音")
-//            }
-//            result(true)
-//        }
-//        else {
-//            result(FlutterMethodNotImplemented)
-//        }
-//    }
+            ezPlayer.setPlayerView(nativeView)
+            print("注册播放器成功")
+            result(true)
+        } else if call.method == "startRealPlay" {
+            let isSuccess = ezPlayer.startRealPlay()
+            print("\(TAG) 开始直播 \(isSuccess ? "成功" : "失败")")
+            result(isSuccess)
+        }else if call.method == "stopRealPlay" {
+            let isSuccess = ezPlayer.stopRealPlay()
+            print("\(TAG) 停止直播 \(isSuccess ? "成功" : "失败")")
+            result(isSuccess)
+        }
+        else {
+            result(FlutterMethodNotImplemented)
+        }
+    }
 }

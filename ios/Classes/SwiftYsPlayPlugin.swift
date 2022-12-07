@@ -13,25 +13,35 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     
     var ezPlayer:EZPlayer
     var ysResult:FlutterBasicMessageChannel
+    var playerView:UIView?
     let TAG = "荧石SDK=======>"
     
     init(messenger:FlutterBinaryMessenger){
+       
       ezPlayer = EZOpenSDK.createPlayer(withDeviceSerial: "123", cameraNo: 1)
      
       ysResult = FlutterBasicMessageChannel(name: Constants.PLAYER_STATUS_CHANNEL, binaryMessenger: messenger, codec:
         FlutterStandardMessageCodec.sharedInstance() )
       super.init()
       ezPlayer.destoryPlayer()
+        
+        
+       
+        
+      
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let factory = YsPlayViewFactory()
-       
+ 
+        let factory = YsPlayViewFactory(messenger: registrar.messenger())
+
         registrar.register(factory, withId: Constants.CHANNEL)
         let channel = FlutterMethodChannel(name: Constants.CHANNEL, binaryMessenger: registrar.messenger())
         
         let instance = SwiftYsPlayPlugin(messenger: registrar.messenger() )
         registrar.addMethodCallDelegate(instance, channel: channel)
+        
+     
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -40,38 +50,49 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             if data == nil || data!["appKey"] == nil {
                 result(false)
             }else{
-                DispatchQueue.global().async {
-                    let res:Bool = EZOpenSDK.initLib(withAppKey: data!["appKey"]!)
-                    DispatchQueue.main.async {
-                      result(res)
-                    }
-                }
+                let res:Bool = EZOpenSDK.initLib(withAppKey: data!["appKey"]!)
+                result(res)
             }
-        } else if call.method == "set_access_token" {
+        }else if call.method == "set_access_token" {
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
             EZOpenSDK.setAccessToken(data?["accessToken"] as? String)
             print("accessToken设置成功")
             result(true)
-        } else if call.method == "destoryLib" {
+        }else if call.method == "destoryLib" {
             let isSuccess = EZOpenSDK.destoryLib()
             print("\(TAG) SDK销毁 \(isSuccess ? "成功" : "失败")")
             result(true)
-        } else if call.method == "EZPlayer_init" {
-            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
-            
-            let deviceSerial:String? = data?["deviceSerial"] as? String
-            let cameraNo:Int? = data?["cameraNo"] as? Int
-            let verifyCode:String? = data?["verifyCode"] as? String
-            
-            ezPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
-            ezPlayer.setPlayVerifyCode(verifyCode)
-            ezPlayer.delegate = self
-           
-            let ysPlayView = YsPlayView()
-//            ezPlayer.setPlayerView(ysPlayView.nativeView)
-            print("\(TAG)注册播放器成功")
-            result(true)
-        }else if call.method == "startRealPlay" {
+        }
+//        else if call.method == "EZPlayer_init" {
+//
+//            let ysFactory = YsPlayViewFactory()
+//            ysFactory.callback = {[weak self] (tmpView:UIView) in
+//                self?.playerView = tmpView
+//                print(">>>>>>>>view0==\(tmpView)")
+//            }
+//
+//
+//
+//
+//            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+//
+//            let deviceSerial:String? = data?["deviceSerial"] as? String
+//            let cameraNo:Int? = data?["cameraNo"] as? Int
+//            let verifyCode:String? = data?["verifyCode"] as? String
+//
+//            ezPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
+//            ezPlayer.setPlayVerifyCode(verifyCode)
+//            ezPlayer.delegate = self
+//
+////            let ysPlayView = YsPlayView()
+////            ezPlayer.setPlayerView(ysPlayView.nativeView)
+//
+////            ezPlayer.setPlayerView(playerView)
+//
+//            print("\(TAG)注册播放器成功")
+//            result(true)
+//        }
+        else if call.method == "startRealPlay" {
             let isSuccess = ezPlayer.startRealPlay()
             print("\(TAG) 开始直播 \(isSuccess ? "成功" : "失败")")
             result(isSuccess)
@@ -119,6 +140,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     public func player(_ player: EZPlayer!, didPlayFailed error: Error!) {
         print(">>>>>>>>>>>>error====\(String(describing: error))")
         ysResult.sendMessage(false)
+        
     }
     
     /*
