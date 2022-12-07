@@ -20,7 +20,10 @@ class YsPlayViewHandler extends Handler {
 
     @Override
     public void handleMessage(@NonNull Message msg) {
-        ErrorInfo errorinfo = (ErrorInfo) msg.obj;
+        ErrorInfo errorinfo = new ErrorInfo();
+        if(msg.obj!=null && msg.obj.getClass() == ErrorInfo.class){
+            errorinfo = (ErrorInfo) msg.obj;
+        }
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 LogUtils.d("回放播放成功");
@@ -36,6 +39,7 @@ class YsPlayViewHandler extends Handler {
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
                 try {
+                    assert msg.obj instanceof String;
                     String temp = (String) msg.obj;
                     //解析出视频分辨率
                 } catch (Exception e) {
