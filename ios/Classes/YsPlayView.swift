@@ -95,6 +95,24 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             let bool = ezPlayer.stopPlayback()
             print("\(TAG)停止回放\(bool ? "成功" : "失败")")
             result(bool)
+        }else if call.method == "pause_play_back"{
+            let bool = ezPlayer.pausePlayback()
+            print("\(TAG)暂停回放\(bool ? "成功" : "失败")")
+            result(bool)
+        }else if call.method == "resume_play_back"{
+            let bool = ezPlayer.resumePlayback()
+            print("\(TAG)恢复回放\(bool ? "成功" : "失败")")
+            result(bool)
+        }else if call.method == "openSound"{
+            let bool = ezPlayer.openSound()
+            print("\(TAG)打开声音\(bool ? "成功" : "失败")")
+            result(bool)
+        }else if call.method == "closeSound"{
+            let bool = ezPlayer.closeSound()
+            print("\(TAG)关闭声音\(bool ? "成功" : "失败")")
+            result(bool)
+        }else if call.method == "capturePicture"{
+            ezPlayer.capturePicture(10)
         }
         else {
             result(FlutterMethodNotImplemented)
