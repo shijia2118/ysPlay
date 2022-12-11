@@ -1,21 +1,25 @@
 class YsPlayerStatus {
   bool? isSuccess;
-  String? errorInfo;
+  String? playErrorInfo;
+  String? talkErrorInfo;
 
   YsPlayerStatus({
     this.isSuccess,
-    this.errorInfo,
+    this.playErrorInfo,
+    this.talkErrorInfo,
   });
 
   YsPlayerStatus.fromJson(Map<String, dynamic> json) {
     isSuccess = json['isSuccess'] ?? false;
-    errorInfo = json['errorInfo'];
+    playErrorInfo = json['playErrorInfo'];
+    talkErrorInfo = json['talkErrorInfo'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['isSuccess'] = isSuccess;
-    data['errorInfo'] = errorInfo;
+    data['playErrorInfo'] = playErrorInfo;
+    data['talkErrorInfo'] = talkErrorInfo;
     return data;
   }
 }

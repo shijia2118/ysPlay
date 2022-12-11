@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:ys_play/ys.dart';
 import 'package:ys_play_example/land_scape_page.dart';
 import 'package:ys_play_example/widgets/player_forground_widget.dart';
@@ -60,8 +61,15 @@ class YsPlayerState extends State<YsPlayer> {
         isPlayerSuccess = true;
         if (mounted) setState(() {});
       } else {
-        errorInfo = status.errorInfo;
-        if (mounted) setState(() {});
+        //播放错误
+        if (status.playErrorInfo != null) {
+          errorInfo = status.playErrorInfo;
+          if (mounted) setState(() {});
+        }
+        //对讲错误
+        if (status.talkErrorInfo != null) {
+          showToast(status.talkErrorInfo!);
+        }
       }
     });
   }

@@ -16,10 +16,29 @@ class RealPage extends StatefulWidget {
 }
 
 class _RealPageState extends State<RealPage> {
-  int ptzCommand = 0;
-
   bool isTalking = false;
   bool isLongPressed = false;
+  int supportTalk = 0;
+  late YsRequestEntity entity;
+
+  @override
+  void initState() {
+    super.initState();
+    Map<String, dynamic> map = {
+      'accessToken': accessToken,
+      'deviceSerial': deviceSerial,
+      'channelNo': cameraNo,
+      'direction': 0,
+      'speed': 1,
+    };
+    entity = YsRequestEntity.fromJson(map);
+  }
+
+  @override
+  void dispose() {
+    YsPlay.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +73,10 @@ class _RealPageState extends State<RealPage> {
       mainAxisSize: MainAxisSize.max,
       children: [
         PanelView(
-          onLeftTap: onLeftTapHandle,
-          onRightTap: onRightTapHandle,
-          onTopTap: onTopTapHandle,
-          onBottomTap: onBottomTapHandle,
+          onLeftTap: () => onPTZStart(direction: 2),
+          onRightTap: () => onPTZStart(direction: 3),
+          onTopTap: () => onPTZStart(direction: 0),
+          onBottomTap: () => onPTZStart(direction: 1),
           innerIcon: innerWidget,
           onCanceled: onPTZCancel,
           onInnerIconClicked: onInnerIconClicked,
@@ -82,8 +101,12 @@ class _RealPageState extends State<RealPage> {
           Text(text),
           SizedBox(height: 20),
           GestureDetector(
-            onLongPress: onLongPress,
-            onLongPressUp: onLongPressUp,
+            onLongPressStart: (d) {
+              onStartTalk(isPhone2Dev: true);
+            },
+            onLongPressEnd: (d) {
+              onStartTalk(isPhone2Dev: false);
+            },
             child: Image.asset(icon, width: 60, height: 60),
           ),
         ],
@@ -125,36 +148,58 @@ class _RealPageState extends State<RealPage> {
 
   /// 屏幕翻转
   void onMirrorReverse() async {
-    showToast('需要调用服务端接口实现');
+    entity.command = 2;
+    await YsPlay.ptzMirror(entity).then((value) {
+      if (value.code != '200') {
+        showToast(value.msg ?? '未知异常');
+      }
+    });
   }
 
-  /// 摄像头往左
-  void onLeftTapHandle() async {
-    ptzCommand = 2;
-    await YsPlay.ptz(ptzCommand: ptzCommand);
-  }
-
-  /// 摄像头往右
-  void onRightTapHandle() async {
-    ptzCommand = 3;
-    await YsPlay.ptz(ptzCommand: ptzCommand);
-  }
-
-  /// 摄像头向上
-  void onTopTapHandle() async {
-    ptzCommand = 0;
-    await YsPlay.ptz(ptzCommand: ptzCommand);
-  }
-
-  /// 摄像头向下
-  void onBottomTapHandle() async {
-    ptzCommand = 1;
-    await YsPlay.ptz(ptzCommand: ptzCommand);
+  /**
+   * 云台控制 参数列表:
+   * 1.accessToken,
+   * 2.deviceSerial,
+   * 3.channelNo(cameraNo),
+   * 4.direction:0-上，1-下，2-左，3-右，4-左上，5-左下，6-右上，7-右下，8-放大，9-缩小，
+   *             10-近焦距，11-远焦距
+   * 5.speed:0-慢，1-适中，2-快，海康设备参数不可为0.默认为1
+   */
+  void onPTZStart({required int direction}) async {
+    entity.direction = direction;
+    //开始云台控制之后必须先调用停止云台控制接口才能进行其他操作，包括其他方向的云台转动
+    bool result = await onPTZCancel();
+    if (result) {
+      await YsPlay.ptzStart(
+        deviceSerial: deviceSerial,
+        channelNo: cameraNo,
+        accessToken: accessToken,
+        direction: entity.direction!,
+      ).then((value) {
+        if (value.code != '200') {
+          showToast(value.msg ?? '未知异常');
+        }
+      });
+    }
   }
 
   /// 摄像头停止旋转
-  void onPTZCancel() async {
-    await YsPlay.ptz(ptzCommand: ptzCommand, action: 1);
+  Future<bool> onPTZCancel() async {
+    bool result = false;
+    await YsPlay.ptzStop(
+      accessToken: accessToken,
+      deviceSerial: deviceSerial,
+      channelNo: cameraNo,
+      direction: entity.direction,
+    ).then((value) {
+      if (value.code == '200') {
+        result = true;
+      } else {
+        showToast(value.msg ?? '未知异常');
+        result = false;
+      }
+    });
+    return result;
   }
 
   /// 内部icon点击事件
@@ -165,36 +210,45 @@ class _RealPageState extends State<RealPage> {
     setState(() {
       this.isTalking = isTalking;
     });
-    if (!isTalking) isLongPressed = false;
-  }
 
-  /// 长按说话
-  void onLongPress() async {
-    // 判断是否支持对讲
-    bool result = await YsPlay.isSupportTalk(deviceSerial: deviceSerial);
-    if (result) {
-      setState(() {
-        isLongPressed = true;
+    if (isTalking) {
+      // 判断是否支持对讲
+      await YsPlay.getDevCapacity(accessToken: accessToken, deviceSerial: deviceSerial).then((res) {
+        if (res.code == '200' && res.data != null) {
+          //1-全双工 3-半双工
+          if (res.data!.supportTalk == "1" || res.data!.supportTalk == "3") {
+            supportTalk = int.parse(res.data!.supportTalk!);
+          } else {
+            showToast('该设备不支持对讲');
+            supportTalk = 0;
+          }
+        } else {
+          showToast(res.msg ?? '未知异常');
+          supportTalk = 0;
+        }
       });
-
-      // 请求麦克风权限
-      PermissionUtils.microPhone(
-        context,
-        action: () async {
-          await YsPlay.startVoiceTalk(
-            deviceSerial: deviceSerial,
-            verifyCode: verifyCode,
-            isTalk: !isLongPressed,
-          );
-        },
-      );
+    } else {
+      isLongPressed = false;
+      await YsPlay.stopVoiceTalk();
     }
   }
 
-  /// 松开收听
-  void onLongPressUp() async {
+  /// 长按说话
+  void onStartTalk({required isPhone2Dev}) async {
     setState(() {
-      isLongPressed = false;
+      isLongPressed = isPhone2Dev;
     });
+    // 请求麦克风权限
+    PermissionUtils.microPhone(
+      context,
+      action: () async {
+        await YsPlay.startVoiceTalk(
+          deviceSerial: deviceSerial,
+          verifyCode: verifyCode,
+          isPhone2Dev: isPhone2Dev,
+          supportTalk: supportTalk,
+        );
+      },
+    );
   }
 }

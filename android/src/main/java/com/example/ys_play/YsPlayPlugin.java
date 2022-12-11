@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Objects;
 
 import io.flutter.BuildConfig;
+import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -49,6 +50,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
     private String deviceSerial;
     private Integer cameraNo;
+    private Integer supportTalk; //1-半双工 3-全双工
+    private boolean isPhone2Dev; //true-手机端说，设备端听 false-设备端说，手机端听
 
     private YsPlayViewHandler mHandler;
 
@@ -57,7 +60,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         application = (Application) binding.getApplicationContext();
         BinaryMessenger messenger = binding.getBinaryMessenger();
 
-        mHandler = new YsPlayViewHandler(ysResultListener);
 
         /// 注册播放视图
         binding.getPlatformViewRegistry().registerViewFactory(
@@ -135,6 +137,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
                 ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
 
+                mHandler = new YsPlayViewHandler(ysResultListener);
                 ezPlayer.setHandler(mHandler);
                 ezPlayer.setSurfaceHold(surfaceView.getHolder());
                 ezPlayer.setPlayVerifyCode(verifyCode);
@@ -236,59 +239,12 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 if(ezPlayer!=null){
                     ezPlayer.setSurfaceHold(null);
                     surfaceView=null;
+                    mHandler = null;
                     ezPlayer.release();
                 }
-                break;
-            case "ptz":
-                /// 云台控制
-                if(call.hasArgument("command") && call.hasArgument("action")){
-                    Integer command = call.argument("command");
-                    Integer action = call.argument("action");
-                    Integer speed = call.argument("speed");
-
-                    if(command==null) command = 0;
-                    if(action==null) action = 0;
-                    if(speed==null) speed = 1;
-
-                    EZConstants.EZPTZCommand ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandUp;
-                    switch (command) {
-                        case 1:
-                            ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandDown;
-                            break;
-                        case 2:ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandLeft;break;
-                        case 3 :ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandRight;break;
-                        case 8 :ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandZoomIn;break;
-                        case 9 :ezptzCommand = EZConstants.EZPTZCommand.EZPTZCommandZoomOut;break;
-                        default :break;
-                    }
-
-                    EZConstants.EZPTZAction ezptzAction = EZConstants.EZPTZAction.EZPTZActionSTART;
-                    if(action==1){
-                        ezptzAction = EZConstants.EZPTZAction.EZPTZActionSTOP;
-                    }
-                    EZConstants.EZPTZCommand finalEzptzCommand = ezptzCommand;
-                    EZConstants.EZPTZAction finalEzptzAction = ezptzAction;
-                    Integer finalSpeed = speed;
-                    // 记得在子线程中调用
-                    new Thread(){
-                        public void run(){
-                            Looper.prepare();
-                            new Handler().post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        boolean  ptzResult =  EZOpenSDK.getInstance().controlPTZ(deviceSerial,cameraNo, finalEzptzCommand, finalEzptzAction, finalSpeed);
-                                        result.success(ptzResult);
-                                    } catch ( BaseException e) {
-                                        LogUtils.d(""+e);
-                                        Toast.makeText(application, e.toString(), Toast.LENGTH_SHORT).show();
-                                        result.success(false);
-                                    }
-                                }
-                            });
-                            Looper.loop();
-                        }
-                    }.start();
+                if(talk != null){
+                    mHandler = null;
+                    talk.release();
                 }
                 break;
             case "start_record":
@@ -346,81 +302,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                            }
                        }.start();
                     }
-                }
-                break;
-            case "probe_device_info":
-                deviceSerial = call.argument("deviceSerial");
-                String deviceType = call.argument("deviceType");
-                if(deviceSerial!=null||deviceType!=null){
-                    new Thread(){
-                        public void run(){
-                            Looper.prepare();
-                            new Handler().post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    final EZProbeDeviceInfoResult deviceInfoResult = EZOpenSDK.getInstance().probeDeviceInfo(deviceSerial,deviceType);
-                                    if (deviceInfoResult.getBaseException() == null){
-                                        //查询成功，添加设备
-                                        return;
-                                    }else{
-                                        switch (deviceInfoResult.getBaseException().getErrorCode()){
-                                            case 120023:
-                                                // TODO: 2018/6/25  设备不在线，未被用户添加 （这里需要网络配置）
-                                                Toast.makeText(application, "设备不在线，未被用户添加", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 120002:
-                                                // TODO: 2018/6/25  设备不存在，未被用户添加 （这里需要网络配置）
-                                                Toast.makeText(application, "设备不存在，未被用户添加", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 120029:
-                                                // TODO: 2018/6/25  设备不在线，已经被自己添加 (这里需要网络配置)
-                                                Toast.makeText(application, "设备不在线，已经被自己添加", Toast.LENGTH_SHORT).show();
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (deviceInfoResult.getEZProbeDeviceInfo() == null){
-                                                            // 未查询到设备信息，不确定设备支持的配网能力,需要用户根据指示灯判断
-                                                            //若设备指示灯红蓝闪烁，请选择smartconfig配网
-                                                            //若设备指示灯蓝色闪烁，请选择设备热点配网
-                                                        }else{
-                                                            // 查询到设备信息，根据能力级选择配网方式
-                                                            if (deviceInfoResult.getEZProbeDeviceInfo().getSupportAP() == 2) {
-                                                                //选择设备热单配网
-                                                            }
-                                                            if (deviceInfoResult.getEZProbeDeviceInfo().getSupportWifi() == 3) {
-                                                                //选择smartconfig配网
-                                                            }
-                                                            if (deviceInfoResult.getEZProbeDeviceInfo().getSupportSoundWave() == 1) {
-                                                                //选择声波配网
-                                                            }
-                                                        }
-
-                                                    }
-                                                }).start();
-                                                break;
-                                            case 120020:
-                                                // TODO: 2018/6/25 设备在线，已经被自己添加 (给出提示)
-                                                Toast.makeText(application, "设备在线，已经被自己添加", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 120022:
-                                                // TODO: 2018/6/25  设备在线，已经被别的用户添加 (给出提示)
-                                                Toast.makeText(application, "设备在线，已经被别的用户添加", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 120024:
-                                                // TODO: 2018/6/25  设备不在线，已经被别的用户添加 (给出提示)
-                                                Toast.makeText(application, "设备不在线，已经被别的用户添加", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            default:
-                                                // TODO: 2018/6/25 请求异常
-                                                Toast.makeText(application, ""+deviceInfoResult.getBaseException().getErrorCode(), Toast.LENGTH_SHORT).show();
-                                                break;
-                                        }
-                                    }
-                                }
-                            });
-                            Looper.loop();
-                        }
-                    }.start();
                 }
                 break;
             case "start_config_wifi":
@@ -497,59 +378,49 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     result.success(false);
                 }
                 break;
-            case "is_support_talk":  /// 对讲能力支持
-                deviceSerial = call.argument("deviceSerial");
-                if(ezPlayer!=null){
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                EZConstants.EZTalkbackCapability talkbackCapability
-                                        = EZOpenSDK.getInstance().getDeviceInfo(deviceSerial).isSupportTalk();
-                                if(talkbackCapability==EZConstants.EZTalkbackCapability.EZTalkbackNoSupport){
-                                    /// 不支持对讲
-                                    Toast.makeText(application, "您的设备暂不支持对讲哦", Toast.LENGTH_SHORT).show();
-                                    result.success(false);
-                                }else{
-                                    result.success(true);
-                                }
-                            } catch (BaseException e) {
-                                e.printStackTrace();
-                                result.success(false);
-                                Toast.makeText(application, ""+e.getErrorInfo(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }).start();
-                }else{
-                    Toast.makeText(application, "请先注册播放器", Toast.LENGTH_SHORT).show();
-                    result.success(false);
-                }
-                break;
             case "start_voice_talk": /// 开始对讲
                 if (talk != null) {
-                    //声音开关
-                    ezPlayer.openSound();
-                    //手机端听，设备端说
-                    talk.setVoiceTalkStatus(false);
+                    //关闭播放声音
+                    ezPlayer.closeSound();
                     //关闭对讲
                     talk.stopVoiceTalk();
+                    //销毁对讲器
+                    talk.release();
                 }
                 deviceSerial = call.argument("deviceSerial");
                 verifyCode = call.argument("verifyCode");
                 cameraNo = call.argument("cameraNo");
+                supportTalk = call.argument("supportTalk");
+                isPhone2Dev = Boolean.TRUE.equals(call.argument("isPhone2Dev"));
                 if(cameraNo==null) cameraNo=1;
+                if(supportTalk==null) supportTalk = 1;
+
                 talk = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
                 //设置Handler, 该handler将被用于从播放器向handler传递消息
+                if(mHandler==null){
+                    mHandler = new YsPlayViewHandler(ysResultListener);
+                }
                 talk.setHandler(mHandler);
                 //设备加密的需要传入密码
                 talk.setPlayVerifyCode(verifyCode);
                 //开启对讲
                 talk.startVoiceTalk();
+        
+                if(!isPhone2Dev){
+                    //声音开关
+                    ezPlayer.openSound();
+                    //手机端听，设备端说
+                    talk.setVoiceTalkStatus(false);
+                    talk.stopVoiceTalk();
+                }
                 break;
             case "stop_voice_talk": /// 停止对讲
-                isSuccess = ezPlayer.stopVoiceTalk();
-                LogUtils.d("停止对讲"+(isSuccess?"成功":"失败"));
-                result.success(isSuccess);
+                if(talk != null){
+                    isSuccess = talk.stopVoiceTalk();
+                    LogUtils.d("停止对讲"+(isSuccess?"成功":"失败"));
+                    talk.release();
+                    result.success(isSuccess);
+                }
                 break;
             default:
                 result.notImplemented();
@@ -562,30 +433,36 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
      */
     YsResultListener ysResultListener = new YsResultListener() {
         @Override
-        public void onRealPlaySuccess() {
+        public void onPlaySuccess() {
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
             entity.setIsSuccess(true);
             ysResult.send(new Gson().toJson(entity));
         }
 
         @Override
-        public void onPlayBackSuccess() {
-            YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
-            entity.setIsSuccess(true);
-            ysResult.send(new Gson().toJson(entity));
+        public void onTalkSuccess() {
+            if(talk!=null) {
+                //半双工
+                if(supportTalk != null && supportTalk == 3){
+                    //设备端听，手机端说
+                    talk.setVoiceTalkStatus(isPhone2Dev);
+                }
+            }
         }
 
         @Override
-        public void onTalkBackSuccess() {
-            //设备端听，手机端说
-            if(talk!=null) talk.setVoiceTalkStatus(true);
-        }
-
-        @Override
-        public void onError(String errorInfo) {
+        public void onPlayError(String errorInfo) {
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
             entity.setIsSuccess(false);
-            entity.setErrorInfo(errorInfo);
+            entity.setPlayErrorInfo(errorInfo);
+            ysResult.send(new Gson().toJson(entity));
+        }
+
+        @Override
+        public void onTalkError(String errorInfo) {
+            YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
+            entity.setIsSuccess(false);
+            entity.setTalkErrorInfo(errorInfo);
             ysResult.send(new Gson().toJson(entity));
         }
     };
