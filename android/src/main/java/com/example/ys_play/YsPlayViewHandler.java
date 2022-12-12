@@ -27,14 +27,14 @@ class YsPlayViewHandler extends Handler {
         switch (msg.what) {
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_SUCCUSS:
                 LogUtils.d("回放播放成功");
-                ysResult.onPlayBackSuccess();
+                ysResult.onPlaySuccess();
                 break;
             case EZConstants.EZPlaybackConstants.MSG_REMOTEPLAYBACK_PLAY_FAIL:
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_FAIL:
                 //得到播放失败描述
                 String description = errorinfo.description;
                 //错误信息回调
-                ysResult.onError(description);
+                ysResult.onPlayError(description);
                 break;
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
@@ -48,17 +48,16 @@ class YsPlayViewHandler extends Handler {
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_SUCCESS:
                 LogUtils.d("直播播放成功");
-                ysResult.onRealPlaySuccess();
+                ysResult.onPlaySuccess();
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_VOICETALK_FAIL:
                 handleVoiceTalkFailed(errorinfo);
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_VOICETALK_SUCCESS:
                 LogUtils.d("对讲成功");
-                ysResult.onTalkBackSuccess();
+                ysResult.onTalkSuccess();
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_VOICETALK_STOP:
-                LogUtils.d("停止对讲");
                 break;
             default:
                 break;
@@ -101,7 +100,7 @@ class YsPlayViewHandler extends Handler {
                 errorDes = "" + errorInfo.errorCode;
                 break;
         }
-        ysResult.onError(errorDes);
+        ysResult.onTalkError(errorDes);
     }
 
 

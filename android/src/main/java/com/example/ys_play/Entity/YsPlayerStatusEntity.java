@@ -6,7 +6,8 @@ public class YsPlayerStatusEntity {
 
     @SerializedName(value="isSuccess")
     private boolean isSuccess;
-    private String errorInfo;
+    private String playErrorInfo;
+    private String talkErrorInfo;
 
     public boolean isIsSuccess() {
         return isSuccess;
@@ -16,14 +17,19 @@ public class YsPlayerStatusEntity {
         this.isSuccess = isSuccess;
     }
 
-    public String getErrorInfo() {
-        return errorInfo;
+    public String getPlayErrorInfo() {
+        return playErrorInfo;
     }
 
-    public void setErrorInfo(String errorInfo) {
-        this.errorInfo = errorInfo;
+    public void setPlayErrorInfo(String playErrorInfo) {
+        this.playErrorInfo = playErrorInfo;
     }
 
+    public String getTalkErrorInfo() {
+        return talkErrorInfo;
+    }
 
-
+    public void setTalkErrorInfo(String talkErrorInfo) {
+        this.talkErrorInfo = talkErrorInfo;
+    }
 }

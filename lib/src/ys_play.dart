@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:ys_play/src/entity/capacity_response_entity.dart';
 import 'package:ys_play/src/entity/ys_player_status.dart';
 import 'package:ys_play/src/entity/ys_pw_result.dart';
+import 'package:ys_play/src/entity/ys_response_entity.dart';
+import 'package:ys_play/src/ys_http_api.dart';
 import 'package:ys_play/ys.dart';
 
 class YsPlay {
@@ -216,23 +219,52 @@ class YsPlay {
     return result;
   }
 
-  /// 云台控制PTZ
-  /// command:摄像头旋转方向 0-up 1-down 2-left 3-right 8-zoomin(镜头拉近) 9-zoomout(镜头拉远)
-  /// action:0-开始 1-停止
-  /// speed:旋转速度0-2 默认1
-  static Future ptz({
-    int ptzCommand = 0,
-    int action = 0,
-    int? speed = 1,
+  // 控制云台
+  static Future<YsResponseEntity> ptzStart({
+    required String accessToken,
+    required String deviceSerial,
+    required int channelNo,
+    required int direction,
+    int? speed,
   }) async {
-    await _channel.invokeMethod(
-      "ptz",
-      {
-        'command': ptzCommand,
-        'action': action,
-        'speed': speed,
-      },
+    return await YsHttpApi.devPtzStart(
+      accessToken: accessToken,
+      deviceSerial: deviceSerial,
+      channelNo: channelNo,
+      direction: direction,
+      speed: speed,
     );
+  }
+
+  // 停止控制
+  static Future<YsResponseEntity> ptzStop({
+    required String accessToken,
+    required String deviceSerial,
+    required int channelNo,
+    int? direction,
+  }) async {
+    return await YsHttpApi.devPtzStop(
+      accessToken: accessToken,
+      deviceSerial: deviceSerial,
+      channelNo: channelNo,
+      direction: direction,
+    );
+  }
+
+  ///获取设备能力集
+  static Future<CapacityResponseEntity> getDevCapacity({
+    required String accessToken,
+    required String deviceSerial,
+  }) async {
+    return await YsHttpApi.getDevCapacity(
+      accessToken: accessToken,
+      deviceSerial: deviceSerial,
+    );
+  }
+
+  ///镜像翻转
+  static Future<YsResponseEntity> ptzMirror(YsRequestEntity requestEntity) async {
+    return await YsHttpApi.devPtzMirror(requestEntity);
   }
 
   ///开始录像
@@ -251,15 +283,15 @@ class YsPlay {
   }
 
   // 获取设备信息
-  static Future<void> probeDeviceInfo({String? deviceSerial, String? deviceType}) async {
-    await _channel.invokeMethod(
-      "probe_device_info",
-      {
-        'deviceSerial': deviceSerial,
-        'deviceType': deviceType,
-      },
-    );
-  }
+  // static Future<void> probeDeviceInfo({String? deviceSerial, String? deviceType}) async {
+  //   await _channel.invokeMethod(
+  //     "probe_device_info",
+  //     {
+  //       'deviceSerial': deviceSerial,
+  //       'deviceType': deviceType,
+  //     },
+  //   );
+  // }
 
   /// 无线配网模式
   /// mode: wifi-wifi配网 wave-声波配网
@@ -307,25 +339,33 @@ class YsPlay {
   }
 
   /// 对讲能力支持
-  static Future<bool> isSupportTalk({required String deviceSerial}) async {
-    bool result = await _channel.invokeMethod('is_support_talk', {'deviceSerial': deviceSerial});
-    return result;
-  }
+  // static Future<bool> isSupportTalk({required String deviceSerial}) async {
+  //   bool result = await _channel.invokeMethod('is_support_talk', {'deviceSerial': deviceSerial});
+  //   return result;
+  // }
 
   /// 开始对讲
   static Future<bool> startVoiceTalk({
     required String deviceSerial,
     String? verifyCode,
     int cameraNo = 1,
-    bool isTalk = true,
+    bool isPhone2Dev = true, //手机端说，设备端听
+    int supportTalk = 1, //1-全双工 3-半双工
   }) async {
     Map<String, dynamic> argsParam = {
       "deviceSerial": deviceSerial,
       "verifyCode": verifyCode,
       "cameraNo": cameraNo,
-      "isTalk": isTalk,
+      "isPhone2Dev": isPhone2Dev,
+      "supportTalk": supportTalk,
     };
     bool result = await _channel.invokeMethod("start_voice_talk", argsParam);
+    return result;
+  }
+
+  ///停止对讲
+  static Future<bool> stopVoiceTalk() async {
+    bool result = await _channel.invokeMethod("stop_voice_talk");
     return result;
   }
 }
