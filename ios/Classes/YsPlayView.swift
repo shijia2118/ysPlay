@@ -9,6 +9,7 @@ import Foundation
 import Flutter
 import UIKit
 import EZOpenSDKFramework
+import Photos
 
 
 class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
@@ -41,6 +42,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     
 
     func callMessage (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void {
+
         if call.method == "set_access_token" {
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
             EZOpenSDK.setAccessToken(data?["accessToken"] as? String)
@@ -63,11 +65,11 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             let isSuccess = ezPlayer.startRealPlay()
             print("\(TAG) 开始直播 \(isSuccess ? "成功" : "失败")")
             result(isSuccess)
-        }else if call.method == "stopRealPlay" {
+        } else if call.method == "stopRealPlay" {
             let isSuccess = ezPlayer.stopRealPlay()
             print("\(TAG) 停止直播 \(isSuccess ? "成功" : "失败")")
             result(isSuccess)
-        }else if call.method == "startPlayback" {
+        } else if call.method == "startPlayback" {
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let startTime = data?["startTime"] as! Int
             let endTime = data?["endTime"] as! Int
@@ -91,28 +93,33 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             let bool = ezPlayer.startPlayback(fromDevice: recordFile)
             print("\(TAG)开始回放\(bool ? "成功" : "失败")")
             result(bool)
-        }else if call.method == "stopPlayback" {
+        } else if call.method == "stopPlayback" {
             let bool = ezPlayer.stopPlayback()
             print("\(TAG)停止回放\(bool ? "成功" : "失败")")
             result(bool)
-        }else if call.method == "pause_play_back"{
+        } else if call.method == "pause_play_back"{
             let bool = ezPlayer.pausePlayback()
             print("\(TAG)暂停回放\(bool ? "成功" : "失败")")
             result(bool)
-        }else if call.method == "resume_play_back"{
+        } else if call.method == "resume_play_back"{
             let bool = ezPlayer.resumePlayback()
             print("\(TAG)恢复回放\(bool ? "成功" : "失败")")
             result(bool)
-        }else if call.method == "openSound"{
+        } else if call.method == "openSound"{
             let bool = ezPlayer.openSound()
             print("\(TAG)打开声音\(bool ? "成功" : "失败")")
             result(bool)
-        }else if call.method == "closeSound"{
+        } else if call.method == "closeSound"{
             let bool = ezPlayer.closeSound()
             print("\(TAG)关闭声音\(bool ? "成功" : "失败")")
             result(bool)
-        }else if call.method == "capturePicture"{
-            ezPlayer.capturePicture(10)
+        } else if call.method == "capturePicture"{
+            let image =  ezPlayer.capturePicture(10)
+            if image != nil {
+                var isSuccess = saveImage2Library(image: image!)
+                print("\(TAG)截屏\(isSuccess ? "成功" : "失败")")
+                result(isSuccess)
+            }
         }
         else {
             result(FlutterMethodNotImplemented)
@@ -155,5 +162,23 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
         let data = try? JSONSerialization.data(withJSONObject: dict,options: JSONSerialization.WritingOptions.init(rawValue: 0))
         let jsonStr = NSString(data: data!, encoding:String.Encoding.utf8.rawValue)
         return jsonStr! as String
+    }
+    
+    /**
+     *  保存图片到相册
+     */
+    private func saveImage2Library(image:UIImage) -> Bool{
+        var result = false
+        PHPhotoLibrary.shared().performChanges(
+            {PHAssetChangeRequest.creationRequestForAsset(from: image)},
+            completionHandler:{(isSuccess,error) in
+            DispatchQueue.main.async {
+                result = isSuccess
+                print(">>>>>>resul2t ==\(result)")
+
+            }
+        })
+        print(">>>>>>result1 ==\(result)")
+        return result
     }
 }
