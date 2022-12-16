@@ -175,16 +175,18 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 }
             })
         } else if call.method == "start_voice_talk"{
-            if _talkPlayer != nil {
-                //关闭播放声音
-                ezPlayer.closeSound()
-                //关闭对讲
-                var result =  _talkPlayer!.stopVoiceTalk()
-                print(">>>>>>>>>>stopresult==\(result)")
-                //销毁对讲器
-                _talkPlayer = nil
-            }
-            //开始对讲
+//            if _talkPlayer != nil {
+//                //关闭播放声音
+//                ezPlayer.closeSound()
+//                //关闭对讲
+//                let result =  _talkPlayer!.stopVoiceTalk()
+//                print(">>>>>>>>>>stopresult==\(result)")
+//                //销毁对讲器
+//                _talkPlayer = nil
+//            }
+//            var stopResult = stopVoiceTalk()
+//            print("\(TAG)停止对讲\(stopResult)")
+            //获取参数
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
             let cameraNo:Int? = data?["cameraNo"] as? Int
@@ -195,7 +197,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             if data?["isPhone2Dev"] != nil {
                 isPhone2Dev = (data!["isPhone2Dev"] as! Int)
             }
-            
+            //创建对讲器
             _talkPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
             _talkPlayer!.setPlayVerifyCode(verifyCode)
             _talkPlayer!.delegate = self
@@ -215,19 +217,31 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                     _talkPlayer!.audioTalkPressed(true)
                 }
             }
+            _talkPlayer!.stopVoiceTalk()
             
             print("\(TAG)\(isPhone2Dev == 1 ? "说" : "听")")
             result(true)
         } else if call.method == "stop_voice_talk" {
-            if _talkPlayer != nil {
-                let isSuccess = _talkPlayer!.stopVoiceTalk()
-                print("\(self.TAG)结束对讲\(isSuccess ? "成功": "失败")")
-                _talkPlayer!.destoryPlayer()
-                result(isSuccess)
-            }
+            result(stopVoiceTalk())
         }
         else {
             result(FlutterMethodNotImplemented)
+        }
+    }
+    
+    /**
+     * 停止对讲
+     */
+    private func stopVoiceTalk() -> Bool {
+        if _talkPlayer != nil {
+            let isSuccess = _talkPlayer!.stopVoiceTalk()
+            print("\(self.TAG)结束对讲\(isSuccess ? "成功": "失败")")
+            _talkPlayer!.delegate = nil
+            _talkPlayer!.destoryPlayer()
+            _talkPlayer = nil
+            return isSuccess
+        }else{
+            return true
         }
     }
     
