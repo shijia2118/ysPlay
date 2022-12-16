@@ -349,7 +349,7 @@ class YsPlay {
     required String deviceSerial,
     String? verifyCode,
     int cameraNo = 1,
-    bool isPhone2Dev = true, //手机端说，设备端听
+    int isPhone2Dev = 1, //1手机端说设备端听 0手机端听设备端说
     int supportTalk = 1, //1-全双工 3-半双工
   }) async {
     Map<String, dynamic> argsParam = {

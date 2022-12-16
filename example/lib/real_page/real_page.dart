@@ -102,10 +102,10 @@ class _RealPageState extends State<RealPage> {
           SizedBox(height: 20),
           GestureDetector(
             onLongPressStart: (d) {
-              onStartTalk(isPhone2Dev: true);
+              onStartTalk(isPhone2Dev: 1);
             },
             onLongPressEnd: (d) {
-              onStartTalk(isPhone2Dev: false);
+              onStartTalk(isPhone2Dev: 0);
             },
             child: Image.asset(icon, width: 60, height: 60),
           ),
