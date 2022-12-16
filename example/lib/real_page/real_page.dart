@@ -245,7 +245,7 @@ class _RealPageState extends State<RealPage> {
         await YsPlay.startVoiceTalk(
           deviceSerial: deviceSerial,
           verifyCode: verifyCode,
-          isPhone2Dev: isPhone2Dev,
+          isPhone2Dev: 0,
           supportTalk: supportTalk,
         );
       },
