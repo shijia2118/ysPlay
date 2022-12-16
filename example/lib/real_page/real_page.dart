@@ -236,7 +236,7 @@ class _RealPageState extends State<RealPage> {
   /// 长按说话
   void onStartTalk({required isPhone2Dev}) async {
     setState(() {
-      isLongPressed = isPhone2Dev;
+      isLongPressed = isPhone2Dev == 1;
     });
     // 请求麦克风权限
     PermissionUtils.microPhone(
