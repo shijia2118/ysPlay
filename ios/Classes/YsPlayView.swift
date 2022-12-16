@@ -131,7 +131,6 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                                                                       FileManager.SearchPathDomainMask.userDomainMask, true).first
                 let date = String(DateUtil.getCurrentTimeStamp())
                 self.videoPath = "\(documentDir ?? "")/\(date).mp4"
-                print(">>>>>>>>path==\(String(describing: self.videoPath))")
                 let isSuccess = self.ezPlayer.startLocalRecord(withPathExt: self.videoPath)
                 print("\(self.TAG)录屏\(isSuccess ? "成功": "失败")")
                 result(isSuccess)
@@ -180,9 +179,10 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 //关闭播放声音
                 ezPlayer.closeSound()
                 //关闭对讲
-                _talkPlayer!.stopVoiceTalk()
+                var result =  _talkPlayer!.stopVoiceTalk()
+                print(">>>>>>>>>>stopresult==\(result)")
                 //销毁对讲器
-                _talkPlayer!.destoryPlayer()
+                _talkPlayer = nil
             }
             //开始对讲
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
@@ -195,19 +195,28 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             if data?["isPhone2Dev"] != nil {
                 isPhone2Dev = (data!["isPhone2Dev"] as! Int)
             }
-            print(">>>>>>>>>>params==\(String(describing: data))")
             
             _talkPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
             _talkPlayer!.setPlayVerifyCode(verifyCode)
             _talkPlayer!.delegate = self
             _talkPlayer!.startVoiceTalk()
             
-            //手机端听 设备端说
             if isPhone2Dev == 0 {
+                //手机端听 设备端说
                 ezPlayer.openSound()
-                _talkPlayer!.audioTalkPressed(false)
-                _talkPlayer!.stopVoiceTalk()
+                if supportTalk == 3 {
+                    //半双工设备需要设置
+                    _talkPlayer!.audioTalkPressed(false)
+                }
+            }else if isPhone2Dev == 1 {
+                //手机端说 设备端听
+                if supportTalk == 3 {
+                    //半双工设备需要设置
+                    _talkPlayer!.audioTalkPressed(true)
+                }
             }
+            
+            print("\(TAG)\(isPhone2Dev == 1 ? "说" : "听")")
             result(true)
         } else if call.method == "stop_voice_talk" {
             if _talkPlayer != nil {
@@ -230,8 +239,10 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
         let entity:YsPlayerStatusEntity = YsPlayerStatusEntity()
         entity.isSuccess = false
         if player == _talkPlayer {
+            print(">>>>>>>>error1===\(String(describing: error))")
             entity.talkErrorInfo = error.localizedDescription
         }else if player == ezPlayer {
+            print(">>>>>>>>error2===\(String(describing: error))")
             entity.playErrorInfo = error.localizedDescription
         }
         ysResult?.sendMessage(entity.getString())
@@ -254,11 +265,6 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             break
         case 4:
             print("\(TAG)对讲开始")
-            if _talkPlayer != nil {
-                if supportTalk == 3 {
-                    _talkPlayer?.audioTalkPressed(true)
-                }
-            }
             dict.updateValue(true, forKey: "isSuccess")
             break
         case 5:
