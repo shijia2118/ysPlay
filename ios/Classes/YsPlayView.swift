@@ -22,7 +22,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     var ysResult:FlutterBasicMessageChannel?
     private var videoPath:String? //视频地址
     var supportTalk:Int = 0 //对讲能力 0不支持 1全双工 3半双工
-    var isPhone2Dev:Bool = true
+    var isPhone2Dev:Int = 0 //1手机端说设备端听 0手机端听设备端说
     
     let TAG = "荧石SDK=======>"
     
@@ -176,6 +176,14 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 }
             })
         } else if call.method == "start_voice_talk"{
+            if _talkPlayer != nil {
+                //关闭播放声音
+                ezPlayer.closeSound()
+                //关闭对讲
+                _talkPlayer!.stopVoiceTalk()
+                //销毁对讲器
+                _talkPlayer!.destoryPlayer()
+            }
             //开始对讲
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
@@ -185,13 +193,21 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 supportTalk = (data!["supportTalk"] as! Int)
             }
             if data?["isPhone2Dev"] != nil {
-                isPhone2Dev = (data!["isPhone2Dev"] as! Bool)
+                isPhone2Dev = (data!["isPhone2Dev"] as! Int)
             }
+            print(">>>>>>>>>>params==\(String(describing: data))")
             
             _talkPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
             _talkPlayer!.setPlayVerifyCode(verifyCode)
             _talkPlayer!.delegate = self
             _talkPlayer!.startVoiceTalk()
+            
+            //手机端听 设备端说
+            if isPhone2Dev == 0 {
+                ezPlayer.openSound()
+                _talkPlayer!.audioTalkPressed(false)
+                _talkPlayer!.stopVoiceTalk()
+            }
             result(true)
         } else if call.method == "stop_voice_talk" {
             if _talkPlayer != nil {
@@ -206,8 +222,8 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
         }
     }
     
-    /*
-       直播、回放和对讲 错误回调
+    /**
+     * 直播、回放和对讲 错误回调
      */
     public func player(_ player: EZPlayer!, didPlayFailed error: Error!) {
 
@@ -221,8 +237,8 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
         ysResult?.sendMessage(entity.getString())
     }
     
-    /*
-       直播、回放和对讲 成功后收到的状态码
+    /**
+     * 直播、回放和对讲 成功后收到的状态码
      */
     public func player(_ player: EZPlayer!, didReceivedMessage messageCode: Int) {
         var dict = [String:Any]()
