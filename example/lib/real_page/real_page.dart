@@ -242,16 +242,13 @@ class _RealPageState extends State<RealPage> {
     PermissionUtils.microPhone(
       context,
       action: () async {
-        await YsPlay.stopVoiceTalk().then((value) async {
-          if (value) {
-            await YsPlay.startVoiceTalk(
-              deviceSerial: deviceSerial,
-              verifyCode: verifyCode,
-              isPhone2Dev: isPhone2Dev,
-              supportTalk: supportTalk,
-            );
-          }
-        });
+        await YsPlay.stopVoiceTalk();
+        await YsPlay.startVoiceTalk(
+          deviceSerial: deviceSerial,
+          verifyCode: verifyCode,
+          isPhone2Dev: isPhone2Dev,
+          supportTalk: supportTalk,
+        );
       },
     );
   }
