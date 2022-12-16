@@ -175,17 +175,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 }
             })
         } else if call.method == "start_voice_talk"{
-//            if _talkPlayer != nil {
-//                //关闭播放声音
-//                ezPlayer.closeSound()
-//                //关闭对讲
-//                let result =  _talkPlayer!.stopVoiceTalk()
-//                print(">>>>>>>>>>stopresult==\(result)")
-//                //销毁对讲器
-//                _talkPlayer = nil
-//            }
-//            var stopResult = stopVoiceTalk()
-//            print("\(TAG)停止对讲\(stopResult)")
+          
             //获取参数
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
@@ -203,22 +193,20 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             _talkPlayer!.delegate = self
             _talkPlayer!.startVoiceTalk()
             
-            if isPhone2Dev == 0 {
-                //手机端听 设备端说
-                ezPlayer.openSound()
-                if supportTalk == 3 {
-                    //半双工设备需要设置
+            //半双工设备需要设置
+            if supportTalk == 3{
+                if isPhone2Dev == 0 {
+                    //手机端听 设备端说
+                    ezPlayer.openSound()
                     _talkPlayer!.audioTalkPressed(false)
-                }
-            }else if isPhone2Dev == 1 {
-                //手机端说 设备端听
-                if supportTalk == 3 {
-                    //半双工设备需要设置
+                } else if isPhone2Dev == 1{
+                    //手机端说 设备端听
+                    ezPlayer.closeSound()
                     _talkPlayer!.audioTalkPressed(true)
                 }
             }
+            //需成对使用，否则会出各种问题
             _talkPlayer!.stopVoiceTalk()
-            
             print("\(TAG)\(isPhone2Dev == 1 ? "说" : "听")")
             result(true)
         } else if call.method == "stop_voice_talk" {
@@ -252,11 +240,9 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
 
         let entity:YsPlayerStatusEntity = YsPlayerStatusEntity()
         entity.isSuccess = false
-        if player == _talkPlayer {
-            print(">>>>>>>>error1===\(String(describing: error))")
+        if player.isEqual(_talkPlayer) {
             entity.talkErrorInfo = error.localizedDescription
-        }else if player == ezPlayer {
-            print(">>>>>>>>error2===\(String(describing: error))")
+        }else if player.isEqual(ezPlayer) {
             entity.playErrorInfo = error.localizedDescription
         }
         ysResult?.sendMessage(entity.getString())
@@ -267,7 +253,6 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
      */
     public func player(_ player: EZPlayer!, didReceivedMessage messageCode: Int) {
         var dict = [String:Any]()
-        print(">>>>>>>>>code==\(messageCode)")
         switch messageCode {
         case 1:
             print("\(TAG)直播开始")
