@@ -271,8 +271,8 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
         ysResult?.sendMessage(message)
     }
     
-    /*
-     字典转JSON
+    /**
+     * 字典转JSON
      */
     func convertDictionaryToJson(dict : Dictionary<String,Any>) -> String {
         let data = try? JSONSerialization.data(withJSONObject: dict,options: JSONSerialization.WritingOptions.init(rawValue: 0))
@@ -295,7 +295,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     
     
     /**
-     保存视频到相册
+     * 保存视频到相册
      */
     private func saveVideo2Library(path:String, callback:@escaping(_ result:Bool)->Void ) {
         PHPhotoLibrary.shared().performChanges({
@@ -311,7 +311,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     }
     
     /*
-     根据videoLevel返回EZVideoLevelType
+     * 根据videoLevel返回EZVideoLevelType
      */
     private func getVideoLevelType (videoLevel:Int) -> EZVideoLevelType {
         var videolevelType:EZVideoLevelType = EZVideoLevelType.high
