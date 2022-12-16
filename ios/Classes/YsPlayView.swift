@@ -17,8 +17,12 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     var nativeView : UIView
     var callback: ((_ tmpView:UIView)->())?
     var ezPlayer:EZPlayer
+    var _talkPlayer:EZPlayer?
     private var messenger:FlutterBinaryMessenger
     var ysResult:FlutterBasicMessageChannel?
+    private var videoPath:String? //视频地址
+    var supportTalk:Int = 0 //对讲能力 0不支持 1全双工 3半双工
+    var isPhone2Dev:Bool = true
     
     let TAG = "荧石SDK=======>"
     
@@ -50,7 +54,6 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             result(true)
         } else if call.method == "EZPlayer_init" {
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
-            
             let deviceSerial:String? = data?["deviceSerial"] as? String
             let cameraNo:Int? = data?["cameraNo"] as? Int
             let verifyCode:String? = data?["verifyCode"] as? String
@@ -116,8 +119,85 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
         } else if call.method == "capturePicture"{
             let image =  ezPlayer.capturePicture(10)
             if image != nil {
-                var isSuccess = saveImage2Library(image: image!)
-                print("\(TAG)截屏\(isSuccess ? "成功" : "失败")")
+                saveImage2Library(image: image!,callback:  {isSuccess in
+                    print("\(self.TAG)截屏\(isSuccess ? "成功" : "失败")")
+                    result(isSuccess)
+                })
+            }
+        } else if call.method == "start_record" {
+            //录屏前,先结束上一次录像
+            ezPlayer.stopLocalRecordExt({(isSuccess : Bool) in
+                let documentDir = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory,
+                                                                      FileManager.SearchPathDomainMask.userDomainMask, true).first
+                let date = String(DateUtil.getCurrentTimeStamp())
+                self.videoPath = "\(documentDir ?? "")/\(date).mp4"
+                print(">>>>>>>>path==\(String(describing: self.videoPath))")
+                let isSuccess = self.ezPlayer.startLocalRecord(withPathExt: self.videoPath)
+                print("\(self.TAG)录屏\(isSuccess ? "成功": "失败")")
+                result(isSuccess)
+            })
+        }else if call.method == "stop_record"{
+            ezPlayer.stopLocalRecordExt({(isSuccess : Bool) in
+                print("\(self.TAG)停止录屏\(isSuccess ? "成功": "失败")")
+                if self.videoPath != nil {
+                    self.saveVideo2Library(path: self.videoPath!, callback: {success in
+                        result(success)
+                    })
+                }else {
+                    result(false)
+                }
+             })
+        }else if call.method == "set_video_level"{
+            ///设置视频清晰度
+            ///videoLevel:  0流畅，1均衡，2高清，3超清。默认高清
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            let deviceSerial:String? = data?["deviceSerial"] as? String
+            var cameraNo:Int? = data?["cameraNo"] as? Int
+            var videoLevel:Int? = data?["videoLevel"] as? Int
+            
+            if cameraNo == nil {
+                cameraNo = 1
+            }
+            if(videoLevel == nil){
+                videoLevel = 2
+            }
+            if deviceSerial == nil{
+                result(false)
+            }
+            let videoLevelType = getVideoLevelType(videoLevel: videoLevel!)
+          
+            EZOpenSDK.setVideoLevel(deviceSerial!, cameraNo: cameraNo!, videoLevel: videoLevelType, completion: {
+                (error) in
+                if error != nil{
+                    print(">>>>>>>>error==\(String(describing: error))")
+                    result(false)
+                }else{
+                    result(true)
+                }
+            })
+        } else if call.method == "start_voice_talk"{
+            //开始对讲
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            let deviceSerial:String? = data?["deviceSerial"] as? String
+            let cameraNo:Int? = data?["cameraNo"] as? Int
+            let verifyCode:String? = data?["verifyCode"] as? String
+            if data?["supportTalk"] != nil {
+                supportTalk = (data!["supportTalk"] as! Int)
+            }
+            if data?["isPhone2Dev"] != nil {
+                isPhone2Dev = (data!["isPhone2Dev"] as! Bool)
+            }
+            
+            _talkPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
+            _talkPlayer!.setPlayVerifyCode(verifyCode)
+            _talkPlayer!.delegate = self
+            _talkPlayer!.startVoiceTalk()
+            result(true)
+        } else if call.method == "stop_voice_talk" {
+            if _talkPlayer != nil {
+                let isSuccess = _talkPlayer!.stopVoiceTalk()
+                print("\(self.TAG)结束对讲\(isSuccess ? "成功": "失败")")
+                _talkPlayer!.destoryPlayer()
                 result(isSuccess)
             }
         }
@@ -130,8 +210,15 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
        直播、回放和对讲 错误回调
      */
     public func player(_ player: EZPlayer!, didPlayFailed error: Error!) {
-        print(">>>>>>>>>>>>error====\(String(describing: error))")
-        ysResult?.sendMessage(false)
+
+        let entity:YsPlayerStatusEntity = YsPlayerStatusEntity()
+        entity.isSuccess = false
+        if player == _talkPlayer {
+            entity.talkErrorInfo = error.localizedDescription
+        }else if player == ezPlayer {
+            entity.playErrorInfo = error.localizedDescription
+        }
+        ysResult?.sendMessage(entity.getString())
     }
     
     /*
@@ -139,7 +226,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
      */
     public func player(_ player: EZPlayer!, didReceivedMessage messageCode: Int) {
         var dict = [String:Any]()
-
+        print(">>>>>>>>>code==\(messageCode)")
         switch messageCode {
         case 1:
             print("\(TAG)直播开始")
@@ -147,6 +234,19 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             break
         case 11:
             print("\(TAG)录像开始")
+            dict.updateValue(true, forKey: "isSuccess")
+            break
+        case 4:
+            print("\(TAG)对讲开始")
+            if _talkPlayer != nil {
+                if supportTalk == 3 {
+                    _talkPlayer?.audioTalkPressed(true)
+                }
+            }
+            dict.updateValue(true, forKey: "isSuccess")
+            break
+        case 5:
+            print("\(TAG)对讲结束")
             dict.updateValue(true, forKey: "isSuccess")
             break
         default: break
@@ -167,18 +267,55 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     /**
      *  保存图片到相册
      */
-    private func saveImage2Library(image:UIImage) -> Bool{
-        var result = false
+    private func saveImage2Library(image:UIImage,callback:@escaping(_ result:Bool)->Void ) {
         PHPhotoLibrary.shared().performChanges(
             {PHAssetChangeRequest.creationRequestForAsset(from: image)},
             completionHandler:{(isSuccess,error) in
-            DispatchQueue.main.async {
-                result = isSuccess
-                print(">>>>>>resul2t ==\(result)")
-
+                DispatchQueue.main.async {
+                    callback(isSuccess)
             }
         })
-        print(">>>>>>result1 ==\(result)")
-        return result
     }
+    
+    
+    /**
+     保存视频到相册
+     */
+    private func saveVideo2Library(path:String, callback:@escaping(_ result:Bool)->Void ) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: URL(fileURLWithPath: path))
+        }){(success,error) in
+            DispatchQueue.main.async {
+                if !success {
+                    print(">>>>>>>>>保存相册失败:\(String(describing: error))")
+                }
+                callback(success)
+            }
+        }
+    }
+    
+    /*
+     根据videoLevel返回EZVideoLevelType
+     */
+    private func getVideoLevelType (videoLevel:Int) -> EZVideoLevelType {
+        var videolevelType:EZVideoLevelType = EZVideoLevelType.high
+        switch videoLevel {
+        case 0:
+            videolevelType = EZVideoLevelType.low
+        case 1:
+            videolevelType = EZVideoLevelType.middle
+        case 2:
+            videolevelType = EZVideoLevelType.high
+        case 3:
+            videolevelType = EZVideoLevelType.superHigh
+        default:
+            break
+        }
+        return videolevelType
+    }
+    
+   
+      
+    
+    
 }
