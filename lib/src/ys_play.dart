@@ -107,14 +107,6 @@ class YsPlay {
     return result;
   }
 
-  // 释放
-  static Future<bool> videoRelease() async {
-    await _channel.invokeMethod(
-      "release",
-    );
-    return true;
-  }
-
   // 打开声音
   static Future<bool> openSound() async {
     bool result = await _channel.invokeMethod("openSound");
@@ -190,19 +182,19 @@ class YsPlay {
     return result;
   }
 
-  // 结束直播
+  ///结束直播
   static Future<bool> endVideo() async {
     await _channel.invokeMethod("end");
     return true;
   }
 
-  // 截屏
+  ///截屏
   static Future capturePicture() async {
     var result = await _channel.invokeMethod("capturePicture");
     return result;
   }
 
-  // 设置视频清晰度
+  ///设置视频清晰度
   static Future<bool> setVideoLevel({
     required String deviceSerial,
     int cameraNo = 1,
@@ -219,7 +211,7 @@ class YsPlay {
     return result;
   }
 
-  // 控制云台
+  ///控制云台
   static Future<YsResponseEntity> ptzStart({
     required String accessToken,
     required String deviceSerial,
@@ -236,7 +228,7 @@ class YsPlay {
     );
   }
 
-  // 停止控制
+  ///停止控制
   static Future<YsResponseEntity> ptzStop({
     required String accessToken,
     required String deviceSerial,
@@ -279,19 +271,8 @@ class YsPlay {
 
   // 释放资源
   static Future<void> dispose() async {
-    await _channel.invokeMethod("release");
+    await _channel.invokeMethod("dispose");
   }
-
-  // 获取设备信息
-  // static Future<void> probeDeviceInfo({String? deviceSerial, String? deviceType}) async {
-  //   await _channel.invokeMethod(
-  //     "probe_device_info",
-  //     {
-  //       'deviceSerial': deviceSerial,
-  //       'deviceType': deviceType,
-  //     },
-  //   );
-  // }
 
   /// 无线配网模式
   /// mode: wifi-wifi配网 wave-声波配网
@@ -337,12 +318,6 @@ class YsPlay {
     bool result = await _channel.invokeMethod('stop_config', {'mode': mode});
     return result;
   }
-
-  /// 对讲能力支持
-  // static Future<bool> isSupportTalk({required String deviceSerial}) async {
-  //   bool result = await _channel.invokeMethod('is_support_talk', {'deviceSerial': deviceSerial});
-  //   return result;
-  // }
 
   /// 开始对讲
   static Future<bool> startVoiceTalk({

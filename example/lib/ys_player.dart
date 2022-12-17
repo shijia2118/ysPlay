@@ -198,11 +198,6 @@ class YsPlayerState extends State<YsPlayer> {
 
   /// 停止播放，释放资源
   void videoDispose() async {
-    if (mediaType == JkMediaType.playback) {
-      await YsPlay.stopPlayback();
-    } else if (mediaType == JkMediaType.real) {
-      await YsPlay.stopRealPlay();
-    }
     await YsPlay.dispose();
   }
 

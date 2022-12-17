@@ -73,12 +73,18 @@ class _PlaybackPageState extends State<PlaybackPage> {
     Widget stWidget = TimeSelector(
       text: '开始时间',
       time: startDt,
+      onSelected: (t) {
+        startDt = t;
+      },
     );
 
     /// 结束时间
     Widget etWidget = TimeSelector(
       text: '结束时间',
       time: endDt,
+      onSelected: (t) {
+        endDt = t;
+      },
     );
 
     /// 回放按钮
@@ -166,7 +172,6 @@ class _PlaybackPageState extends State<PlaybackPage> {
     if (ysPlayKey.currentState != null) {
       int st = TimeUtil.String2timeStamp(startDt);
       int et = TimeUtil.String2timeStamp(endDt);
-
       ysPlayKey.currentState!.onRePlay(startTime: st, endTime: et);
     }
   }

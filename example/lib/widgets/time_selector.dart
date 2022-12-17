@@ -7,10 +7,12 @@ import 'package:ys_play_example/utils/time_util.dart';
 class TimeSelector extends StatefulWidget {
   final String text;
   final String time;
+  final Function(String) onSelected;
   const TimeSelector({
     super.key,
     this.text = '',
     required this.time,
+    required this.onSelected,
   });
 
   @override
@@ -63,6 +65,7 @@ class _TimeSelectorState extends State<TimeSelector> {
           t.second ?? 0,
         );
         time = TimeUtil.timeFormat(dateTime.millisecondsSinceEpoch);
+        widget.onSelected(time);
         setState(() {});
       },
     );
