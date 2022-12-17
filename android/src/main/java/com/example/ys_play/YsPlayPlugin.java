@@ -23,14 +23,12 @@ import com.videogo.openapi.EZConstants;
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZOpenSDKListener;
 import com.videogo.openapi.EZPlayer;
-import com.videogo.openapi.bean.EZProbeDeviceInfoResult;
 import com.videogo.wificonfig.APWifiConfig;
 
 import java.util.Calendar;
 import java.util.Objects;
 
 import io.flutter.BuildConfig;
-import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -41,25 +39,20 @@ import io.flutter.plugin.common.StandardMessageCodec;
 public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private Application application;
-    private EZPlayer ezPlayer;
-    private EZPlayer talk;
+    private EZPlayer ezPlayer; //视频播放器
+    private EZPlayer talkPlayer; //对讲播放器
 
-    private SurfaceView surfaceView;
-    BasicMessageChannel<Object> ysResult;
+    private SurfaceView surfaceView; //播放视图
+    BasicMessageChannel<Object> ysResult; //回放、直播和对讲结果渠道
     BasicMessageChannel<Object> pwResult; //配网结果通道
 
-    private String deviceSerial;
-    private Integer cameraNo;
-    private Integer supportTalk; //1-半双工 3-全双工
-    private boolean isPhone2Dev; //true-手机端说，设备端听 false-设备端说，手机端听
-
-    private YsPlayViewHandler mHandler;
+    private Integer supportTalk; //0-不支持 1-全双工 3-半双工
+    private Integer isPhone2Dev; //1-手机端说，设备端听; 0-设备端说，手机端听
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         application = (Application) binding.getApplicationContext();
         BinaryMessenger messenger = binding.getBinaryMessenger();
-
 
         /// 注册播放视图
         binding.getPlatformViewRegistry().registerViewFactory(
@@ -67,28 +60,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 new YsPlayViewFactory((surfaceView) -> {
                     this.surfaceView = surfaceView;
                     //设置播放器的显示Surface
-                    surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-                        @Override
-                        public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                            LogUtils.d("surfaceCreated");
-                            if (ezPlayer != null) {
-                                ezPlayer.setSurfaceHold(holder);
-                            }
-                        }
-
-                        @Override
-                        public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-                            LogUtils.d("surfaceChanged");
-                        }
-
-                        @Override
-                        public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                            LogUtils.d("surfaceDestroyed");
-                            if (ezPlayer != null) {
-                                ezPlayer.setSurfaceHold(null);
-                            }
-                        }
-                    });
+//                    surfaceView.getHolder().addCallback(surfaceHolderCallback);
                 })
         );
 
@@ -130,15 +102,14 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 break;
             case "EZPlayer_init":
                 //初始化播放器
-                deviceSerial = call.argument("deviceSerial");
+                String deviceSerial1 = call.argument("deviceSerial");
                 String verifyCode = call.argument("verifyCode");
-                cameraNo = call.argument("cameraNo");
-                if(cameraNo==null) cameraNo=1;
+                Integer cameraNo1 = call.argument("cameraNo");
+                if(cameraNo1 ==null) cameraNo1 =1;
 
-                ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
+                ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial1, cameraNo1);
 
-                mHandler = new YsPlayViewHandler(ysResultListener);
-                ezPlayer.setHandler(mHandler);
+                ezPlayer.setHandler(new YsPlayViewHandler(ysResultListener));
                 ezPlayer.setSurfaceHold(surfaceView.getHolder());
                 ezPlayer.setPlayVerifyCode(verifyCode);
                 LogUtils.d("播放器初始化成功");
@@ -239,12 +210,10 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 if(ezPlayer!=null){
                     ezPlayer.setSurfaceHold(null);
                     surfaceView=null;
-                    mHandler = null;
                     ezPlayer.release();
                 }
-                if(talk != null){
-                    mHandler = null;
-                    talk.release();
+                if(talkPlayer != null){
+                    talkPlayer.release();
                 }
                 break;
             case "start_record":
@@ -317,7 +286,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                  *                  EZWiFiConfigMode.EZWiFiConfigWave：声波配网(Wave)
                  * @param back     配置回调
                  */
-                deviceSerial = call.argument("deviceSerial");
+                deviceSerial1 = call.argument("deviceSerial");
                 String ssid = call.argument("ssid");
                 String password = call.argument("password");
                 String mode = call.argument("mode");
@@ -328,7 +297,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 }
                 EZOpenSDK.getInstance().startConfigWifi(
                         application.getApplicationContext(),
-                        deviceSerial,
+                        deviceSerial1,
                         ssid,
                         password,
                         configMode,
@@ -349,15 +318,15 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                  */
                 ssid = call.argument("ssid");
                 password = call.argument("password");
-                deviceSerial = call.argument("deviceSerial");
+                deviceSerial1 = call.argument("deviceSerial");
                 verifyCode = call.argument("verifyCode");
 
                 EZOpenSDK.getInstance().startAPConfigWifiWithSsid(
                         ssid,
                         password,
-                        deviceSerial,
+                        deviceSerial1,
                         verifyCode,
-                        "EZVIZ_"+deviceSerial,
+                        "EZVIZ_"+ deviceSerial1,
                 "EZVIZ_"+ verifyCode,
                  true,
                         apConfigCallback
@@ -378,55 +347,72 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     result.success(false);
                 }
                 break;
-            case "start_voice_talk": /// 开始对讲
-                if (talk != null) {
-                    //关闭播放声音
-                    ezPlayer.closeSound();
-                    //关闭对讲
-                    talk.stopVoiceTalk();
-                    //销毁对讲器
-                    talk.release();
-                }
-                deviceSerial = call.argument("deviceSerial");
+            case "start_voice_talkPlayer": /// 开始对讲
+                //关闭播放器声音
+                if(ezPlayer!=null) ezPlayer.closeSound();
+                //获取对讲参数
+                deviceSerial1 = call.argument("deviceSerial");
                 verifyCode = call.argument("verifyCode");
-                cameraNo = call.argument("cameraNo");
+                cameraNo1 = call.argument("cameraNo");
                 supportTalk = call.argument("supportTalk");
-                isPhone2Dev = Boolean.TRUE.equals(call.argument("isPhone2Dev"));
-                if(cameraNo==null) cameraNo=1;
+                isPhone2Dev = call.argument("isPhone2Dev");
+                if(cameraNo1 ==null) cameraNo1 =1;
                 if(supportTalk==null) supportTalk = 1;
+                if(isPhone2Dev==null) isPhone2Dev = 1;
 
-                talk = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
-                //设置Handler, 该handler将被用于从播放器向handler传递消息
-                if(mHandler==null){
-                    mHandler = new YsPlayViewHandler(ysResultListener);
+                if(talkPlayer == null) {
+                    talkPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial1, cameraNo1);
+                    //设置Handler, 该handler将被用于从播放器向handler传递消息
+                    talkPlayer.setHandler(new YsPlayViewHandler(ysResultListener));
+                    //设备加密的需要传入密码
+                    talkPlayer.setPlayVerifyCode(verifyCode);
+                }else{
+                    talkPlayer.stopVoiceTalk();
                 }
-                talk.setHandler(mHandler);
-                //设备加密的需要传入密码
-                talk.setPlayVerifyCode(verifyCode);
                 //开启对讲
-                talk.startVoiceTalk();
-        
-                if(!isPhone2Dev){
-                    //声音开关
-                    ezPlayer.openSound();
-                    //手机端听，设备端说
-                    talk.setVoiceTalkStatus(false);
-                    talk.stopVoiceTalk();
-                }
+                talkPlayer.startVoiceTalk();
                 break;
-            case "stop_voice_talk": /// 停止对讲
-                if(talk != null){
-                    isSuccess = talk.stopVoiceTalk();
+            case "stop_voice_talkPlayer": /// 停止对讲
+                isSuccess = true;
+                if(talkPlayer != null){
+                    isSuccess = talkPlayer.stopVoiceTalk();
                     LogUtils.d("停止对讲"+(isSuccess?"成功":"失败"));
-                    talk.release();
-                    result.success(isSuccess);
+                    talkPlayer.release();
+                    talkPlayer = null;
                 }
+                result.success(isSuccess);
                 break;
             default:
                 result.notImplemented();
                 break;
         }
     }
+
+    /**
+     * 播放视图改变的回调
+     */
+    SurfaceHolder.Callback surfaceHolderCallback = new SurfaceHolder.Callback() {
+        @Override
+        public void surfaceCreated(@NonNull SurfaceHolder holder) {
+            LogUtils.d("surfaceCreated");
+            if (ezPlayer != null) {
+                ezPlayer.setSurfaceHold(holder);
+            }
+        }
+
+        @Override
+        public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+            LogUtils.d("surfaceChanged");
+        }
+
+        @Override
+        public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+            LogUtils.d("surfaceDestroyed");
+            if (ezPlayer != null) {
+                ezPlayer.setSurfaceHold(null);
+            }
+        }
+    };
 
     /**
      * 播放器状态监听回调
@@ -441,11 +427,14 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
         @Override
         public void onTalkSuccess() {
-            if(talk!=null) {
+            if(talkPlayer!=null) {
                 //半双工
                 if(supportTalk != null && supportTalk == 3){
-                    //设备端听，手机端说
-                    talk.setVoiceTalkStatus(isPhone2Dev);
+                    //isPhone2Dev:
+                    //0-手机端听，设备端说.打开扬声器
+                    //1-手机端说，设备端听.关闭扬声器
+                    talkPlayer.setVoiceTalkStatus(isPhone2Dev==1);
+                    talkPlayer.setSpeakerphoneOn(isPhone2Dev==0);
                 }
             }
         }

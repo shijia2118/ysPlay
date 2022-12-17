@@ -14,7 +14,7 @@ public class YsPlayViewFactory extends PlatformViewFactory {
     final String TAG = "萤石LOG=========>";
     private final OnPlatformViewCreated onViewCreated;
 
-    /// 构造函数，在应用启动时执行
+    ///应用启动时，通过registerViewFactory方法调用1次
     public YsPlayViewFactory(OnPlatformViewCreated onViewCreated) {
         super(StandardMessageCodec.INSTANCE);
         this.onViewCreated = onViewCreated;
