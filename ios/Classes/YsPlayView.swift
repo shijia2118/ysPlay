@@ -15,14 +15,13 @@ import Photos
 class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     
     var nativeView : UIView
-    var callback: ((_ tmpView:UIView)->())?
     var ezPlayer:EZPlayer
     var _talkPlayer:EZPlayer?
     private var messenger:FlutterBinaryMessenger
     var ysResult:FlutterBasicMessageChannel?
     private var videoPath:String? //视频地址
     var supportTalk:Int = 0 //对讲能力 0不支持 1全双工 3半双工
-    var isPhone2Dev:Int = 0 //1手机端说设备端听 0手机端听设备端说
+    var isPhone2Dev:Int = 1 //1手机端说设备端听 0手机端听设备端说
     
     let TAG = "荧石SDK=======>"
     
@@ -135,7 +134,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 print("\(self.TAG)录屏\(isSuccess ? "成功": "失败")")
                 result(isSuccess)
             })
-        }else if call.method == "stop_record"{
+        } else if call.method == "stop_record"{
             ezPlayer.stopLocalRecordExt({(isSuccess : Bool) in
                 print("\(self.TAG)停止录屏\(isSuccess ? "成功": "失败")")
                 if self.videoPath != nil {
@@ -146,7 +145,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                     result(false)
                 }
              })
-        }else if call.method == "set_video_level"{
+        } else if call.method == "set_video_level"{
             ///设置视频清晰度
             ///videoLevel:  0流畅，1均衡，2高清，3超清。默认高清
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
@@ -175,7 +174,10 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 }
             })
         } else if call.method == "start_voice_talk"{
-          
+            //关闭播放声音
+            if ezPlayer != nil {
+                ezPlayer.closeSound()
+            }
             //获取参数
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
@@ -187,52 +189,81 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             if data?["isPhone2Dev"] != nil {
                 isPhone2Dev = (data!["isPhone2Dev"] as! Int)
             }
-            //创建对讲器
-            _talkPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
-            _talkPlayer!.setPlayVerifyCode(verifyCode)
-            _talkPlayer!.delegate = self
-            _talkPlayer!.startVoiceTalk()
-            
-            //半双工设备需要设置
-            if supportTalk == 3{
-                if isPhone2Dev == 0 {
-                    //手机端听 设备端说
-                    ezPlayer.openSound()
-                    _talkPlayer!.audioTalkPressed(false)
-                } else if isPhone2Dev == 1{
-                    //手机端说 设备端听
-                    ezPlayer.closeSound()
-                    _talkPlayer!.audioTalkPressed(true)
-                }
+            if _talkPlayer == nil {
+                //创建对讲器
+                _talkPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
+                _talkPlayer!.setPlayVerifyCode(verifyCode)
+                _talkPlayer!.delegate = self
+            }else{
+                _talkPlayer!.stopVoiceTalk()
             }
-            //需成对使用，否则会出各种问题
-            _talkPlayer!.stopVoiceTalk()
-            print("\(TAG)\(isPhone2Dev == 1 ? "说" : "听")")
-            result(true)
+            //开启对讲
+            _talkPlayer!.startVoiceTalk()
         } else if call.method == "stop_voice_talk" {
-            result(stopVoiceTalk())
+            var isSuccess : Bool = true
+            if _talkPlayer != nil {
+                isSuccess = _talkPlayer!.stopVoiceTalk()
+                print("\(self.TAG)结束对讲\(isSuccess ? "成功": "失败")")
+                _talkPlayer!.delegate = nil
+                _talkPlayer!.destoryPlayer()
+                _talkPlayer = nil
+            }
+            result(isSuccess)
+        } else if call.method == "start_config_ap" {
+            ///AP配网接口(热点配网)
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            let deviceSerial:String? = data?["deviceSerial"] as? String
+            let verifyCode:String? = data?["verifyCode"] as? String
+            let ssid:String? = data?["ssid"] as? String
+            let password:String? = data?["password"] as? String
+
+            
+        } else if call.method == "start_config_wifi" {
+            ///SmartConfig & 声波配网
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            let deviceSerial:String? = data?["deviceSerial"] as? String
+            let ssid:String? = data?["ssid"] as? String
+            let password:String? = data?["password"] as? String
+            let mode:String? = data?["mode"] as? String
+
+            var configMode:Int = EZWiFiConfigMode.smart ////默认wifi配网
+            if mode == "wave"{
+                //声波配网
+                configMode = EZWiFiConfigMode.wave
+            }
+            
+            EZOpenSDK.startConfigWifi(ssid, password: password, deviceSerial:deviceSerial, mode: configMode, deviceStatus: <#T##((EZWifiConfigStatus, String?) -> Void)!##((EZWifiConfigStatus, String?) -> Void)!##(EZWifiConfigStatus, String?) -> Void#>)
+            
+            
+        } else if call.method == "stop_config" {
+            ///停止配网
+            var mode:String = call.argument("mode");
+            if mode == "wave" || mode == "wifi" {
+                let isSuccess:Bool = EZOpenSDK.stopConfigWifi()
+                print("\(TAG)停止配网\(isSuccess ? "成功" : "失败")")
+                result(isSuccess)
+            } else if mode == "ap" {
+                EZOpenSDK.stopAPConfigWifi()
+                result(true)
+            } else {
+                result(false)
+            }
+        }
+        else if call.method == "dispose" {
+            if ezPlayer != nil {
+                ezPlayer.destoryPlayer()
+                ezPlayer = nil
+            }
+            if _talkPlayer != nil {
+                _talkPlayer!.destoryPlayer()
+                _talkPlayer = nil
+            }
         }
         else {
             result(FlutterMethodNotImplemented)
         }
     }
-    
-    /**
-     * 停止对讲
-     */
-    private func stopVoiceTalk() -> Bool {
-        if _talkPlayer != nil {
-            let isSuccess = _talkPlayer!.stopVoiceTalk()
-            print("\(self.TAG)结束对讲\(isSuccess ? "成功": "失败")")
-            _talkPlayer!.delegate = nil
-            _talkPlayer!.destoryPlayer()
-            _talkPlayer = nil
-            return isSuccess
-        }else{
-            return true
-        }
-    }
-    
+        
     /**
      * 直播、回放和对讲 错误回调
      */
@@ -264,6 +295,18 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             break
         case 4:
             print("\(TAG)对讲开始")
+            if _talkPlayer != nil {
+                //半双工设备需要设置
+                if supportTalk == 3{
+                    if isPhone2Dev == 0 {
+                        //手机端听 设备端说
+                        _talkPlayer!.audioTalkPressed(false)
+                    } else if isPhone2Dev == 1{
+                        //手机端说 设备端听
+                        _talkPlayer!.audioTalkPressed(true)
+                    }
+                }
+            }
             dict.updateValue(true, forKey: "isSuccess")
             break
         case 5:

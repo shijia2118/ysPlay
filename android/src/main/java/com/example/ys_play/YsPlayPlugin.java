@@ -331,7 +331,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 supportTalk = call.argument("supportTalk");
                 isPhone2Dev = call.argument("isPhone2Dev");
                 if(cameraNo ==null) cameraNo =1;
-                if(supportTalk==null) supportTalk = 1;
+                if(supportTalk==null) supportTalk = 0;
                 if(isPhone2Dev==null) isPhone2Dev = 1;
 
                 if(talkPlayer == null) {
