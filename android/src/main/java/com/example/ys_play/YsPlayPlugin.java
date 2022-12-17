@@ -60,7 +60,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 new YsPlayViewFactory((surfaceView) -> {
                     this.surfaceView = surfaceView;
                     //设置播放器的显示Surface
-//                    surfaceView.getHolder().addCallback(surfaceHolderCallback);
+                    surfaceView.getHolder().addCallback(surfaceHolderCallback);
                 })
         );
 
@@ -347,7 +347,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     result.success(false);
                 }
                 break;
-            case "start_voice_talkPlayer": /// 开始对讲
+            case "start_voice_talk": /// 开始对讲
                 //关闭播放器声音
                 if(ezPlayer!=null) ezPlayer.closeSound();
                 //获取对讲参数
@@ -372,7 +372,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 //开启对讲
                 talkPlayer.startVoiceTalk();
                 break;
-            case "stop_voice_talkPlayer": /// 停止对讲
+            case "stop_voice_talk": /// 停止对讲
                 isSuccess = true;
                 if(talkPlayer != null){
                     isSuccess = talkPlayer.stopVoiceTalk();
