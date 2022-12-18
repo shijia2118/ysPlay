@@ -262,10 +262,10 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
       onTap: () async {
         Navigator.pop(context);
         LoadingHelper.showDialogLoading(context, text: '配网中...');
-        bool result = await YsPlay.setAccessToken(accessToken);
-        if (!result) {
-          showToast('assessToken有误');
-        }
+        // bool result = await YsPlay.setAccessToken(accessToken);
+        // if (!result) {
+        //   showToast('assessToken有误');
+        // }
 
         if (pwPosition == 1) {
           //热点配网
