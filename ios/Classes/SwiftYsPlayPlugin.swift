@@ -25,7 +25,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
         registrar.register(factory, withId: Constants.CHANNEL)
         let channel = FlutterMethodChannel(name: Constants.CHANNEL, binaryMessenger: registrar.messenger())
         
-        let instance = SwiftYsPlayPlugin(messenger: registrar.messenger() )
+        let instance = SwiftYsPlayPlugin(messenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
@@ -39,11 +39,15 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                 print("\(TAG) SDK初始化 \(res ? "成功" : "失败")")
                 result(res)
             }
-        }else if call.method == "set_access_token" {
+        } else if call.method == "set_access_token" {
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
-            EZOpenSDK.setAccessToken(data?["accessToken"] as? String)
-            print("\(TAG)accessToken设置成功")
-            result(true)
+            if data != nil && data!["accessToken"] != nil {
+                EZOpenSDK.setAccessToken(data!["accessToken"]!)
+                print("\(TAG)accessToken设置成功")
+                result(true)
+            }else{
+                result(false)
+            }
         } else if call.method == "start_config_ap" {
             ///AP配网接口(热点配网)
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
@@ -52,8 +56,8 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let password:String? = data?["password"] as? String
             let verifyCode:String? = data?["verifyCode"] as? String
 
-            EZOpenSDK.startAPConfigWifi(withSsid: ssid, password: password,
-                                        deviceSerial: deviceSerial, verifyCode: verifyCode,result: apConfigStatus)
+            EZOpenSDK.startAPConfigWifi(withSsid: ssid ?? "", password: password ?? "",
+                                        deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", deviceStatus: wifiConfigStatus)
             
         } else if call.method == "start_config_wifi" {
             ///SmartConfig & 声波配网
@@ -69,8 +73,9 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                 configMode = .wave
             }
             print(">>>>>>>>\(configMode.rawValue)")
-            EZOpenSDK.startConfigWifi(ssid, password: password, deviceSerial:deviceSerial,
+            EZOpenSDK.startConfigWifi(ssid ?? "", password: password ?? "", deviceSerial:deviceSerial ?? "",
                                       mode: configMode.rawValue,deviceStatus: wifiConfigStatus)
+            
         } else if call.method == "stop_config" {
             ///停止配网
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
@@ -99,46 +104,46 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     }
     
     /**
-     * smartconfig配网回调
+     * 配网回调
      */
     lazy var wifiConfigStatus = { (status:EZWifiConfigStatus,result:String?)  in
         let entity:PeiwangResultEntity = PeiwangResultEntity()
         switch(status){
         case EZWifiConfigStatus.DEVICE_PLATFORM_REGISTED:
-            print("\(self.TAG)注册平台成功")
+            print("\(self.TAG)设备注册平台成功")
             entity.isSuccess = true
             entity.msg = "注册平台成功"
             self.pwResult?.sendMessage(entity.getString())
             EZOpenSDK.stopConfigWifi()
             break
         case .DEVICE_WIFI_CONNECTING:
-            print("\(self.TAG)Wi-Fi连接中...")
+            print("\(self.TAG)设备正在连接WiFi...")
+            break
         case .DEVICE_WIFI_CONNECTED:
             print("\(self.TAG)Wi-Fi连接成功")
+            break
         case .DEVICE_ACCOUNT_BINDED:
             print("\(self.TAG)已绑定设备")
+            break
+        case .DEVICE_WIFI_SENT_SUCCESS:
+            print("\(self.TAG)向设备发送WiFi信息成功")
+            break
+        case .DEVICE_WIFI_SENT_FAILED:
+            print("\(self.TAG)向设备发送WiFi信息失败")
+            entity.isSuccess = false
+            entity.msg = "向设备发送WiFi信息失败"
+            self.pwResult?.sendMessage(entity.getString())
+            break
+        case .DEVICE_PLATFORM_REGIST_FAILED:
+            entity.isSuccess = false
+            entity.msg = "注册平台失败"
+            self.pwResult?.sendMessage(entity.getString())
+            break
         default:
             break
         }
     }
-    
-    /**
-     * AP配网结果回调
-     */
-    lazy var apConfigStatus = {(result:Bool) in
-        let entity:PeiwangResultEntity = PeiwangResultEntity()
-        entity.isSuccess = result
-        var msg:String = ""
-        if result == true {
-            entity.msg = "注册平台成功"
-        }else {
-            entity.msg = "注册平台失败"
-        }
-        self.pwResult?.sendMessage(entity.getString())
-        EZOpenSDK.stopAPConfigWifi()
-        
-    }
-    
+
 
 }
 
