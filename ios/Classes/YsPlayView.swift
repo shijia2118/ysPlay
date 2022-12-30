@@ -47,9 +47,13 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
 
         if call.method == "set_access_token" {
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
-            EZOpenSDK.setAccessToken(data?["accessToken"] as? String)
-            print("\(TAG)accessToken设置成功")
-            result(true)
+            if data != nil && data!["accessToken"] != nil {
+                EZOpenSDK.setAccessToken(data!["accessToken"]!)
+                print("\(TAG)accessToken设置成功")
+                result(true)
+            }else{
+                result(false)
+            }
         } else if call.method == "EZPlayer_init" {
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String

@@ -75,7 +75,6 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             print(">>>>>>>>\(configMode.rawValue)")
             EZOpenSDK.startConfigWifi(ssid ?? "", password: password ?? "", deviceSerial:deviceSerial ?? "",
                                       mode: configMode.rawValue,deviceStatus: wifiConfigStatus)
-            
         } else if call.method == "stop_config" {
             ///停止配网
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
