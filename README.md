@@ -12,12 +12,7 @@ Flutter萤石云直播插件，支持Android和IOS
 7.配网  
 8.对讲(包含半双工对讲和全双工对讲)  
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+# 准备工作
+集成之前，最好读一下[官方文档](http://open.ys7.com/help/36).
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
 
