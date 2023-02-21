@@ -61,55 +61,55 @@ Flutter萤石云直播插件，支持Android和IOS
     #========SDK对外接口=======#
     -keep class com.ezviz.opensdk.** { *;}
 
-#========以下是hik二方库=======#
--dontwarn com.ezviz.**
--keep class com.ezviz.** { *;}
+    #========以下是hik二方库=======#
+    -dontwarn com.ezviz.**
+    -keep class com.ezviz.** { *;}
 
--dontwarn com.ez.**
--keep class com.ez.** { *;}
+    -dontwarn com.ez.**
+    -keep class com.ez.** { *;}
 
--dontwarn com.hc.CASClient.**
--keep class com.hc.CASClient.** { *;}
+    -dontwarn com.hc.CASClient.**
+    -keep class com.hc.CASClient.** { *;}
 
--dontwarn com.videogo.**
--keep class com.videogo.** { *;}
+    -dontwarn com.videogo.**
+    -keep class com.videogo.** { *;}
 
--dontwarn com.hik.TTSClient.**
--keep class com.hik.TTSClient.** { *;}
+    -dontwarn com.hik.TTSClient.**
+    -keep class com.hik.TTSClient.** { *;}
 
--dontwarn com.hik.stunclient.**
--keep class com.hik.stunclient.** { *;}
+    -dontwarn com.hik.stunclient.**
+    -keep class com.hik.stunclient.** { *;}
 
--dontwarn com.hik.streamclient.**
--keep class com.hik.streamclient.** { *;}
+    -dontwarn com.hik.streamclient.**
+    -keep class com.hik.streamclient.** { *;}
 
--dontwarn com.hikvision.sadp.**
--keep class com.hikvision.sadp.** { *;}
+    -dontwarn com.hikvision.sadp.**
+    -keep class com.hikvision.sadp.** { *;}
 
--dontwarn com.hikvision.netsdk.**
--keep class com.hikvision.netsdk.** { *;}
+    -dontwarn com.hikvision.netsdk.**
+    -keep class com.hikvision.netsdk.** { *;}
 
--dontwarn com.neutral.netsdk.**
--keep class com.neutral.netsdk.** { *;}
+    -dontwarn com.neutral.netsdk.**
+    -keep class com.neutral.netsdk.** { *;}
 
--dontwarn com.hikvision.audio.**
--keep class com.hikvision.audio.** { *;}
+    -dontwarn com.hikvision.audio.**
+    -keep class com.hikvision.audio.** { *;}
 
--dontwarn com.mediaplayer.audio.**
--keep class com.mediaplayer.audio.** { *;}
+    -dontwarn com.mediaplayer.audio.**
+    -keep class com.mediaplayer.audio.** { *;}
 
--dontwarn com.hikvision.wifi.**
--keep class com.hikvision.wifi.** { *;}
+    -dontwarn com.hikvision.wifi.**
+    -keep class com.hikvision.wifi.** { *;}
 
--dontwarn com.hikvision.keyprotect.**
--keep class com.hikvision.keyprotect.** { *;}
+    -dontwarn com.hikvision.keyprotect.**
+    -keep class com.hikvision.keyprotect.** { *;}
 
--dontwarn com.hikvision.audio.**
--keep class com.hikvision.audio.** { *;}
+    -dontwarn com.hikvision.audio.**
+    -keep class com.hikvision.audio.** { *;}
 
--dontwarn org.MediaPlayer.PlayM4.**
--keep class org.MediaPlayer.PlayM4.** { *;}
-#========以上是hik二方库=======#
+    -dontwarn org.MediaPlayer.PlayM4.**
+    -keep class org.MediaPlayer.PlayM4.** { *;}
+    #========以上是hik二方库=======#
 
 #========以下是第三方开源库=======#
 # JNA
