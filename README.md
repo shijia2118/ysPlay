@@ -49,17 +49,17 @@ Flutter萤石云直播插件，支持Android和IOS
 
 在项目app目录下添加:
 
-defaultConfig {
+    defaultConfig {
        ...
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
-}
+    }
 
 代码混淆:
 
-#========SDK对外接口=======#
--keep class com.ezviz.opensdk.** { *;}
+    #========SDK对外接口=======#
+    -keep class com.ezviz.opensdk.** { *;}
 
 #========以下是hik二方库=======#
 -dontwarn com.ezviz.**
@@ -134,5 +134,6 @@ defaultConfig {
 # 必须额外加的，否则编译无法通过
 -dontwarn okio.**
 #========以上是第三方开源库=======#
+
 
 
