@@ -16,9 +16,9 @@ Flutter萤石云直播插件，支持Android和IOS
 集成之前，最好读一下[官方文档](http://open.ys7.com/help/36).
 
 ## 安装
-        dependencies:
-            ys_play: 
-                git:
-                    url: https://github.com/shijia2118/nav_router.git
+    dependencies:
+        ys_play: 
+            git:
+                url: https://github.com/shijia2118/nav_router.git
 
 
