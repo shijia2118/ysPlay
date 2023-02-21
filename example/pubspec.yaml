@@ -6,7 +6,7 @@ description: Demonstrates how to use the ys_play plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: '>=2.19.2 <3.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -22,11 +22,11 @@ dependencies:
   permission_handler: 10.2.0
   flutter_pickers: 2.1.9
   #获取wifi信息
-  network_info_plus: ^2.3.2
+  network_info_plus: 3.0.2
   #监听网络状态
   # connectivity_plus: ^2.3.9
   #设置app
-  app_settings: ^4.1.8
+  app_settings: 4.2.0
 
   ys_play:
     # When depending on this package from a real application you should use:
