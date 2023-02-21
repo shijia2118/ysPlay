@@ -139,21 +139,21 @@ Flutter萤石云直播插件，支持Android和IOS
 ### IOS端
 在info.plist中添加:  
 
-1.相册权限： 如果需要使用开放平台播放器录像和截图并保存的功能，就需要配置相册权限。
+1.相册权限： 如果需要使用开放平台播放器录像和截图并保存的功能，就需要配置相册权限。     
     <key>NSPhotoLibraryAddUsageDescription</key>
 	<string>$(PRODUCT_NAME)需要使用手机相册</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME)需要使用手机相册</string>
 
-2.麦克风权限： 如果需要使用设备对讲功能，就需要配置麦克风权限。务必在发起对讲前向iOS系统申请麦克风权限，否则将导致对讲异常。
+2.麦克风权限： 如果需要使用设备对讲功能，就需要配置麦克风权限。务必在发起对讲前向iOS系统申请麦克风权限，否则将导致对讲异常。        
     <key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME)需要使用手机麦克风</string>
 
-3.摄像头权限： 如果需要仿照demo实现扫码添加设备功能，就需要配置摄像头权限。
+3.摄像头权限： 如果需要仿照demo实现扫码添加设备功能，就需要配置摄像头权限。     
     <key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME)需要使用手机照相机</string>
 
-4.配网权限: 如果需要使用萤石云设备入网配置，就需要配置配网权限。
+4.配网权限: 如果需要使用萤石云设备入网配置，就需要配置配网权限。        
     <key>NSLocalNetworkUsageDescription</key>
 	<string>$(PRODUCT_NAME)需要使用本地网络权限用于wifi配网</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
