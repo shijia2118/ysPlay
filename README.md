@@ -23,7 +23,7 @@ Flutter萤石云直播插件，支持Android和IOS
 
 
 ## 工程配置
-###Android端
+### Android端
 在 AndroidMainfest.xml 文件中添加：
 <!-- 基础功能所需权限 -->
 <uses-permission android:name="android.permission.INTERNET" />
@@ -48,6 +48,7 @@ Flutter萤石云直播插件，支持Android和IOS
 <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
 在项目app目录下添加:
+
 defaultConfig {
        ...
         ndk {
@@ -56,6 +57,7 @@ defaultConfig {
 }
 
 代码混淆:
+        
 #========SDK对外接口=======#
 -keep class com.ezviz.opensdk.** { *;}
 
