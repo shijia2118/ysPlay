@@ -8,9 +8,9 @@ class DialogUtil {
     BuildContext context,
     String title, {
     required Widget content,
-    bool noCancel: false,
-    String confirm: '确定',
-    String cancel: '取消',
+    bool noCancel = false,
+    String confirm = '确定',
+    String cancel = '取消',
     Function()? onTap,
   }) async {
     if (Platform.isIOS) {
@@ -50,8 +50,9 @@ class DialogUtil {
     } else {
       List<Widget> actions = [];
       if (!noCancel) {
-        actions
-            .add(TextButton(onPressed: () => Navigator.pop(context, false), child: Text(cancel)));
+        actions.add(TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(cancel)));
       }
       actions.add(
         TextButton(

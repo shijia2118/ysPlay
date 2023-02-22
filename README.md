@@ -172,6 +172,10 @@ Flutter萤石云直播插件，支持Android和IOS
 <key>NSLocationWhenInUseUsageDescription</key>  
 <string>$(PRODUCT_NAME)需要使用定位权限用于wifi配网</string>  
 ```
+
+## 使用方式
+具体请见example中的功能，里面有详细注释。
+
    
 	
 
