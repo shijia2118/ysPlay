@@ -154,13 +154,13 @@ Flutter萤石云直播插件，支持Android和IOS
     ```
 
 3.摄像头权限： 如果需要仿照demo实现扫码添加设备功能，就需要配置摄像头权限。 
-```    
+    ```
     <key>NSCameraUsageDescription</key>  
     <string>$(PRODUCT_NAME)需要使用手机照相机</string>
     ```
 
 4.配网权限: 如果需要使用萤石云设备入网配置，就需要配置配网权限。 
-```       
+    ```       
     <key>NSLocalNetworkUsageDescription</key>  
     <string>$(PRODUCT_NAME)需要使用本地网络权限用于wifi配网</string>  
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>  
