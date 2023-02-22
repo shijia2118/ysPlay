@@ -122,7 +122,7 @@ class _RealPageState extends State<RealPage> {
           YsPlayer(
             deviceSerial: deviceSerial,
             verifyCode: verifyCode,
-            mediaType: JkMediaType.real,
+            mediaType: YsMediaType.real,
           ),
           buttonBars,
           Expanded(child: bodyWidget),
@@ -213,7 +213,9 @@ class _RealPageState extends State<RealPage> {
 
     if (isTalking) {
       // 判断是否支持对讲
-      await YsPlay.getDevCapacity(accessToken: accessToken, deviceSerial: deviceSerial).then((res) {
+      await YsPlay.getDevCapacity(
+              accessToken: accessToken, deviceSerial: deviceSerial)
+          .then((res) {
         if (res.code == '200' && res.data != null) {
           //1-全双工 3-半双工
           if (res.data!.supportTalk == "1" || res.data!.supportTalk == "3") {

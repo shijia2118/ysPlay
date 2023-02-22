@@ -7,23 +7,23 @@ import 'package:ys_play_example/widgets/player_forground_widget.dart';
 import 'widgets/bottom_handle_bar.dart';
 import 'main.dart';
 
-enum JkMediaType {
-  playback,
-  real,
+enum YsMediaType {
+  playback, //回放
+  real, //直播
 }
 
 class YsPlayer extends StatefulWidget {
   final String deviceSerial;
   final String verifyCode;
   final int cameraNo;
-  final JkMediaType mediaType;
+  final YsMediaType mediaType;
   final Orientation orientation;
   const YsPlayer({
     Key? key,
     required this.deviceSerial,
     required this.verifyCode,
     this.cameraNo = 1,
-    this.mediaType = JkMediaType.playback,
+    this.mediaType = YsMediaType.playback,
     this.orientation = Orientation.portrait,
   }) : super(key: key);
 
@@ -35,7 +35,7 @@ class YsPlayerState extends State<YsPlayer> {
   late String deviceSerial;
   late String verifyCode;
   late int cameraNo;
-  late JkMediaType mediaType;
+  late YsMediaType mediaType;
   late double playerHeight;
   late double playerWidth;
 
@@ -164,7 +164,7 @@ class YsPlayerState extends State<YsPlayer> {
     int? startTime,
     int? endTime,
   }) async {
-    if (mediaType == JkMediaType.playback) {
+    if (mediaType == YsMediaType.playback) {
       DateTime now = DateTime.now();
       int et = now.millisecondsSinceEpoch;
       int st = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
@@ -176,7 +176,7 @@ class YsPlayerState extends State<YsPlayer> {
         startTime,
         endTime,
       );
-    } else if (mediaType == JkMediaType.real) {
+    } else if (mediaType == YsMediaType.real) {
       // 直播
       return await YsPlay.startRealPlay();
     } else {
@@ -213,9 +213,9 @@ class YsPlayerState extends State<YsPlayer> {
 
   /// 点击播放按钮
   void onPlayHandle(bool isPlaying) async {
-    if (mediaType == JkMediaType.playback) {
+    if (mediaType == YsMediaType.playback) {
       isPlaying ? resumePlayback() : pausePlayback();
-    } else if (mediaType == JkMediaType.real) {
+    } else if (mediaType == YsMediaType.real) {
       isPlaying ? onRePlay() : YsPlay.stopRealPlay();
     }
   }
@@ -227,7 +227,7 @@ class YsPlayerState extends State<YsPlayer> {
 
   /// 设置清晰度
   void onSelectLevelHandle(int i) async {
-    if (mediaType == JkMediaType.real) {
+    if (mediaType == YsMediaType.real) {
       bool result = await YsPlay.setVideoLevel(
         deviceSerial: deviceSerial,
         videoLevel: i,

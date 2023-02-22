@@ -16,7 +16,7 @@ class BottomHandleBar extends StatefulWidget {
   final Function()? onFullScreenHandle;
   final Function(int)? onSelectLevelHandle;
   final bool isPrepared;
-  final JkMediaType mediaType;
+  final YsMediaType mediaType;
   final Orientation orientation;
   const BottomHandleBar({
     Key? key,
@@ -27,7 +27,7 @@ class BottomHandleBar extends StatefulWidget {
     this.onSoundHandle,
     this.onSelectLevelHandle,
     required this.isPrepared,
-    this.mediaType = JkMediaType.playback,
+    this.mediaType = YsMediaType.playback,
     this.orientation = Orientation.portrait,
   }) : super(key: key);
 
@@ -40,7 +40,7 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
   Timer? timer;
   bool isPrepared = false;
 
-  late JkMediaType mediaType;
+  late YsMediaType mediaType;
   late Orientation orientation;
 
   @override
@@ -97,8 +97,9 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
 
               // 清晰度设置
               JkLevelBtn(
-                isShow: mediaType == JkMediaType.real,
-                onSelectLevelHandle: (position) => onSelectLevelHandle(position),
+                isShow: mediaType == YsMediaType.real,
+                onSelectLevelHandle: (position) =>
+                    onSelectLevelHandle(position),
               ),
 
               const Spacer(),
@@ -164,6 +165,7 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
   /// 设置清晰度
   void onSelectLevelHandle(int position) {
     onTouchedHandle();
-    if (widget.onSelectLevelHandle != null) widget.onSelectLevelHandle!(position);
+    if (widget.onSelectLevelHandle != null)
+      widget.onSelectLevelHandle!(position);
   }
 }

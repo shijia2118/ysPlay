@@ -53,6 +53,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        LogUtils.d("onAttachedToEngine");
         application = (Application) binding.getApplicationContext();
         BinaryMessenger messenger = binding.getBinaryMessenger();
 
@@ -405,6 +406,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
             }
         }
     };
+
+
 
     /**
      * 播放器状态监听回调

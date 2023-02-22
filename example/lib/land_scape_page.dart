@@ -5,10 +5,10 @@ import 'package:ys_play_example/ys_player.dart';
 import 'main.dart';
 
 class LandscapePage extends StatefulWidget {
-  final JkMediaType mediaType;
+  final YsMediaType mediaType;
   const LandscapePage({
     super.key,
-    this.mediaType = JkMediaType.playback,
+    this.mediaType = YsMediaType.playback,
   });
 
   @override
@@ -16,7 +16,7 @@ class LandscapePage extends StatefulWidget {
 }
 
 class _LandscapePageState extends State<LandscapePage> {
-  late JkMediaType mediaType;
+  late YsMediaType mediaType;
 
   @override
   void initState() {
@@ -25,7 +25,8 @@ class _LandscapePageState extends State<LandscapePage> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
     ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []); //隐藏状态栏，底部按钮栏
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: []); //隐藏状态栏，底部按钮栏
     initParams();
   }
 

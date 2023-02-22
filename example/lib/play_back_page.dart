@@ -12,10 +12,10 @@ class PlaybackPage extends StatefulWidget {
   const PlaybackPage({Key? key}) : super(key: key);
 
   @override
-  State<PlaybackPage> createState() => _PlaybackPageState();
+  State<PlaybackPage> createState() => PlaybackPageState();
 }
 
-class _PlaybackPageState extends State<PlaybackPage> {
+class PlaybackPageState extends State<PlaybackPage> {
   bool isRecording = false;
   late String startDt;
   late String endDt;
@@ -94,9 +94,7 @@ class _PlaybackPageState extends State<PlaybackPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('回放页面'),
-      ),
+      appBar: AppBar(title: Text('回放页面')),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -104,7 +102,7 @@ class _PlaybackPageState extends State<PlaybackPage> {
               key: ysPlayKey,
               deviceSerial: deviceSerial,
               verifyCode: verifyCode,
-              mediaType: JkMediaType.playback,
+              mediaType: YsMediaType.playback,
             ),
 
             // 截屏和录屏
