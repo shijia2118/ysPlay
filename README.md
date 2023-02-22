@@ -140,7 +140,7 @@ Flutter萤石云直播插件，支持Android和IOS
 在info.plist中添加:  
 
 1.相册权限： 如果需要使用开放平台播放器录像和截图并保存的功能，就需要配置相册权限。                 
-    <key>NSPhotoLibraryAddUsageDescription</key>
+        <key>NSPhotoLibraryAddUsageDescription</key>
     <string>$(PRODUCT_NAME)需要使用手机相册</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>$(PRODUCT_NAME)需要使用手机相册</string>
