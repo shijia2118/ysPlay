@@ -25,6 +25,7 @@ Flutter萤石云直播插件，支持Android和IOS
 ## 工程配置
 ### Android端
 在 AndroidMainfest.xml 文件中添加：
+```       
 <!-- 基础功能所需权限 -->
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -46,6 +47,7 @@ Flutter萤石云直播插件，支持Android和IOS
 <!-- 麦克风权限-->
 <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+```       
 
 在项目app目录下添加:
 
