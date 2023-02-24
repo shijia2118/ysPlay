@@ -1,7 +1,7 @@
 package com.example.ys_play;
 
 import android.content.Context;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -12,21 +12,21 @@ import io.flutter.plugin.platform.PlatformView;
 
 public class YsPlayView implements PlatformView{
 
-    private SurfaceView surfaceView;
+    private TextureView textureView;
 
     public YsPlayView(@NonNull Context context,OnPlatformViewCreated onViewCreated){
-        surfaceView = new SurfaceView(context);
-        onViewCreated.callback(surfaceView);
+        textureView = new TextureView(context);
+        onViewCreated.callback(textureView); //把 textureView 回调给 YsPlayPlugin
     }
 
     @Nullable
     @Override
     public View getView() {
-        return surfaceView;
+        return textureView;
     }
 
     @Override
     public void dispose() {
-        surfaceView=null;
+        textureView=null;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.ys_play.Interface;
 
-import android.view.SurfaceView;
+import android.view.TextureView;
 
 public interface OnPlatformViewCreated {
-    void callback(SurfaceView surfaceView);
+    void callback(TextureView textureView);
 }

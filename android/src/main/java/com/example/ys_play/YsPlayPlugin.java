@@ -2,12 +2,13 @@ package com.example.ys_play;
 
 import android.app.Application;
 import android.content.Intent;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.util.Log;
+import android.view.TextureView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,13 +39,13 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 
-public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
+public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler,TextureView.SurfaceTextureListener  {
 
     private Application application;
     private EZPlayer ezPlayer; //视频播放器
     private EZPlayer talkPlayer; //对讲播放器
 
-    private SurfaceView surfaceView; //播放视图
+    private TextureView textureView; //播放视图
     BasicMessageChannel<Object> ysResult; //回放、直播和对讲结果渠道
     BasicMessageChannel<Object> pwResult; //配网结果通道
 
@@ -60,10 +61,10 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         /// 注册播放视图
         binding.getPlatformViewRegistry().registerViewFactory(
                 Constants.CHANNEL,
-                new YsPlayViewFactory((surfaceView) -> {
-                    this.surfaceView = surfaceView;
+                new YsPlayViewFactory((textureView) -> {
+                    this.textureView = textureView;
                     //设置播放器的显示Surface
-                    surfaceView.getHolder().addCallback(surfaceHolderCallback);
+                    textureView.setSurfaceTextureListener(this);
                 })
         );
 
@@ -109,7 +110,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
 
                 ezPlayer  = EZOpenSDK.getInstance().createPlayer(deviceSerial, cameraNo);
                 ezPlayer.setHandler(new YsPlayViewHandler(ysResultListener));
-                ezPlayer.setSurfaceHold(surfaceView.getHolder());
+                ezPlayer.setSurfaceEx(textureView.getSurfaceTexture());
+
                 ezPlayer.setPlayVerifyCode(verifyCode);
                 LogUtils.d("播放器初始化成功");
                 result.success(true);
@@ -364,7 +366,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
             case "dispose":
                 if(ezPlayer!=null){
                     ezPlayer.setSurfaceHold(null);
-                    surfaceView=null;
                     ezPlayer.release();
                 }
                 if(talkPlayer != null){
@@ -381,31 +382,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         }
     }
 
-    /**
-     * 播放视图改变的回调
-     */
-    SurfaceHolder.Callback surfaceHolderCallback = new SurfaceHolder.Callback() {
-        @Override
-        public void surfaceCreated(@NonNull SurfaceHolder holder) {
-            LogUtils.d("surfaceCreated");
-            if (ezPlayer != null) {
-                ezPlayer.setSurfaceHold(holder);
-            }
-        }
 
-        @Override
-        public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-            LogUtils.d("surfaceChanged");
-        }
-
-        @Override
-        public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-            LogUtils.d("surfaceDestroyed");
-            if (ezPlayer != null) {
-                ezPlayer.setSurfaceHold(null);
-            }
-        }
-    };
 
 
 
@@ -415,6 +392,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     YsResultListener ysResultListener = new YsResultListener() {
         @Override
         public void onPlaySuccess() {
+            LogUtils.d("onPlaySuccess");
             YsPlayerStatusEntity entity = new YsPlayerStatusEntity();
             entity.setIsSuccess(true);
             ysResult.send(new Gson().toJson(entity));
@@ -573,5 +551,39 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         }
     };
 
+
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        LogUtils.d("onSurfaceTextureAvailable");
+        LogUtils.d(String.valueOf(ezPlayer==null));
+
+        if (ezPlayer != null) {
+            ezPlayer.setSurfaceEx(surface);
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        LogUtils.d("onSurfaceTextureSizeChanged");
+        if (ezPlayer != null) {
+            ezPlayer.setSurfaceEx(surface);
+        }
+
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        LogUtils.d("onSurfaceTextureDestroyed");
+        if (ezPlayer != null) {
+            ezPlayer.setSurfaceEx(null);
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+    }
 
 }
