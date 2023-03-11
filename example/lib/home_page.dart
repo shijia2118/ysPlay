@@ -21,12 +21,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void dispose() {
-    YsPlay.destroyLib();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('萤石SDK功能测试')),

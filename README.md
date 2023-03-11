@@ -58,6 +58,12 @@ Flutter萤石云直播插件，支持Android和IOS
         }
     }
 
+     sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
 代码混淆:
 
     #========SDK对外接口=======#

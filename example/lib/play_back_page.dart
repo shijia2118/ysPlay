@@ -148,7 +148,7 @@ class PlaybackPageState extends State<PlaybackPage> {
       context,
       action: () async {
         if (isRecording) {
-          bool result = await YsPlay.startRecordWithFile();
+          bool result = await YsPlay.stopRecordWithFile();
           if (result) {
             isRecording = false;
             showToast('录屏已结束,请到手机相册查看录制视频');

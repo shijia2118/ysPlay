@@ -4,7 +4,7 @@ import 'package:ys_play_example/home_page.dart';
 
 String appKey = '9ddc4fb7c0ef4996b04dd90156368f7c';
 String accessToken =
-    'ra.daltj3lp25wyubaa6tqgzgudas052h2e-2ve2xp77xl-13a3wrr-o93xpxb2g';
+    'ra.3rafxjwd3z0zk4gy73lmjqpx1mhz9b6u-2h7nn679o7-0zlwl0w-pta0gdkxj';
 String deviceSerial = 'C63167422';
 String verifyCode = 'PDSWCZ';
 int cameraNo = 1;

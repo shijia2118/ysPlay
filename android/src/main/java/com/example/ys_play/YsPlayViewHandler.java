@@ -38,13 +38,6 @@ class YsPlayViewHandler extends Handler {
                 break;
             case EZConstants.MSG_VIDEO_SIZE_CHANGED:
                 //解析出视频画面分辨率回调
-                try {
-                    assert msg.obj instanceof String;
-                    String temp = (String) msg.obj;
-                    //解析出视频分辨率
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 break;
             case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_SUCCESS:
                 LogUtils.d("直播播放成功");
@@ -57,8 +50,6 @@ class YsPlayViewHandler extends Handler {
                 LogUtils.d("对讲成功");
                 ysResult.onTalkSuccess();
                 break;
-            case EZConstants.EZRealPlayConstants.MSG_REALPLAY_VOICETALK_STOP:
-                break;
             default:
                 break;
         }
@@ -66,7 +57,7 @@ class YsPlayViewHandler extends Handler {
 
     /**
      * 对讲失败
-     * @param errorInfo
+     * @param errorInfo:错误信息
      */
     private void handleVoiceTalkFailed(ErrorInfo errorInfo) {
         String errorDes = "";

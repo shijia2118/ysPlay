@@ -31,27 +31,25 @@ class _LandscapePageState extends State<LandscapePage> {
   }
 
   @override
-  void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values); //显示状态栏、底部按钮栏
-
-    //页面销毁时执行还原操作
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: YsPlayer(
-        deviceSerial: deviceSerial,
-        verifyCode: verifyCode,
-        mediaType: mediaType,
-        orientation: Orientation.landscape,
+    return WillPopScope(
+      child: Scaffold(
+        body: YsPlayer(
+          deviceSerial: deviceSerial,
+          verifyCode: verifyCode,
+          mediaType: mediaType,
+        ),
       ),
+      onWillPop: () async {
+        //显示状态栏、底部按钮栏
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+            overlays: SystemUiOverlay.values);
+
+        //横屏到竖屏
+        await SystemChrome.setPreferredOrientations(
+            [DeviceOrientation.portraitUp]);
+        return true;
+      },
     );
   }
 

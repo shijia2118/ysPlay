@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.example.ys_play.Interface.OnPlatformViewCreated;
-import com.example.ys_play.utils.LogUtils;
 
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
@@ -19,15 +18,13 @@ public class YsPlayViewFactory extends PlatformViewFactory {
     public YsPlayViewFactory(OnPlatformViewCreated onViewCreated) {
         super(StandardMessageCodec.INSTANCE);
         this.onViewCreated = onViewCreated;
-        LogUtils.d("YsPlayViewFactory");
     }
 
     /// 创建视图
-    /// flutter端调用androidView时执行
+    /// flutter端每次调用androidView时，都会执行1次
     @NonNull
     @Override
     public PlatformView create(Context context, int id, Object args) {
-        LogUtils.d("PlatformView create");
         return new YsPlayView(context,onViewCreated);
     }
 }

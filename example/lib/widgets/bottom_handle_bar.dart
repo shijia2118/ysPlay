@@ -141,8 +141,8 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
       setState(() {
         opacity = 1.0;
       });
+      disappearAfter3s();
     }
-    disappearAfter3s();
   }
 
   ///播放按钮点击事件

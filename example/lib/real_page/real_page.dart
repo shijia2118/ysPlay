@@ -202,7 +202,8 @@ class _RealPageState extends State<RealPage> {
     return result;
   }
 
-  /// 内部icon点击事件
+  /// 抓拍
+  /// 内部icon点击事件，抓拍后发送自己的到服务器
   void onInnerIconClicked() {}
 
   /// 对讲

@@ -5,19 +5,22 @@ import 'package:ys_play/src/entity/ys_request_entity.dart';
 import 'entity/ys_response_entity.dart';
 
 class YsHttpApi {
-  // 开始云台控制
-  static const String ptzStart = "https://open.ys7.com/api/lapp/device/ptz/start";
+  /// 开始云台控制
+  static const String ptzStart =
+      "https://open.ys7.com/api/lapp/device/ptz/start";
 
-  // 关闭云台控制
+  /// 关闭云台控制
   static const String ptzStop = "https://open.ys7.com/api/lapp/device/ptz/stop";
 
-  // 镜像翻转
-  static const String ptzMirror = "https://open.ys7.com/api/lapp/device/ptz/mirror";
+  /// 镜像翻转
+  static const String ptzMirror =
+      "https://open.ys7.com/api/lapp/device/ptz/mirror";
 
-  ///设备能力集
-  static const String devCapacity = "https://open.ys7.com/api/lapp/device/capacity";
+  /// 设备能力集
+  static const String devCapacity =
+      "https://open.ys7.com/api/lapp/device/capacity";
 
-  //开始云台控制
+  /// 开始云台控制
   static Future<YsResponseEntity> devPtzStart({
     required String accessToken,
     required String deviceSerial,
@@ -36,7 +39,8 @@ class YsHttpApi {
     try {
       Response response = await Dio().post(ptzStart, data: formData);
       if (response.statusCode == 200) {
-        YsResponseEntity responseData = YsResponseEntity.fromJson(response.data);
+        YsResponseEntity responseData =
+            YsResponseEntity.fromJson(response.data);
         return responseData;
       } else {
         // 失败
@@ -50,7 +54,7 @@ class YsHttpApi {
     }
   }
 
-  ///停止云台控制
+  /// 停止云台控制
   static Future<YsResponseEntity> devPtzStop({
     required String accessToken,
     required String deviceSerial,
@@ -66,7 +70,8 @@ class YsHttpApi {
     try {
       Response response = await Dio().post(ptzStop, data: formData);
       if (response.statusCode == 200) {
-        YsResponseEntity responseData = YsResponseEntity.fromJson(response.data);
+        YsResponseEntity responseData =
+            YsResponseEntity.fromJson(response.data);
         return responseData;
       } else {
         // 失败
@@ -80,8 +85,9 @@ class YsHttpApi {
     }
   }
 
-  ///镜像翻转
-  static Future<YsResponseEntity> devPtzMirror(YsRequestEntity requestEntity) async {
+  /// 镜像翻转
+  static Future<YsResponseEntity> devPtzMirror(
+      YsRequestEntity requestEntity) async {
     FormData formData = FormData.fromMap({
       "accessToken": requestEntity.accessToken,
       "deviceSerial": requestEntity.deviceSerial,
@@ -92,7 +98,8 @@ class YsHttpApi {
     try {
       Response response = await Dio().post(ptzMirror, data: formData);
       if (response.statusCode == 200) {
-        YsResponseEntity responseData = YsResponseEntity.fromJson(response.data);
+        YsResponseEntity responseData =
+            YsResponseEntity.fromJson(response.data);
         return responseData;
       } else {
         // 失败
@@ -106,7 +113,7 @@ class YsHttpApi {
     }
   }
 
-  ///设备能力集
+  /// 设备能力集
   static Future<CapacityResponseEntity> getDevCapacity({
     required String accessToken,
     required String deviceSerial,
@@ -119,7 +126,8 @@ class YsHttpApi {
     try {
       Response response = await Dio().post(devCapacity, data: formData);
       if (response.statusCode == 200) {
-        CapacityResponseEntity responseData = CapacityResponseEntity.fromJson(response.data);
+        CapacityResponseEntity responseData =
+            CapacityResponseEntity.fromJson(response.data);
         return responseData;
       } else {
         // 失败

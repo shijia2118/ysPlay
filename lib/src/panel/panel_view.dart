@@ -1,8 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
-
 import 'package:ys_play/src/panel/panel_paint.dart';
 
 class PanelView extends StatefulWidget {
@@ -51,7 +47,7 @@ class _PanelViewState extends State<PanelView> {
       children: [
         GestureDetector(
           onTapDown: _onStart,
-          onTapUp: (d) => _onStop(),
+          onTapUp: (d) => _onStop,
           onTapCancel: _onStop,
           child: SizedBox(
             width: outerRadius * 2,
@@ -98,19 +94,9 @@ class _PanelViewState extends State<PanelView> {
   }
 
   void _onStop() {
+    if (widget.onCanceled != null) widget.onCanceled!();
+
     p = Offset.zero;
     setState(() {});
-    if (widget.onCanceled != null) widget.onCanceled!();
-  }
-
-  /// 获取方向箭头url
-  Future<ui.Image> getArrowUrl(String url) async {
-    AssetImage assetImage = const AssetImage("assets/url.png");
-    ImageStream stream = assetImage.resolve(createLocalImageConfiguration(context));
-    Completer<ui.Image> completer = Completer();
-    stream.addListener(ImageStreamListener((image, _) {
-      return completer.complete(image.image);
-    }));
-    return completer.future;
   }
 }

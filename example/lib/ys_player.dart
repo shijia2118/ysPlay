@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:ys_play/ys.dart';
 import 'package:ys_play_example/land_scape_page.dart';
@@ -17,14 +18,12 @@ class YsPlayer extends StatefulWidget {
   final String verifyCode;
   final int cameraNo;
   final YsMediaType mediaType;
-  final Orientation orientation;
   const YsPlayer({
     Key? key,
     required this.deviceSerial,
     required this.verifyCode,
     this.cameraNo = 1,
     this.mediaType = YsMediaType.playback,
-    this.orientation = Orientation.portrait,
   }) : super(key: key);
 
   @override
@@ -43,89 +42,85 @@ class YsPlayerState extends State<YsPlayer> {
 
   String? errorInfo; //播放错误提示
 
-  late Orientation orientation;
-
   @override
   void initState() {
     super.initState();
     initParams();
-    if (orientation == Orientation.portrait) {
-      prepareYsPlayer();
-    } else {
-      isPlayerSuccess = true;
-    }
+    setAccessToken();
 
     /// 播放结果监听
-    YsPlay.onResultListener((status) async {
-      if (status.isSuccess == true) {
+    YsPlay.onResultListener(
+      onSuccess: () {
         isPlayerSuccess = true;
         if (mounted) setState(() {});
-      } else {
-        //播放错误
-        if (status.playErrorInfo != null) {
-          errorInfo = status.playErrorInfo;
-          if (mounted) setState(() {});
-        }
-        //对讲错误
-        if (status.talkErrorInfo != null) {
-          showToast(status.talkErrorInfo!);
-        }
-      }
-    });
+      },
+      onPlayError: (errorInfo) {
+        this.errorInfo = errorInfo;
+        if (mounted) setState(() {});
+      },
+      onTalkError: (errorInfo) {
+        showToast(errorInfo);
+      },
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
-    if (orientation == Orientation.portrait) videoDispose();
+    // if (orientation == Orientation.portrait) videoDispose();
+    YsPlay.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    playerHeight = orientation == Orientation.portrait ? 200 : size.height;
-    playerWidth = size.width;
-    return Container(
-      width: playerWidth,
-      height: playerHeight,
-      color: Colors.black,
-      child: Stack(
-        children: [
-          //底层播放视图
-          const YsPlayView(),
-          GestureDetector(
-            onTap: () {
-              setState(() {});
-            },
-            child: Container(
-              height: playerHeight,
-              width: playerWidth,
-              color: Colors.transparent,
-            ),
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        Size size = MediaQuery.of(context).size;
+        playerHeight = orientation == Orientation.portrait ? 200 : size.height;
+        playerWidth = size.width;
+        return Container(
+          width: playerWidth,
+          height: playerHeight,
+          color: Colors.black,
+          child: Stack(
+            children: [
+              //底层播放视图
+              const YsPlayView(),
+              GestureDetector(
+                onTap: () {
+                  setState(() {});
+                },
+                child: Container(
+                  height: playerHeight,
+                  width: playerWidth,
+                  color: Colors.transparent,
+                ),
+              ),
+              //底部操作按钮组
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: BottomHandleBar(
+                  width: playerWidth,
+                  height: 35,
+                  isPrepared: isPlayerSuccess,
+                  onPlayHandle: (isPlaying) => onPlayHandle(isPlaying),
+                  onFullScreenHandle: () => onFullScreenHandle(orientation),
+                  onSoundHandle: (isOpen) => onSoundHandle(isOpen),
+                  onSelectLevelHandle: (i) => onSelectLevelHandle(i),
+                  mediaType: mediaType,
+                  orientation: orientation,
+                ),
+              ),
+              //视图上层加载指示器
+              PlayerForgroundWidget(
+                errorInfo: errorInfo,
+                isVisible: !isPlayerSuccess,
+                onRePlay: onRePlay,
+              ),
+            ],
           ),
-          //底部操作按钮组
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: BottomHandleBar(
-              width: playerWidth,
-              height: 35,
-              isPrepared: isPlayerSuccess,
-              onPlayHandle: (isPlaying) => onPlayHandle(isPlaying),
-              onFullScreenHandle: onFullScreenHandle,
-              onSoundHandle: (isOpen) => onSoundHandle(isOpen),
-              onSelectLevelHandle: (i) => onSelectLevelHandle(i),
-              mediaType: mediaType,
-              orientation: orientation,
-            ),
-          ),
-          //视图上层加载指示器
-          PlayerForgroundWidget(
-            errorInfo: errorInfo,
-            isVisible: !isPlayerSuccess,
-            onRePlay: onRePlay,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -135,35 +130,38 @@ class YsPlayerState extends State<YsPlayer> {
     verifyCode = widget.verifyCode;
     cameraNo = widget.cameraNo;
     mediaType = widget.mediaType;
-    orientation = widget.orientation;
   }
 
-  ///播放前准备
-  Future<void> prepareYsPlayer() async {
-    // 1.从服务端获取accessToken
-    // 这里直接使用静态token，具体项目中需要从接口获取
-    // 2.拿到accessToken后，绑定账号和设备
+  /// 获取并设置"accessToken"
+  ///
+  /// "accessToken"一般从服务器端获取,这里为了便利，直接定义成了全局变量。
+  /// 拿到"accessToken"后,传给萤石SDK，实现授权登录。
+  /// 否则无法继续回放，直播，对讲等操作。
+  Future<void> setAccessToken() async {
     bool tokenResult = await YsPlay.setAccessToken(accessToken);
     if (tokenResult) {
-      // 3.注册播放器
-      await YsPlay.initEZPlayer(
-        deviceSerial,
-        verifyCode,
-        cameraNo,
-      ).then((value) async {
-        if (value) {
-          // 4.开始播放
-          await start2Play();
-        }
-      });
+      // 开始播放
+      await startPlay();
     }
   }
 
-  ///开始播放
-  Future<bool> start2Play({
+  /// 开始播放
+  ///
+  /// 播放有2种类型：直播和回放。它有一个自定义的枚举类 [YsMediaType]:
+  /// [YsMediaType.playback] : 回放;
+  /// [YsMediaType.real] : 直播。
+  /// * 如果是直播，需要传以下3个参数:
+  ///   1.`deviceSerial`:设备序列号,一般通过扫描设备二维码获得,必传;
+  ///   2.`verifyCode`:如果视频需要加密，可以传;默认为设备的6位验证码.
+  ///   3.`cameraNo`:设备通道号，默认为1，可不传.
+  /// * 如果是回放，除了上述3个参数外，还有2个必传参数:
+  ///   1.`startTime`:开始时间;
+  ///   2.`endTime`:结束时间。
+  Future<bool> startPlay({
     int? startTime,
     int? endTime,
   }) async {
+    // 回放
     if (mediaType == YsMediaType.playback) {
       DateTime now = DateTime.now();
       int et = now.millisecondsSinceEpoch;
@@ -171,17 +169,28 @@ class YsPlayerState extends State<YsPlayer> {
 
       startTime ??= st;
       endTime ??= et;
-      // 回放
       return await YsPlay.startPlayback(
-        startTime,
-        endTime,
+        deviceSerial: deviceSerial,
+        startTime: startTime,
+        endTime: endTime,
+        verifyCode: verifyCode,
+        cameraNo: cameraNo,
       );
     } else if (mediaType == YsMediaType.real) {
       // 直播
-      return await YsPlay.startRealPlay();
+      return await YsPlay.startRealPlay(
+        deviceSerial: deviceSerial,
+        verifyCode: verifyCode,
+        cameraNo: cameraNo,
+      );
     } else {
       return false;
     }
+  }
+
+  /// 停止直播
+  Future<bool> stopRealPlay() async {
+    return await YsPlay.stopRealPlay();
   }
 
   /// 发生异常时，点击重播
@@ -193,7 +202,7 @@ class YsPlayerState extends State<YsPlayer> {
       errorInfo = null;
       isPlayerSuccess = false;
     });
-    await start2Play(startTime: startTime, endTime: endTime);
+    await startPlay(startTime: startTime, endTime: endTime);
   }
 
   /// 停止播放，释放资源
@@ -242,7 +251,7 @@ class YsPlayerState extends State<YsPlayer> {
   }
 
   /// 点击全屏按钮
-  void onFullScreenHandle() {
+  void onFullScreenHandle(Orientation orientation) async {
     // 竖屏到横屏
     if (orientation == Orientation.portrait) {
       Navigator.push(
@@ -250,8 +259,23 @@ class YsPlayerState extends State<YsPlayer> {
         MaterialPageRoute(
           builder: (context) => LandscapePage(mediaType: mediaType),
         ),
-      );
+      ).then((value) async {
+        print('>>>>>>>>返回了');
+        // bool result = await startPlay();
+        setState(() {
+          isPlayerSuccess = false;
+        });
+        await setAccessToken();
+      });
     } else {
+      //显示状态栏、底部按钮栏
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+          overlays: SystemUiOverlay.values);
+
+      //切换到竖屏
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
       Navigator.pop(context);
     }
   }
