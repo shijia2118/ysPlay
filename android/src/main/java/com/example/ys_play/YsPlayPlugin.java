@@ -311,7 +311,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                         mEZStartConfigWifiCallback
                 );
                 break;
-            /**
+            /*
              * AP配网接口(热点配网)
              * @param ssid WiFi的ssid
              * @param password WiFi的密码
@@ -339,6 +339,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                         apConfigCallback
                 );
                 break;
+
             ///停止配网
             case "stop_config":
                 mode = call.argument("mode");
@@ -355,6 +356,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                     result.success(false);
                 }
                 break;
+
             ///开始对讲
             case "start_voice_talk":
                 //关闭播放器声音
