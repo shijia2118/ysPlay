@@ -1,14 +1,14 @@
 PODS:
   - "app_settings (3.0.0+1)":
     - Flutter
-  - EZOpenSDK (5.1)
+  - EZOpenSDK (5.1.2)
   - Flutter (1.0.0)
   - network_info_plus (0.0.1):
     - Flutter
   - permission_handler_apple (9.0.4):
     - Flutter
   - ys_play (0.0.1):
-    - EZOpenSDK (= 5.1)
+    - EZOpenSDK (= 5.1.2)
     - Flutter
 
 DEPENDENCIES:
@@ -36,11 +36,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
-  EZOpenSDK: 4bfab5e390461bc599726b31d5a87e4031829651
+  EZOpenSDK: 512613cf70c2f132b12c49d6e8d961750e6f387b
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
-  ys_play: a855ae799c4ba39fad4ebdd6a15800187f79fc3e
+  ys_play: feb4bb0346a34c83646aafac159220512de2b160
 
 PODFILE CHECKSUM: 87e75cff2e496afeda943caa2f162048e10dbaa4
 

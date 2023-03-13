@@ -21,17 +21,25 @@ class _LandscapePageState extends State<LandscapePage> {
   @override
   void initState() {
     super.initState();
-    //全屏时旋转方向，左边
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: []); //隐藏状态栏，底部按钮栏
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        print('>>>>>>组件渲染完成');
+
+        //全屏时旋转方向，左边
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+        ]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+            overlays: []); //隐藏状态栏，底部按钮栏
+      },
+    );
     initParams();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('>>>>>>build');
+
     return WillPopScope(
       child: Scaffold(
         body: YsPlayer(

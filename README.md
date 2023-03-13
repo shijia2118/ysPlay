@@ -145,7 +145,7 @@ Flutter萤石云直播插件，支持Android和IOS
 
 
 ### IOS端
-在info.plist中添加:  
+## 在info.plist中添加:  
 
 1.相册权限： 如果需要使用开放平台播放器录像和截图并保存的功能，就需要配置相册权限。   
 ```              
@@ -178,6 +178,11 @@ Flutter萤石云直播插件，支持Android和IOS
 <key>NSLocationWhenInUseUsageDescription</key>  
 <string>$(PRODUCT_NAME)需要使用定位权限用于wifi配网</string>  
 ```
+
+## 在xcode中配置
+在xcode -> Runner -> Target -> Target-Signing & Capabilities中，添加以下2项能力:
+1.Access WiFi Information(获取手机连接的WiFi名，配网需要);
+2.Hotspot Configuation(连接指定WiFi，配网需要).
 
 ## 使用方式
 具体请见example中的功能，里面有详细注释。
