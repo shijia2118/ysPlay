@@ -6,7 +6,7 @@ class JkPlayBtn extends StatefulWidget {
   final double size;
   final EdgeInsets? padding;
   final Function(bool) onTap;
-  final bool isPrepared;
+  final bool isPlaying;
   const JkPlayBtn({
     super.key,
     this.playIcon = 'assets/on_play.png',
@@ -14,7 +14,7 @@ class JkPlayBtn extends StatefulWidget {
     required this.onTap,
     this.padding = const EdgeInsets.symmetric(horizontal: 10),
     this.size = 25,
-    required this.isPrepared,
+    required this.isPlaying,
   });
 
   @override
@@ -35,7 +35,7 @@ class _JkPlayBtnState extends State<JkPlayBtn> {
   @override
   void didUpdateWidget(covariant JkPlayBtn oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isPrepared != oldWidget.isPrepared) {
+    if (widget.isPlaying != oldWidget.isPlaying) {
       initParams();
     }
   }
@@ -67,6 +67,6 @@ class _JkPlayBtnState extends State<JkPlayBtn> {
   void initParams() {
     playIcon = widget.playIcon;
     pauseIcon = widget.pauseIcon;
-    isPlaying = widget.isPrepared;
+    isPlaying = widget.isPlaying;
   }
 }

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:ys_play_example/widgets/full_screen_btn.dart';
 import 'package:ys_play_example/widgets/jk_level_btn.dart';
 import 'package:ys_play_example/widgets/jk_sound_btn.dart';
-import 'package:ys_play_example/ys_player.dart';
 
+import '../ys_player/ys_player.dart';
 import 'jk_play_btn.dart';
 
 class BottomHandleBar extends StatefulWidget {
@@ -15,9 +15,8 @@ class BottomHandleBar extends StatefulWidget {
   final Function(bool)? onSoundHandle;
   final Function()? onFullScreenHandle;
   final Function(int)? onSelectLevelHandle;
-  final bool isPrepared;
+  final YsPlayStatus ysPlayStatus;
   final YsMediaType mediaType;
-  final Orientation orientation;
   const BottomHandleBar({
     Key? key,
     this.height,
@@ -26,9 +25,8 @@ class BottomHandleBar extends StatefulWidget {
     this.onPlayHandle,
     this.onSoundHandle,
     this.onSelectLevelHandle,
-    required this.isPrepared,
+    required this.ysPlayStatus,
     this.mediaType = YsMediaType.playback,
-    this.orientation = Orientation.portrait,
   }) : super(key: key);
 
   @override
@@ -38,17 +36,16 @@ class BottomHandleBar extends StatefulWidget {
 class _BottomHandleBarState extends State<BottomHandleBar> {
   double opacity = 1.0;
   Timer? timer;
-  bool isPrepared = false;
+  late YsPlayStatus ysPlayStatus;
 
   late YsMediaType mediaType;
-  late Orientation orientation;
-
+  bool get isFullScreen =>
+      MediaQuery.of(context).orientation == Orientation.landscape;
   @override
   void initState() {
     super.initState();
-    isPrepared = widget.isPrepared;
+    ysPlayStatus = widget.ysPlayStatus;
     mediaType = widget.mediaType;
-    orientation = widget.orientation;
     disappearAfter3s();
   }
 
@@ -60,8 +57,8 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
         opacity = 1.0;
       });
     }
-    if (widget.isPrepared != oldWidget.isPrepared) {
-      isPrepared = widget.isPrepared;
+    if (widget.ysPlayStatus != oldWidget.ysPlayStatus) {
+      ysPlayStatus = widget.ysPlayStatus;
     }
     disappearAfter3s();
   }
@@ -89,7 +86,7 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
               // 播放按钮
               JkPlayBtn(
                 onTap: (isPlaying) => onPlayBtnClicked(isPlaying),
-                isPrepared: isPrepared,
+                isPlaying: ysPlayStatus == YsPlayStatus.onPlaying,
               ),
 
               // 声音按钮
@@ -107,7 +104,7 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
               // 全屏按钮
               FullScreenBtn(
                 onTap: onFullScreenBtnClicked,
-                orientation: orientation,
+                isFullScreen: isFullScreen,
               ),
             ],
           ),

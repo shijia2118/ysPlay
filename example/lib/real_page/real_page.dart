@@ -6,7 +6,7 @@ import 'package:ys_play_example/real_page/screen_record_btn.dart';
 
 import '../main.dart';
 import '../utils/permission_util.dart';
-import '../ys_player.dart';
+import '../ys_player/ys_player.dart';
 
 class RealPage extends StatefulWidget {
   const RealPage({Key? key}) : super(key: key);
@@ -20,6 +20,7 @@ class _RealPageState extends State<RealPage> {
   bool isLongPressed = false;
   int supportTalk = 0;
   late YsRequestEntity entity;
+  bool showOtherUI = true;
 
   @override
   void initState() {
@@ -113,22 +114,31 @@ class _RealPageState extends State<RealPage> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('直播页面'),
-      ),
-      body: Column(
-        children: [
-          YsPlayer(
-            deviceSerial: deviceSerial,
-            verifyCode: verifyCode,
-            mediaType: YsMediaType.real,
-          ),
-          buttonBars,
-          Expanded(child: bodyWidget),
-        ],
-      ),
+    YsPlayer ysPlayer = YsPlayer(
+      deviceSerial: deviceSerial,
+      verifyCode: verifyCode,
+      mediaType: YsMediaType.real,
+      showOtherUI: (show) {
+        setState(() {
+          showOtherUI = show;
+        });
+      },
     );
+
+    return showOtherUI
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text('直播页面'),
+            ),
+            body: Column(
+              children: [
+                ysPlayer,
+                buttonBars,
+                Expanded(child: bodyWidget),
+              ],
+            ),
+          )
+        : Scaffold(body: ysPlayer);
   }
 
   /// 截屏

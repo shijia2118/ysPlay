@@ -4,7 +4,7 @@ import 'package:ys_play/ys.dart';
 import 'package:ys_play_example/utils/permission_util.dart';
 import 'package:ys_play_example/utils/time_util.dart';
 import 'package:ys_play_example/widgets/time_selector.dart';
-import 'package:ys_play_example/ys_player.dart';
+import 'package:ys_play_example/ys_player/ys_player.dart';
 
 import 'main.dart';
 
@@ -21,6 +21,8 @@ class PlaybackPageState extends State<PlaybackPage> {
   late String endDt;
 
   int quarterTurns = 0;
+
+  bool showOtherUI = true;
 
   GlobalKey<YsPlayerState> ysPlayKey = GlobalKey();
 
@@ -93,38 +95,47 @@ class PlaybackPageState extends State<PlaybackPage> {
       child: Text('回放'),
     );
 
-    return Scaffold(
-      appBar: AppBar(title: Text('回放页面')),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            YsPlayer(
-              key: ysPlayKey,
-              deviceSerial: deviceSerial,
-              verifyCode: verifyCode,
-              mediaType: YsMediaType.playback,
-            ),
-
-            // 截屏和录屏
-            jplpWidget,
-
-            SizedBox(height: 50),
-
-            // 开始时间
-            stWidget,
-
-            SizedBox(height: 10),
-
-            // 结束时间
-            etWidget,
-            SizedBox(height: 30),
-
-            // 回放按钮
-            playbackBtn,
-          ],
-        ),
-      ),
+    YsPlayer ysPlayer = YsPlayer(
+      key: ysPlayKey,
+      deviceSerial: deviceSerial,
+      verifyCode: verifyCode,
+      mediaType: YsMediaType.playback,
+      showOtherUI: (show) {
+        setState(() {
+          showOtherUI = show;
+        });
+      },
     );
+
+    return showOtherUI
+        ? Scaffold(
+            appBar: AppBar(title: Text('回放页面')),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ysPlayer,
+
+                  // 截屏和录屏
+                  jplpWidget,
+
+                  SizedBox(height: 50),
+
+                  // 开始时间
+                  stWidget,
+
+                  SizedBox(height: 10),
+
+                  // 结束时间
+                  etWidget,
+                  SizedBox(height: 30),
+
+                  // 回放按钮
+                  playbackBtn,
+                ],
+              ),
+            ),
+          )
+        : Scaffold(body: ysPlayer);
   }
 
   /// 截屏

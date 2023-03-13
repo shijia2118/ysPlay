@@ -2,15 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:ys_play/ys.dart';
-import 'package:ys_play_example/land_scape_page.dart';
-import 'package:ys_play_example/widgets/player_forground_widget.dart';
+import 'package:ys_play_example/ys_player/ys_player_land_scape.dart';
+import 'package:ys_play_example/ys_player/ys_player_portrait.dart';
 
-import 'widgets/bottom_handle_bar.dart';
-import 'main.dart';
+import '../main.dart';
 
 enum YsMediaType {
   playback, //回放
   real, //直播
+}
+
+/// 播放状态
+enum YsPlayStatus {
+  onInitial,
+  onPause,
+  onPlaying,
+  onStop,
+  onError;
 }
 
 class YsPlayer extends StatefulWidget {
@@ -18,12 +26,14 @@ class YsPlayer extends StatefulWidget {
   final String verifyCode;
   final int cameraNo;
   final YsMediaType mediaType;
+  final Function(bool)? showOtherUI;
   const YsPlayer({
     Key? key,
     required this.deviceSerial,
     required this.verifyCode,
     this.cameraNo = 1,
     this.mediaType = YsMediaType.playback,
+    this.showOtherUI,
   }) : super(key: key);
 
   @override
@@ -35,12 +45,15 @@ class YsPlayerState extends State<YsPlayer> {
   late String verifyCode;
   late int cameraNo;
   late YsMediaType mediaType;
-  late double playerHeight;
-  late double playerWidth;
+  late double height;
+  late double width;
 
-  bool isPlayerSuccess = false;
+  YsPlayStatus ysPlayStatus = YsPlayStatus.onInitial;
 
   String? errorInfo; //播放错误提示
+
+  bool get isFullScreen =>
+      MediaQuery.of(context).orientation == Orientation.landscape;
 
   @override
   void initState() {
@@ -51,11 +64,12 @@ class YsPlayerState extends State<YsPlayer> {
     /// 播放结果监听
     YsPlay.onResultListener(
       onSuccess: () {
-        isPlayerSuccess = true;
+        ysPlayStatus = YsPlayStatus.onPlaying;
         if (mounted) setState(() {});
       },
       onPlayError: (errorInfo) {
         this.errorInfo = errorInfo;
+        ysPlayStatus = YsPlayStatus.onError;
         if (mounted) setState(() {});
       },
       onTalkError: (errorInfo) {
@@ -67,7 +81,6 @@ class YsPlayerState extends State<YsPlayer> {
   @override
   void dispose() {
     super.dispose();
-    // if (orientation == Orientation.portrait) videoDispose();
     YsPlay.dispose();
   }
 
@@ -76,49 +89,35 @@ class YsPlayerState extends State<YsPlayer> {
     return OrientationBuilder(
       builder: (context, orientation) {
         Size size = MediaQuery.of(context).size;
-        playerHeight = orientation == Orientation.portrait ? 200 : size.height;
-        playerWidth = size.width;
+        height = isFullScreen ? size.height : 200;
+        width = size.width;
         return Container(
-          width: playerWidth,
-          height: playerHeight,
+          width: width,
+          height: height,
           color: Colors.black,
-          child: Stack(
-            children: [
-              //底层播放视图
-              const YsPlayView(),
-              GestureDetector(
-                onTap: () {
-                  setState(() {});
-                },
-                child: Container(
-                  height: playerHeight,
-                  width: playerWidth,
-                  color: Colors.transparent,
+          child: isFullScreen
+              ? YsPlayerLandscape(
+                  width: width,
+                  height: height,
+                  onFullScreenHandle: onFullScreenHandle,
+                  onPlayHandle: onPlayHandle,
+                  onSoundHandle: onSoundHandle,
+                  onScreenTouched: onScreenTouched,
+                  onSelectLevelHandle: onSelectLevelHandle,
+                  onRePlay: onRePlay,
+                  ysPlayStatus: ysPlayStatus,
+                )
+              : YsPlayerPortrait(
+                  width: width,
+                  height: height,
+                  onFullScreenHandle: onFullScreenHandle,
+                  onPlayHandle: onPlayHandle,
+                  onSoundHandle: onSoundHandle,
+                  onScreenTouched: onScreenTouched,
+                  onSelectLevelHandle: onSelectLevelHandle,
+                  onRePlay: onRePlay,
+                  ysPlayStatus: ysPlayStatus,
                 ),
-              ),
-              //底部操作按钮组
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: BottomHandleBar(
-                  width: playerWidth,
-                  height: 35,
-                  isPrepared: isPlayerSuccess,
-                  onPlayHandle: (isPlaying) => onPlayHandle(isPlaying),
-                  onFullScreenHandle: () => onFullScreenHandle(orientation),
-                  onSoundHandle: (isOpen) => onSoundHandle(isOpen),
-                  onSelectLevelHandle: (i) => onSelectLevelHandle(i),
-                  mediaType: mediaType,
-                  orientation: orientation,
-                ),
-              ),
-              //视图上层加载指示器
-              PlayerForgroundWidget(
-                errorInfo: errorInfo,
-                isVisible: !isPlayerSuccess,
-                onRePlay: onRePlay,
-              ),
-            ],
-          ),
         );
       },
     );
@@ -200,7 +199,8 @@ class YsPlayerState extends State<YsPlayer> {
   }) async {
     setState(() {
       errorInfo = null;
-      isPlayerSuccess = false;
+      isPlaying = false;
+      ysPlayStatus = YsPlayStatus.onInitial.number;
     });
     await startPlay(startTime: startTime, endTime: endTime);
   }
@@ -227,6 +227,7 @@ class YsPlayerState extends State<YsPlayer> {
     } else if (mediaType == YsMediaType.real) {
       isPlaying ? onRePlay() : YsPlay.stopRealPlay();
     }
+    this.isPlaying = isPlaying;
   }
 
   /// 点击声音按钮
@@ -250,33 +251,41 @@ class YsPlayerState extends State<YsPlayer> {
     }
   }
 
-  /// 点击全屏按钮
-  void onFullScreenHandle(Orientation orientation) async {
-    // 竖屏到横屏
-    if (orientation == Orientation.portrait) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LandscapePage(mediaType: mediaType),
-        ),
-      ).then((value) async {
-        print('>>>>>>>>返回了');
-        // bool result = await startPlay();
-        setState(() {
-          isPlayerSuccess = false;
-        });
-        await setAccessToken();
-      });
-    } else {
-      //显示状态栏、底部按钮栏
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-          overlays: SystemUiOverlay.values);
+  /// 视频播放区域触摸事件
+  void onScreenTouched() {
+    if (mounted) setState(() {});
+  }
 
-      //切换到竖屏
-      SystemChrome.setPreferredOrientations([
+  /// 点击全屏按钮
+  void onFullScreenHandle() async {
+    if (isFullScreen) {
+      //横屏到竖屏
+      await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
-      Navigator.pop(context);
+
+      //显示状态栏、底部按钮栏
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+          overlays: SystemUiOverlay.values);
+
+      //回调给父组件，显示其他组件
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (widget.showOtherUI != null) {
+          widget.showOtherUI!(true);
+        }
+      });
+    } else {
+      //回调给父组件，隐藏其他组件
+      if (widget.showOtherUI != null) {
+        widget.showOtherUI!(false);
+      }
+      // 竖屏到横屏
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+      ]);
+      //隐藏状态栏，底部按钮栏
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+          overlays: []);
     }
   }
 }
