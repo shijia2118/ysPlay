@@ -199,8 +199,7 @@ class YsPlayerState extends State<YsPlayer> {
   }) async {
     setState(() {
       errorInfo = null;
-      isPlaying = false;
-      ysPlayStatus = YsPlayStatus.onInitial.number;
+      ysPlayStatus = YsPlayStatus.onInitial;
     });
     await startPlay(startTime: startTime, endTime: endTime);
   }

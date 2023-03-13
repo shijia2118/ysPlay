@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ys_play_example/ys_player/ys_player.dart';
 
 class JkPlayBtn extends StatefulWidget {
   final String playIcon;
@@ -6,7 +7,7 @@ class JkPlayBtn extends StatefulWidget {
   final double size;
   final EdgeInsets? padding;
   final Function(bool) onTap;
-  final bool isPlaying;
+  final YsPlayStatus ysPlayStatus;
   const JkPlayBtn({
     super.key,
     this.playIcon = 'assets/on_play.png',
@@ -14,7 +15,7 @@ class JkPlayBtn extends StatefulWidget {
     required this.onTap,
     this.padding = const EdgeInsets.symmetric(horizontal: 10),
     this.size = 25,
-    required this.isPlaying,
+    required this.ysPlayStatus,
   });
 
   @override
@@ -24,7 +25,7 @@ class JkPlayBtn extends StatefulWidget {
 class _JkPlayBtnState extends State<JkPlayBtn> {
   late String playIcon;
   late String pauseIcon;
-  bool isPlaying = false;
+  late YsPlayStatus ysPlayStatus;
 
   @override
   void initState() {
@@ -35,17 +36,20 @@ class _JkPlayBtnState extends State<JkPlayBtn> {
   @override
   void didUpdateWidget(covariant JkPlayBtn oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isPlaying != oldWidget.isPlaying) {
-      initParams();
-    }
+    initParams();
   }
 
   @override
   Widget build(BuildContext context) {
-    String icon = pauseIcon;
-    if (isPlaying) icon = playIcon;
+    String icon = playIcon;
+    if (ysPlayStatus == YsPlayStatus.onInitial) {
+      icon = pauseIcon;
+    }
     return GestureDetector(
       onTap: () {
+        if (ysPlayStatus == YsPlayStatus.onInitial || ysPlayStatus == YsPlayStatus.onPause) {
+          ysPlayStatus == YsPlayStatus.onPlaying;
+        } else if
         setState(() {
           isPlaying = !isPlaying;
         });
@@ -67,6 +71,6 @@ class _JkPlayBtnState extends State<JkPlayBtn> {
   void initParams() {
     playIcon = widget.playIcon;
     pauseIcon = widget.pauseIcon;
-    isPlaying = widget.isPlaying;
+    ysPlayStatus = widget.ysPlayStatus;
   }
 }
