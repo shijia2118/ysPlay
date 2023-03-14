@@ -47,7 +47,7 @@ class _PanelViewState extends State<PanelView> {
       children: [
         GestureDetector(
           onTapDown: _onStart,
-          onTapUp: (d) => _onStop,
+          onTapUp: (d) => _onStop(),
           onTapCancel: _onStop,
           child: SizedBox(
             width: outerRadius * 2,
@@ -89,14 +89,19 @@ class _PanelViewState extends State<PanelView> {
   }
 
   void _onStart(TapDownDetails details) {
-    p = details.localPosition;
-    setState(() {});
+    if (mounted) {
+      setState(() {
+        p = details.localPosition;
+      });
+    }
   }
 
   void _onStop() {
+    if (mounted) {
+      setState(() {
+        p = Offset.zero;
+      });
+    }
     if (widget.onCanceled != null) widget.onCanceled!();
-
-    p = Offset.zero;
-    setState(() {});
   }
 }

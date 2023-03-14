@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
@@ -98,6 +100,7 @@ class YsPlayerState extends State<YsPlayer> {
               ? YsPlayerLandscape(
                   width: width,
                   height: height,
+                  errorInfo: errorInfo,
                   onFullScreenHandle: onFullScreenHandle,
                   onPlayHandle: onPlayHandle,
                   onSoundHandle: onSoundHandle,
@@ -105,10 +108,12 @@ class YsPlayerState extends State<YsPlayer> {
                   onSelectLevelHandle: onSelectLevelHandle,
                   onRePlay: onRePlay,
                   ysPlayStatus: ysPlayStatus,
+                  mediaType: mediaType,
                 )
               : YsPlayerPortrait(
                   width: width,
                   height: height,
+                  errorInfo: errorInfo,
                   onFullScreenHandle: onFullScreenHandle,
                   onPlayHandle: onPlayHandle,
                   onSoundHandle: onSoundHandle,
@@ -116,6 +121,7 @@ class YsPlayerState extends State<YsPlayer> {
                   onSelectLevelHandle: onSelectLevelHandle,
                   onRePlay: onRePlay,
                   ysPlayStatus: ysPlayStatus,
+                  mediaType: mediaType,
                 ),
         );
       },
@@ -131,7 +137,6 @@ class YsPlayerState extends State<YsPlayer> {
   }
 
   /// 获取并设置"accessToken"
-  ///
   /// "accessToken"一般从服务器端获取,这里为了便利，直接定义成了全局变量。
   /// 拿到"accessToken"后,传给萤石SDK，实现授权登录。
   /// 否则无法继续回放，直播，对讲等操作。
@@ -144,7 +149,6 @@ class YsPlayerState extends State<YsPlayer> {
   }
 
   /// 开始播放
-  ///
   /// 播放有2种类型：直播和回放。它有一个自定义的枚举类 [YsMediaType]:
   /// [YsMediaType.playback] : 回放;
   /// [YsMediaType.real] : 直播。
@@ -196,16 +200,10 @@ class YsPlayerState extends State<YsPlayer> {
     int? startTime,
     int? endTime,
   }) async {
-    setState(() {
-      errorInfo = null;
-      ysPlayStatus = YsPlayStatus.onPrepareing;
-    });
+    errorInfo = null;
+    ysPlayStatus = YsPlayStatus.onPrepareing;
+    if (mounted) setState(() {});
     await startPlay(startTime: startTime, endTime: endTime);
-  }
-
-  /// 停止播放，释放资源
-  void videoDispose() async {
-    await YsPlay.dispose();
   }
 
   /// 暂停回放
@@ -287,9 +285,11 @@ class YsPlayerState extends State<YsPlayer> {
         widget.showOtherUI!(false);
       }
       // 竖屏到横屏
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-      ]);
+      DeviceOrientation deviceOrientation = DeviceOrientation.landscapeLeft;
+      if (Platform.isIOS) {
+        deviceOrientation = DeviceOrientation.landscapeRight;
+      }
+      await SystemChrome.setPreferredOrientations([deviceOrientation]);
       //隐藏状态栏，底部按钮栏
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
           overlays: []);

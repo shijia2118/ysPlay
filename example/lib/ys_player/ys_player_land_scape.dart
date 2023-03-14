@@ -52,7 +52,7 @@ class YsPlayerLandscape extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: BottomHandleBar(
               width: width,
-              height: 35,
+              height: 55,
               ysPlayStatus: ysPlayStatus,
               onPlayHandle: (status) => onPlayHandle(status),
               onFullScreenHandle: onFullScreenHandle,

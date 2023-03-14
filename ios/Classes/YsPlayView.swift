@@ -78,17 +78,13 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             let recordFile = EZDeviceRecordFile()
             recordFile.type = 1;
             recordFile.channelType = "D";
-            let startDate = Date(timeIntervalSince1970: TimeInterval(startTime!)/1000)
+            let zone = NSTimeZone.system
+            let interval = zone.secondsFromGMT()
+            let startDate = Date(timeIntervalSince1970: TimeInterval(startTime!)/1000).addingTimeInterval(TimeInterval(interval))
             recordFile.startTime = startDate
             
-            let endDate = Date(timeIntervalSince1970: TimeInterval(endTime!)/1000)
+            let endDate = Date(timeIntervalSince1970: TimeInterval(endTime!)/1000).addingTimeInterval(TimeInterval(interval))
             recordFile.stopTime = endDate
-            print("萤石SDK:回放开始时间=\(startTime!)")
-            print("萤石SDK:回放开始间隔时间:\(TimeInterval(startTime!))")
-            print("萤石SDK:回放开始转换时间:\(startDate)")
-            print("萤石SDK:回放结束时间=\(endTime!)")
-            print("萤石SDK:回放结束间隔时间:\(TimeInterval(endTime!))")
-            print("萤石SDK:回放结束转换时间:\(endDate)")
             
             let bool = ezPlayer!.startPlayback(fromDevice: recordFile)
             print("\(TAG)开始回放\(bool ? "成功" : "失败")")
@@ -409,7 +405,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     /// 注册播放器
     private func createEzPlayer(deviceSerial:String,cameraNo:Int?,verifyCode:String?) -> EZPlayer {
         let player = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial, cameraNo: cameraNo ?? 1)
-        if verifyCode == nil {
+        if verifyCode != nil {
             player.setPlayVerifyCode(verifyCode)
         }
         player.delegate = self
