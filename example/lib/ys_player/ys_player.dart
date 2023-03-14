@@ -14,8 +14,7 @@ enum YsMediaType {
 
 /// 播放状态
 enum YsPlayStatus {
-  onInitial,
-  onPause,
+  onPrepareing,
   onPlaying,
   onStop,
   onError;
@@ -48,7 +47,7 @@ class YsPlayerState extends State<YsPlayer> {
   late double height;
   late double width;
 
-  YsPlayStatus ysPlayStatus = YsPlayStatus.onInitial;
+  YsPlayStatus ysPlayStatus = YsPlayStatus.onPrepareing;
 
   String? errorInfo; //播放错误提示
 
@@ -199,7 +198,7 @@ class YsPlayerState extends State<YsPlayer> {
   }) async {
     setState(() {
       errorInfo = null;
-      ysPlayStatus = YsPlayStatus.onInitial;
+      ysPlayStatus = YsPlayStatus.onPrepareing;
     });
     await startPlay(startTime: startTime, endTime: endTime);
   }
@@ -220,13 +219,22 @@ class YsPlayerState extends State<YsPlayer> {
   }
 
   /// 点击播放按钮
-  void onPlayHandle(bool isPlaying) async {
-    if (mediaType == YsMediaType.playback) {
-      isPlaying ? resumePlayback() : pausePlayback();
-    } else if (mediaType == YsMediaType.real) {
-      isPlaying ? onRePlay() : YsPlay.stopRealPlay();
+  void onPlayHandle(YsPlayStatus playStatus) async {
+    if (playStatus == YsPlayStatus.onPlaying) {
+      if (mediaType == YsMediaType.playback) {
+        resumePlayback();
+      } else if (mediaType == YsMediaType.real) {
+        onRePlay();
+      }
+    } else if (playStatus == YsPlayStatus.onStop) {
+      if (mediaType == YsMediaType.playback) {
+        pausePlayback();
+      } else if (mediaType == YsMediaType.real) {
+        YsPlay.stopRealPlay();
+      }
     }
-    this.isPlaying = isPlaying;
+    this.ysPlayStatus = playStatus;
+    if (mounted) setState(() {});
   }
 
   /// 点击声音按钮

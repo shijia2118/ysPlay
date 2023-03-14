@@ -8,7 +8,7 @@ import '../widgets/player_forground_widget.dart';
 class YsPlayerPortrait extends StatelessWidget {
   final double width;
   final double height;
-  final Function(bool) onPlayHandle;
+  final Function(YsPlayStatus) onPlayHandle;
   final Function()? onFullScreenHandle;
   final Function(bool) onSoundHandle;
   final Function() onScreenTouched;
@@ -53,7 +53,7 @@ class YsPlayerPortrait extends StatelessWidget {
             width: width,
             height: 35,
             ysPlayStatus: ysPlayStatus,
-            onPlayHandle: (isPlaying) => onPlayHandle(isPlaying),
+            onPlayHandle: (status) => onPlayHandle(status),
             onFullScreenHandle: onFullScreenHandle,
             onSoundHandle: (isOpen) => onSoundHandle(isOpen),
             onSelectLevelHandle: (i) => onSelectLevelHandle(i),
@@ -63,7 +63,7 @@ class YsPlayerPortrait extends StatelessWidget {
         //视图上层加载指示器
         PlayerForgroundWidget(
           errorInfo: errorInfo,
-          isVisible: ysPlayStatus == YsPlayStatus.onInitial,
+          isVisible: ysPlayStatus == YsPlayStatus.onPrepareing,
           onRePlay: onRePlay,
         ),
       ],

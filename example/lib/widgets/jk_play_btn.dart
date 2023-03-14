@@ -6,7 +6,7 @@ class JkPlayBtn extends StatefulWidget {
   final String pauseIcon;
   final double size;
   final EdgeInsets? padding;
-  final Function(bool) onTap;
+  final Function(YsPlayStatus) onTap;
   final YsPlayStatus ysPlayStatus;
   const JkPlayBtn({
     super.key,
@@ -26,6 +26,7 @@ class _JkPlayBtnState extends State<JkPlayBtn> {
   late String playIcon;
   late String pauseIcon;
   late YsPlayStatus ysPlayStatus;
+  late YsMediaType mediaType;
 
   @override
   void initState() {
@@ -41,19 +42,22 @@ class _JkPlayBtnState extends State<JkPlayBtn> {
 
   @override
   Widget build(BuildContext context) {
-    String icon = playIcon;
-    if (ysPlayStatus == YsPlayStatus.onInitial) {
-      icon = pauseIcon;
+    String icon = pauseIcon;
+    if (ysPlayStatus == YsPlayStatus.onPlaying) {
+      icon = playIcon;
     }
     return GestureDetector(
       onTap: () {
-        if (ysPlayStatus == YsPlayStatus.onInitial || ysPlayStatus == YsPlayStatus.onPause) {
-          ysPlayStatus == YsPlayStatus.onPlaying;
-        } else if
-        setState(() {
-          isPlaying = !isPlaying;
-        });
-        widget.onTap(isPlaying);
+        if (ysPlayStatus == YsPlayStatus.onPrepareing) {
+          return;
+        } else if (ysPlayStatus == YsPlayStatus.onPlaying) {
+          ysPlayStatus = YsPlayStatus.onStop;
+        } else if (ysPlayStatus == YsPlayStatus.onError) {
+          ysPlayStatus = YsPlayStatus.onPrepareing;
+        } else if (ysPlayStatus == YsPlayStatus.onStop) {
+          ysPlayStatus = YsPlayStatus.onPlaying;
+        }
+        widget.onTap(ysPlayStatus);
       },
       child: Container(
         color: Colors.transparent,

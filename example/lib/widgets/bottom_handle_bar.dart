@@ -11,7 +11,7 @@ import 'jk_play_btn.dart';
 class BottomHandleBar extends StatefulWidget {
   final double? width;
   final double? height;
-  final Function(bool)? onPlayHandle;
+  final Function(YsPlayStatus)? onPlayHandle;
   final Function(bool)? onSoundHandle;
   final Function()? onFullScreenHandle;
   final Function(int)? onSelectLevelHandle;
@@ -26,7 +26,7 @@ class BottomHandleBar extends StatefulWidget {
     this.onSoundHandle,
     this.onSelectLevelHandle,
     required this.ysPlayStatus,
-    this.mediaType = YsMediaType.playback,
+    required this.mediaType,
   }) : super(key: key);
 
   @override
@@ -85,8 +85,8 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
             children: [
               // 播放按钮
               JkPlayBtn(
-                onTap: (isPlaying) => onPlayBtnClicked(isPlaying),
-                isPlaying: ysPlayStatus == YsPlayStatus.onPlaying,
+                onTap: (status) => onPlayBtnClicked(status),
+                ysPlayStatus: ysPlayStatus,
               ),
 
               // 声音按钮
@@ -119,7 +119,7 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
     timer = Timer.periodic(
       const Duration(milliseconds: 100),
       (t) {
-        if (t.tick * 100 >= 3000) {
+        if (t.tick * 100 >= 5000) {
           // 3s后消失
           timer!.cancel();
           if (mounted) {
@@ -143,9 +143,9 @@ class _BottomHandleBarState extends State<BottomHandleBar> {
   }
 
   ///播放按钮点击事件
-  void onPlayBtnClicked(bool isPlaying) {
+  void onPlayBtnClicked(YsPlayStatus status) {
     onTouchedHandle();
-    if (widget.onPlayHandle != null) widget.onPlayHandle!(isPlaying);
+    if (widget.onPlayHandle != null) widget.onPlayHandle!(status);
   }
 
   ///声音按钮点击事件
