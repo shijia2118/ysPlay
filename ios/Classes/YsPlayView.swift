@@ -46,6 +46,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
     func callMessage (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void {
 
         if call.method == "set_access_token" {
+            /// 设置"accessToken"
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
             if data != nil && data!["accessToken"] != nil {
                 EZOpenSDK.setAccessToken(data!["accessToken"]!)
@@ -54,96 +55,124 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             }else{
                 result(false)
             }
-        } else if call.method == "EZPlayer_init" {
-            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
-            let deviceSerial:String? = data?["deviceSerial"] as? String
-            let cameraNo:Int? = data?["cameraNo"] as? Int
-            let verifyCode:String? = data?["verifyCode"] as? String
-            
-            ezPlayer = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial!, cameraNo: cameraNo ?? 1)
-            ezPlayer!.setPlayVerifyCode(verifyCode)
-            ezPlayer!.delegate = self
-            ezPlayer!.setPlayerView(nativeView)
-            print("\(TAG)注册播放器成功")
-            result(true)
-        } else if call.method == "startRealPlay" {
-            if ezPlayer == nil {
-                return
-            }
-            let isSuccess = ezPlayer!.startRealPlay()
-            print("\(TAG) 开始直播 \(isSuccess ? "成功" : "失败")")
-            result(isSuccess)
-        } else if call.method == "stopRealPlay" {
-            if ezPlayer == nil {
-                return
-            }
-            let isSuccess = ezPlayer!.stopRealPlay()
-            print("\(TAG) 停止直播 \(isSuccess ? "成功" : "失败")")
-            result(isSuccess)
         } else if call.method == "startPlayback" {
-            if ezPlayer == nil {
-                return
+            /// 开始回放
+            if ezPlayer != nil {
+                ezPlayer?.stopPlayback()
+                ezPlayer = nil
             }
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
-            let startTime = data?["startTime"] as! Int
-            let endTime = data?["endTime"] as! Int
+            let deviceSerial = data?["deviceSerial"] as? String //设备序列号
+            let cameraNo = data?["cameraNo"] as? Int
+            let verifyCode = data?["verifyCode"] as? String
+            let startTime = data?["startTime"] as? Int
+            let endTime = data?["endTime"] as? Int
+            
+            if deviceSerial == nil || startTime == nil || endTime == nil {
+                result(false)
+                return
+            }
+            // 注册播放器
+            ezPlayer = createEzPlayer(deviceSerial: deviceSerial!, cameraNo: cameraNo, verifyCode: verifyCode)
             
             let recordFile = EZDeviceRecordFile()
             recordFile.type = 1;
             recordFile.channelType = "D";
-            let startDate = Date(timeIntervalSince1970: TimeInterval(startTime)/1000)
+            let startDate = Date(timeIntervalSince1970: TimeInterval(startTime!)/1000)
             recordFile.startTime = startDate
             
-            let endDate = Date(timeIntervalSince1970: TimeInterval(endTime)/1000)
+            let endDate = Date(timeIntervalSince1970: TimeInterval(endTime!)/1000)
             recordFile.stopTime = endDate
-            print(startTime)
-            print("ios startTime")
-            print(TimeInterval(startTime))
-            
-            let nowDate = Date()
-            print("ios nowDate")
-            print(nowDate.timeIntervalSince1970)
+            print("萤石SDK:回放开始时间=\(startTime!)")
+            print("萤石SDK:回放开始间隔时间:\(TimeInterval(startTime!))")
+            print("萤石SDK:回放开始转换时间:\(startDate)")
+            print("萤石SDK:回放结束时间=\(endTime!)")
+            print("萤石SDK:回放结束间隔时间:\(TimeInterval(endTime!))")
+            print("萤石SDK:回放结束转换时间:\(endDate)")
             
             let bool = ezPlayer!.startPlayback(fromDevice: recordFile)
             print("\(TAG)开始回放\(bool ? "成功" : "失败")")
             result(bool)
-        } else if call.method == "stopPlayback" {
-            if ezPlayer == nil {
-                return
-            }
-            let bool = ezPlayer!.stopPlayback()
-            print("\(TAG)停止回放\(bool ? "成功" : "失败")")
-            result(bool)
         } else if call.method == "pause_play_back"{
+            /// 暂停回放
             if ezPlayer == nil {
+                result(false)
                 return
             }
             let bool = ezPlayer!.pausePlayback()
             print("\(TAG)暂停回放\(bool ? "成功" : "失败")")
             result(bool)
         } else if call.method == "resume_play_back"{
+            /// 恢复回放
             if ezPlayer == nil {
+                result(false)
                 return
             }
             let bool = ezPlayer!.resumePlayback()
             print("\(TAG)恢复回放\(bool ? "成功" : "失败")")
             result(bool)
-        } else if call.method == "openSound"{
+        } else if call.method == "stopPlayback" {
+            /// 停止回放
             if ezPlayer == nil {
+                result(false)
+                return
+            }
+            let bool = ezPlayer!.stopPlayback()
+            print("\(TAG)停止回放\(bool ? "成功" : "失败")")
+            result(bool)
+        } else if call.method == "startRealPlay" {
+            if(ezPlayer != nil){
+                // 先停止
+                ezPlayer!.stopRealPlay();
+                ezPlayer = nil;
+            }
+            
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            let deviceSerial = data?["deviceSerial"] as? String //设备序列号
+            let cameraNo = data?["cameraNo"] as? Int
+            let verifyCode = data?["verifyCode"] as? String
+            
+            if deviceSerial == nil {
+                result(false)
+                return
+            }
+            // 注册播放器
+            ezPlayer = createEzPlayer(deviceSerial: deviceSerial!, cameraNo: cameraNo, verifyCode: verifyCode)
+
+            let isSuccess = ezPlayer!.startRealPlay()
+            print("\(TAG) 开始直播 \(isSuccess ? "成功" : "失败")")
+            result(isSuccess)
+        } else if call.method == "stopRealPlay" {
+            /// 停止直播
+            if ezPlayer == nil {
+                result(false)
+                return
+            }
+            let isSuccess = ezPlayer!.stopRealPlay()
+            print("\(TAG) 停止直播 \(isSuccess ? "成功" : "失败")")
+            result(isSuccess)
+        }  else if call.method == "openSound"{
+            /// 打开声音
+            if ezPlayer == nil {
+                result(false)
                 return
             }
             let bool = ezPlayer!.openSound()
             print("\(TAG)打开声音\(bool ? "成功" : "失败")")
             result(bool)
         } else if call.method == "closeSound"{
+            /// 关闭声音
             if ezPlayer == nil {
+                result(false)
                 return
             }
             let bool = ezPlayer!.closeSound()
             print("\(TAG)关闭声音\(bool ? "成功" : "失败")")
             result(bool)
         } else if call.method == "capturePicture"{
+            /// 截屏
             if ezPlayer == nil {
+                result(false)
                 return
             }
             let image =  ezPlayer!.capturePicture(10)
@@ -152,9 +181,13 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                     print("\(self.TAG)截屏\(isSuccess ? "成功" : "失败")")
                     result(isSuccess)
                 })
+            } else {
+                result(false)
             }
         } else if call.method == "start_record" {
+            /// 开始录像
             if ezPlayer == nil {
+                result(false)
                 return
             }
             //录屏前,先结束上一次录像
@@ -168,7 +201,9 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 result(isSuccess)
             })
         } else if call.method == "stop_record"{
+            /// 停止录像
             if ezPlayer == nil {
+                result(false)
                 return
             }
             ezPlayer!.stopLocalRecordExt({(isSuccess : Bool) in
@@ -182,8 +217,8 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
                 }
              })
         } else if call.method == "set_video_level"{
-            ///设置视频清晰度
-            ///videoLevel:  0流畅，1均衡，2高清，3超清。默认高清
+            /// 设置视频清晰度
+            /// videoLevel:  0流畅，1均衡，2高清，3超清。默认高清
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
             var cameraNo:Int? = data?["cameraNo"] as? Int
@@ -197,22 +232,19 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             }
             if deviceSerial == nil{
                 result(false)
+                return
             }
             let videoLevelType = getVideoLevelType(videoLevel: videoLevel!)
           
-            EZOpenSDK.setVideoLevel(deviceSerial!, cameraNo: cameraNo!, videoLevel: videoLevelType, completion: {
-                (error) in
-                if error != nil{
-                    print(">>>>>>>>error==\(String(describing: error))")
-                    result(false)
-                }else{
-                    result(true)
-                }
+            EZOpenSDK.setVideoLevel(deviceSerial!, cameraNo: cameraNo!, videoLevel: videoLevelType, completion: { error in
+                print(">>>>>>>>error==\(String(describing: error))")
+                result(false)
             })
+            result(true)
         } else if call.method == "start_voice_talk"{
-            //关闭播放声音
+            /// 开始对讲
             if ezPlayer != nil {
-                ezPlayer!.closeSound()
+                ezPlayer!.closeSound() //关闭视频播放声音
             }
             //获取参数
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
@@ -236,6 +268,7 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             //开启对讲
             _talkPlayer!.startVoiceTalk()
         } else if call.method == "stop_voice_talk" {
+            /// 停止对讲
             var isSuccess : Bool = true
             if _talkPlayer != nil {
                 isSuccess = _talkPlayer!.stopVoiceTalk()
@@ -371,6 +404,18 @@ class YsPlayView: NSObject, FlutterPlatformView,EZPlayerDelegate{
             break
         }
         return videolevelType
+    }
+    
+    /// 注册播放器
+    private func createEzPlayer(deviceSerial:String,cameraNo:Int?,verifyCode:String?) -> EZPlayer {
+        let player = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial, cameraNo: cameraNo ?? 1)
+        if verifyCode == nil {
+            player.setPlayVerifyCode(verifyCode)
+        }
+        player.delegate = self
+        player.setPlayerView(nativeView)
+        print("\(TAG)注册播放器成功")
+        return player
     }
     
    

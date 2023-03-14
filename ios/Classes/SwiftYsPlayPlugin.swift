@@ -31,6 +31,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == "init_sdk" {
+            /// 初始化萤石SDK
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, String>
             if data == nil || data!["appKey"] == nil {
                 result(false)
@@ -49,7 +50,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                 result(false)
             }
         } else if call.method == "start_config_ap" {
-            ///AP配网接口(热点配网)
+            /// AP配网接口(热点配网)
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
             let ssid:String? = data?["ssid"] as? String
@@ -60,7 +61,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                                         deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", deviceStatus: wifiConfigStatus)
             
         } else if call.method == "start_config_wifi" {
-            ///SmartConfig & 声波配网
+            /// SmartConfig & 声波配网
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
             let ssid:String? = data?["ssid"] as? String
@@ -76,7 +77,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             EZOpenSDK.startConfigWifi(ssid ?? "", password: password ?? "", deviceSerial:deviceSerial ?? "",
                                       mode: configMode.rawValue,deviceStatus: wifiConfigStatus)
         } else if call.method == "stop_config" {
-            ///停止配网
+            /// 停止配网
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             var mode:String? = data?["mode"] as? String
             if mode == nil {
