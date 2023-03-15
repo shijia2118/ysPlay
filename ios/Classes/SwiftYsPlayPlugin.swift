@@ -10,7 +10,7 @@ import EZOpenSDKFramework
 
 public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     
-    var playerView:UIView?
+    var playerView:UIView? = nil
     let TAG = "荧石SDK=======>"
     var pwResult:FlutterBasicMessageChannel?
     
@@ -20,11 +20,12 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                                             codec:FlutterStandardMessageCodec.sharedInstance())
     }
     
+    /// 注册插件，程序启动时执行1次
     public static func register(with registrar: FlutterPluginRegistrar) {
         let factory = YsPlayViewFactory(messenger: registrar.messenger())
         registrar.register(factory, withId: Constants.CHANNEL)
-        let channel = FlutterMethodChannel(name: Constants.CHANNEL, binaryMessenger: registrar.messenger())
         
+        let channel = FlutterMethodChannel(name: Constants.CHANNEL, binaryMessenger: registrar.messenger())
         let instance = SwiftYsPlayPlugin(messenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
