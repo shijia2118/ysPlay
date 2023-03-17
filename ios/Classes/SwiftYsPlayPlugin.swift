@@ -11,10 +11,7 @@ import Photos
 
 public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     
-<<<<<<< HEAD
-=======
-    var playerView:UIView? = nil
->>>>>>> 84097d2984f1ce6e2dacc528a6b903f01b35faaf
+
     let TAG = "荧石SDK=======>"
     
     var playerView:UIView? // 播放视图
@@ -47,7 +44,6 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
         
     }
     
-<<<<<<< HEAD
     deinit {
        /// 移除通知
        NotificationCenter.default.removeObserver(self)
@@ -68,9 +64,6 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
      * 注册插件
      * 程序运行时调用，且在项目周期内，只执行一次
      */
-=======
-    /// 注册插件，程序启动时执行1次
->>>>>>> 84097d2984f1ce6e2dacc528a6b903f01b35faaf
     public static func register(with registrar: FlutterPluginRegistrar) {
 
         let factory = YsPlayViewFactory()
