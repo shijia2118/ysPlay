@@ -127,9 +127,7 @@ class _RealPageState extends State<RealPage> {
 
     return showOtherUI
         ? Scaffold(
-            appBar: AppBar(
-              title: Text('直播页面'),
-            ),
+            appBar: AppBar(title: Text('直播页面')),
             body: Column(
               children: [
                 ysPlayer,

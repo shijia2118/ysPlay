@@ -52,9 +52,6 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     /// 接收到通知后的方法回调
     @objc private func notificationAction(notification: Notification) {
         if notification.object != nil {
-            if playerView != nil {
-                playerView = nil
-            }
             playerView = notification.object as? UIView
         }
     }

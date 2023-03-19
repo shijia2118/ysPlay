@@ -87,44 +87,40 @@ class YsPlayerState extends State<YsPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        Size size = MediaQuery.of(context).size;
-        height = isFullScreen ? size.height : 200;
-        width = size.width;
-        return Container(
-          width: width,
-          height: height,
-          color: Colors.black,
-          child: isFullScreen
-              ? YsPlayerLandscape(
-                  width: width,
-                  height: height,
-                  errorInfo: errorInfo,
-                  onFullScreenHandle: onFullScreenHandle,
-                  onPlayHandle: onPlayHandle,
-                  onSoundHandle: onSoundHandle,
-                  onScreenTouched: onScreenTouched,
-                  onSelectLevelHandle: onSelectLevelHandle,
-                  onRePlay: onRePlay,
-                  ysPlayStatus: ysPlayStatus,
-                  mediaType: mediaType,
-                )
-              : YsPlayerPortrait(
-                  width: width,
-                  height: height,
-                  errorInfo: errorInfo,
-                  onFullScreenHandle: onFullScreenHandle,
-                  onPlayHandle: onPlayHandle,
-                  onSoundHandle: onSoundHandle,
-                  onScreenTouched: onScreenTouched,
-                  onSelectLevelHandle: onSelectLevelHandle,
-                  onRePlay: onRePlay,
-                  ysPlayStatus: ysPlayStatus,
-                  mediaType: mediaType,
-                ),
-        );
-      },
+    Size size = MediaQuery.of(context).size;
+    height = isFullScreen ? size.height : 200;
+    width = size.width;
+    return Container(
+      width: width,
+      height: height,
+      color: Colors.black,
+      child: isFullScreen
+          ? YsPlayerLandscape(
+              width: width,
+              height: height,
+              errorInfo: errorInfo,
+              onFullScreenHandle: onFullScreenHandle,
+              onPlayHandle: onPlayHandle,
+              onSoundHandle: onSoundHandle,
+              onScreenTouched: onScreenTouched,
+              onSelectLevelHandle: onSelectLevelHandle,
+              onRePlay: onRePlay,
+              ysPlayStatus: ysPlayStatus,
+              mediaType: mediaType,
+            )
+          : YsPlayerPortrait(
+              width: width,
+              height: height,
+              errorInfo: errorInfo,
+              onFullScreenHandle: onFullScreenHandle,
+              onPlayHandle: onPlayHandle,
+              onSoundHandle: onSoundHandle,
+              onScreenTouched: onScreenTouched,
+              onSelectLevelHandle: onSelectLevelHandle,
+              onRePlay: onRePlay,
+              ysPlayStatus: ysPlayStatus,
+              mediaType: mediaType,
+            ),
     );
   }
 
@@ -281,9 +277,9 @@ class YsPlayerState extends State<YsPlayer> {
       });
     } else {
       //回调给父组件，隐藏其他组件
-      if (widget.showOtherUI != null) {
-        widget.showOtherUI!(false);
-      }
+      // if (widget.showOtherUI != null) {
+      //   widget.showOtherUI!(false);
+      // }
       // 竖屏到横屏
       DeviceOrientation deviceOrientation = DeviceOrientation.landscapeLeft;
       if (Platform.isIOS) {
@@ -293,6 +289,13 @@ class YsPlayerState extends State<YsPlayer> {
       //隐藏状态栏，底部按钮栏
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
           overlays: []);
+
+      //回调给父组件，隐藏其他组件
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (widget.showOtherUI != null) {
+          widget.showOtherUI!(false);
+        }
+      });
     }
   }
 }
