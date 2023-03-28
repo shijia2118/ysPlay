@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ys_play/ys.dart';
+import 'package:ys_play/ys_play.dart';
 import 'package:ys_play_example/main.dart';
 import 'package:ys_play_example/peiwang/peiwang_page.dart';
 import 'package:ys_play_example/play_back_page.dart';

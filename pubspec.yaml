@@ -1,8 +1,8 @@
 name: ys_play
 description: Flutter萤石云直播插件，支持Android和IOS.
 version: 0.0.1
-homepage: "https"
-repository: https://github.com/shijia2118/ysPlay.git
+homepage: "https://github.com/shijia2118/ysPlay.git"
+# repository: https://github.com/shijia2118/ysPlay.git
 
 environment:
   sdk: '>=2.19.2 <3.0.0'

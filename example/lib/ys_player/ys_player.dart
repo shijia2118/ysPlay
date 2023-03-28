@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:ys_play/ys.dart';
+import 'package:ys_play/ys_play.dart';
 import 'package:ys_play_example/ys_player/ys_player_land_scape.dart';
 import 'package:ys_play_example/ys_player/ys_player_portrait.dart';
 

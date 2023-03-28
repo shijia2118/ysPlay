@@ -271,7 +271,6 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let videoLevelType = getVideoLevelType(videoLevel: videoLevel!)
           
             EZOpenSDK.setVideoLevel(deviceSerial!, cameraNo: cameraNo!, videoLevel: videoLevelType, completion: { error in
-                print(">>>>>>>>error==\(String(describing: error))")
                 result(false)
             })
             result(true)
@@ -299,7 +298,6 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                 //声波配网
                 configMode = .wave
             }
-            print(">>>>>>>>\(configMode.rawValue)")
             EZOpenSDK.startConfigWifi(ssid ?? "", password: password ?? "", deviceSerial:deviceSerial ?? "",
                                       mode: configMode.rawValue,deviceStatus: wifiConfigStatus)
         } else if call.method == "stop_config" {
@@ -502,7 +500,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     lazy var wifiConfigStatus = { (status:EZWifiConfigStatus,result:String?)  in
         let entity:PeiwangResultEntity = PeiwangResultEntity()
         switch(status){
-        case EZWifiConfigStatus.DEVICE_PLATFORM_REGISTED:
+        case .DEVICE_PLATFORM_REGISTED:
             print("\(self.TAG)设备注册平台成功")
             entity.isSuccess = true
             entity.msg = "注册平台成功"
@@ -515,18 +513,18 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
         case .DEVICE_WIFI_CONNECTED:
             print("\(self.TAG)Wi-Fi连接成功")
             break
-        case .DEVICE_ACCOUNT_BINDED:
-            print("\(self.TAG)已绑定设备")
-            break
-        case .DEVICE_WIFI_SENT_SUCCESS:
-            print("\(self.TAG)向设备发送WiFi信息成功")
-            break
-        case .DEVICE_WIFI_SENT_FAILED:
-            print("\(self.TAG)向设备发送WiFi信息失败")
-            entity.isSuccess = false
-            entity.msg = "向设备发送WiFi信息失败"
-            self.pwResult?.sendMessage(entity.getString())
-            break
+         case .DEVICE_ACCOUNT_BINDED:
+             print("\(self.TAG)已绑定设备")
+             break
+         case .DEVICE_WIFI_SENT_SUCCESS:
+             print("\(self.TAG)向设备发送WiFi信息成功")
+             break
+         case .DEVICE_WIFI_SENT_FAILED:
+             print("\(self.TAG)向设备发送WiFi信息失败")
+             entity.isSuccess = false
+             entity.msg = "向设备发送WiFi信息失败"
+             self.pwResult?.sendMessage(entity.getString())
+             break
         case .DEVICE_PLATFORM_REGIST_FAILED:
             entity.isSuccess = false
             entity.msg = "注册平台失败"

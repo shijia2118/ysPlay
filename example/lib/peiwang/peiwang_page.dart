@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pickers/pickers.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:ys_play/ys.dart';
+import 'package:ys_play/ys_play.dart';
 import 'package:ys_play_example/main.dart';
 import 'package:ys_play_example/utils/dialog_util.dart';
 import 'package:ys_play_example/utils/loading_hepler.dart';
@@ -120,7 +120,8 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
     );
 
     /// 底部提示文字
-    Widget reminderText = Text('提示:\n若设备指示灯红蓝交替闪烁，请选择WiFi配网。\n若设备指示灯蓝色闪烁，请选择设备热点配网。');
+    Widget reminderText =
+        Text('提示:\n若设备指示灯红蓝交替闪烁，请选择WiFi配网。\n若设备指示灯蓝色闪烁，请选择设备热点配网。');
 
     /// 选择网络按钮
     Widget selectWifiWidget = TextButton(

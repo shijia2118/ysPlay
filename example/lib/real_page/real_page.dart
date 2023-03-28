@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:ys_play/ys.dart';
+import 'package:ys_play/ys_play.dart';
 import 'package:ys_play_example/real_page/intercom_btn.dart';
 import 'package:ys_play_example/real_page/screen_record_btn.dart';
 

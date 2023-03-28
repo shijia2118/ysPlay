@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:ys_play/ys.dart';
+import 'package:ys_play/ys_play.dart';
 import 'package:ys_play_example/utils/permission_util.dart';
 import 'package:ys_play_example/utils/time_util.dart';
 import 'package:ys_play_example/widgets/time_selector.dart';

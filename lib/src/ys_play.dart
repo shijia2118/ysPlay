@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:ys_play/src/entity/capacity_response_entity.dart';
 import 'package:ys_play/src/entity/ys_player_status.dart';
 import 'package:ys_play/src/entity/ys_pw_result.dart';
+import 'package:ys_play/src/entity/ys_request_entity.dart';
 import 'package:ys_play/src/entity/ys_response_entity.dart';
 import 'package:ys_play/src/ys_http_api.dart';
-import 'package:ys_play/ys.dart';
 
 class YsPlay {
   /// 平台通信渠道
