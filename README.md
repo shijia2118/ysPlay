@@ -183,6 +183,7 @@ Flutter萤石云直播插件，支持Android和IOS
 在xcode -> Runner -> Target -> Target-Signing & Capabilities中，添加以下2项能力:
 1.Access WiFi Information(获取手机连接的WiFi名，配网需要);
 2.Hotspot Configuation(连接指定WiFi，配网需要).
+注意：上述2项能力，同时需要在appstore官网证书上添加相关能力。
 
 ## 使用方式
 具体请见example中的功能，里面有详细注释。

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class LoadingHelper {
@@ -9,7 +11,12 @@ class LoadingHelper {
     if (isLoading) {
       return;
     }
+    Color? color;
+    if (Platform.isIOS) {
+      color = Colors.white;
+    }
     isLoading = true;
+
     var widget = WillPopScope(
       onWillPop: () async {
         return false;
@@ -27,7 +34,9 @@ class LoadingHelper {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircularProgressIndicator.adaptive(),
+                CircularProgressIndicator.adaptive(
+                  backgroundColor: color,
+                ),
                 Container(
                   margin: const EdgeInsets.only(top: 13),
                   child: Text(
