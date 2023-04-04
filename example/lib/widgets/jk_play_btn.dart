@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ys_play_example/ys_player/ys_player.dart';
+import 'package:ys_play/ys_play.dart';
 
 class JkPlayBtn extends StatefulWidget {
   final String playIcon;

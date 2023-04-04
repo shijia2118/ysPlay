@@ -9,19 +9,6 @@ import 'package:ys_play_example/ys_player/ys_player_portrait.dart';
 
 import '../main.dart';
 
-enum YsMediaType {
-  playback, //回放
-  real, //直播
-}
-
-/// 播放状态
-enum YsPlayStatus {
-  onPrepareing,
-  onPlaying,
-  onStop,
-  onError;
-}
-
 class YsPlayer extends StatefulWidget {
   final String deviceSerial;
   final String verifyCode;

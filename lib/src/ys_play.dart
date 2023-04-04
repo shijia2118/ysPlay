@@ -9,6 +9,19 @@ import 'package:ys_play/src/entity/ys_request_entity.dart';
 import 'package:ys_play/src/entity/ys_response_entity.dart';
 import 'package:ys_play/src/ys_http_api.dart';
 
+enum YsMediaType {
+  playback, //回放
+  real, //直播
+}
+
+/// 播放状态
+enum YsPlayStatus {
+  onPrepareing,
+  onPlaying,
+  onStop,
+  onError;
+}
+
 class YsPlay {
   /// 平台通信渠道
   static const _channel = MethodChannel("com.example.ys_play");
