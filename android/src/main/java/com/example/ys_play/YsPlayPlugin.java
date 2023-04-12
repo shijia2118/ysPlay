@@ -406,7 +406,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                         Looper.prepare();
                         try {
                            List<EZStorageStatus> statusList = EZOpenSDK.getInstance().getStorageStatus(deviceSerial);
-                           result.success(statusList);
+                           result.success(new Gson().toJson(statusList));
                         } catch (BaseException e) {
                             e.printStackTrace();
                             LogUtils.d(e.toString());
