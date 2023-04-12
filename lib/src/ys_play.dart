@@ -327,4 +327,9 @@ class YsPlay {
     bool result = await _channel.invokeMethod("stop_voice_talk");
     return result;
   }
+
+  /// 获取存储介质状态(如是否初始化，格式化进度等)
+  static Future getStorageStatus({required String deviceSerial}) async {
+    return await _channel.invokeMethod("get_storage_status");
+  }
 }

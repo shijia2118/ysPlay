@@ -263,10 +263,11 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
       onTap: () async {
         Navigator.pop(context);
         LoadingHelper.showDialogLoading(context, text: '配网中...');
-        // bool result = await YsPlay.setAccessToken(accessToken);
-        // if (!result) {
-        //   showToast('assessToken有误');
-        // }
+        //配网前先授权登录
+        bool result = await YsPlay.setAccessToken(accessToken);
+        if (!result) {
+          showToast('assessToken有误');
+        }
 
         if (pwPosition == 1) {
           //热点配网
@@ -285,6 +286,12 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
             mode: mode,
           );
         }
+
+        //尝试查询设备信息（用于添加设备之前, 简单查询设备信息，如是否在线，是否添加等）
+        // await YsPlay.probeDeviceInfo(deviceSerial: deviceSerial)
+        //     .then((value) async {
+
+        // });
       },
     );
   }

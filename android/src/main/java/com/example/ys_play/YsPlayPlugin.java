@@ -25,9 +25,11 @@ import com.videogo.openapi.EZConstants;
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZOpenSDKListener;
 import com.videogo.openapi.EZPlayer;
+import com.videogo.openapi.bean.EZStorageStatus;
 import com.videogo.wificonfig.APWifiConfig;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 import io.flutter.BuildConfig;
@@ -38,7 +40,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 
-public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler,TextureView.SurfaceTextureListener  {
+public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler,TextureView.SurfaceTextureListener{
 
     private Application application;
     private EZPlayer ezPlayer; //视频播放器
@@ -395,6 +397,24 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                 }
                 result.success(isSuccess);
                 break;
+            /// 获取存储介质状态(如是否初始化，格式化进度等) 该接口为耗时操作，必须在线程中调用
+            case "get_storage_status":
+                deviceSerial = call.argument("deviceSerial");
+                new Thread() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        try {
+                           List<EZStorageStatus> statusList = EZOpenSDK.getInstance().getStorageStatus(deviceSerial);
+                           result.success(statusList);
+                        } catch (BaseException e) {
+                            e.printStackTrace();
+                            result.success(null);
+                        }
+                        Looper.loop();
+                    }
+                }.start();
+                break;
             /// 释放资源
             case "dispose":
                 if(ezPlayer!=null){
@@ -586,7 +606,6 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
         }
     };
 
-
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         if (ezPlayer != null) {
@@ -615,5 +634,4 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
     }
-
 }

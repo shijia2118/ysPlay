@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ys_play/ys_play.dart';
-import 'package:ys_play_example/ys_player/ys_player.dart';
 
 import '../widgets/bottom_handle_bar.dart';
 import '../widgets/player_forground_widget.dart';
