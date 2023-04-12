@@ -333,4 +333,15 @@ class YsPlay {
     return await _channel
         .invokeMethod("get_storage_status", {'deviceSerial': deviceSerial});
   }
+
+  /// 根据分区编号格式化
+  static Future formatStorage({
+    required String deviceSerial,
+    int? index,
+  }) async {
+    return await _channel.invokeMethod("format_storage", {
+      'deviceSerial': deviceSerial,
+      'partitionIndex': index,
+    });
+  }
 }

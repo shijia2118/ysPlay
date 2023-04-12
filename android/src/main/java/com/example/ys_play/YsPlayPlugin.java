@@ -53,6 +53,8 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
     private Integer supportTalk; //0-不支持 1-全双工 3-半双工
     private Integer isPhone2Dev; //0-设备端说，手机端听;1-手机端说，设备端听;
 
+    private Integer partitionIndex; //摄像头分区编号
+
     /**
      * 插件初始化
      * 当且仅当应用启动时，插件注册完成后执行。
@@ -411,6 +413,28 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                             e.printStackTrace();
                             LogUtils.d(e.toString());
                             result.success(null);
+                        }
+                        Looper.loop();
+                    }
+                }.start();
+                break;
+
+            ///格式化分区
+            case "format_storage":
+                deviceSerial = call.argument("deviceSerial");
+                partitionIndex = call.argument("partitionIndex");
+                if(partitionIndex==null) partitionIndex = -1;
+
+                new Thread() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        try {
+                           boolean formatResult = EZOpenSDK.getInstance().formatStorage(deviceSerial,partitionIndex);
+                           result.success(formatResult);
+                        } catch (BaseException e) {
+                            e.printStackTrace();
+                            result.success(false);
                         }
                         Looper.loop();
                     }
