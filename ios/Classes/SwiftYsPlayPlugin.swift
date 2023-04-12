@@ -354,6 +354,24 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                 _talkPlayer = nil
             }
             result(isSuccess)
+        } else if call.method == "get_storage_status"{
+            /// 获取存储介质状态(如是否初始化，格式化进度等) 该接口为耗时操作，必须在线程中调用
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            let deviceSerial:String? = data?["deviceSerial"] as? String
+            EZOpenSDK.getStorageStatus(deviceSerial!, completion: {d,error in
+                print(">>>>>>d==$d")
+                print(">>>>>>e==$error")
+
+                
+            })
+            
+        } else if call.method == "format_storage" {
+            ///格式化分区
+            let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
+            let deviceSerial:String? = data?["deviceSerial"] as? String
+            let partitionIndex:Int? = data?["partitionIndex"] as? Int
+
+            
         } else if call.method == "dispose" {
             if ezPlayer != nil {
                 ezPlayer!.destoryPlayer()
