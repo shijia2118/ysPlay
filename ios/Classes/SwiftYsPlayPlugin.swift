@@ -359,8 +359,8 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
             EZOpenSDK.getStorageStatus(deviceSerial!, completion: {d,error in
-                print(">>>>>>d==$d")
-                print(">>>>>>e==$error")
+                print(">>>>>>d==\(d)")
+                print(">>>>>>e==\(error)")
 
                 
             })
