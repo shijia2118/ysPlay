@@ -409,6 +409,7 @@ public class YsPlayPlugin implements FlutterPlugin, MethodChannel.MethodCallHand
                            result.success(statusList);
                         } catch (BaseException e) {
                             e.printStackTrace();
+                            LogUtils.d(e.toString());
                             result.success(null);
                         }
                         Looper.loop();
