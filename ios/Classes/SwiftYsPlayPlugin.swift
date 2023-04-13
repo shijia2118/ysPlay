@@ -359,12 +359,15 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
             EZOpenSDK.getStorageStatus(deviceSerial!, completion: {info ,error in
-               
-//                result(d)
-                print(">>>>>>>str1==\(info is EZStorageInfo)")
-                print(">>>>>>>str2==\(info is String)")
-                print(">>>>>>>str3==\(info is [EZStorageInfo])")
 
+                
+                if let infoList = info as? [EZStorageInfo] {
+                    result(self.arrayToJsonString(array: info))
+                } else {
+                    result(nil)
+                }
+                
+                
 
 
                 
@@ -375,6 +378,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let data:Optional<Dictionary> = call.arguments as? Dictionary<String, Any>
             let deviceSerial:String? = data?["deviceSerial"] as? String
             let partitionIndex:Int? = data?["partitionIndex"] as? Int
+           
 
             
         } else if call.method == "dispose" {
@@ -453,6 +457,19 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
         let data = try? JSONSerialization.data(withJSONObject: dict,options: JSONSerialization.WritingOptions.init(rawValue: 0))
         let jsonStr = NSString(data: data!, encoding:String.Encoding.utf8.rawValue)
         return jsonStr! as String
+    }
+    
+    /**
+     * 数组转JSON
+     */
+    func arrayToJsonString(array: [Any]) -> String? {
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: array, options: [])
+            return String(data: jsonData, encoding: .utf8)
+        } catch {
+            print("Error converting array to JSON string: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     /**
