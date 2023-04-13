@@ -363,6 +363,8 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
 //                result(d)
                 print(">>>>>>>str1==\(info is EZStorageInfo)")
                 print(">>>>>>>str2==\(info is String)")
+                print(">>>>>>>str3==\(info is [EZStorageInfo])")
+
 
 
                 
