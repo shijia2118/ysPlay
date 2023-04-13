@@ -360,10 +360,15 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let deviceSerial:String? = data?["deviceSerial"] as? String
             EZOpenSDK.getStorageStatus(deviceSerial!, completion: {info ,error in
 
-                
                 if let infoList = info as? [EZStorageInfo] {
-                    print(">>>>>>>>list==\(infoList)")
-                    result(self.arrayToJsonString(array: infoList))
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: infoList, options: .prettyPrinted)
+                        let jsonString = String(data: jsonData, encoding: .utf8)
+                        result(jsonString)
+                    } catch {
+                        print(error.localizedDescription)
+                        result(nil)
+                    }
                 } else {
                     result(nil)
                 }
