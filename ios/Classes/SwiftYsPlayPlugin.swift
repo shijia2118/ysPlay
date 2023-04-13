@@ -361,8 +361,19 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             EZOpenSDK.getStorageStatus(deviceSerial!, completion: {info ,error in
 
                 if let infoList = info as? [EZStorageInfo] {
+                    var mapList = Array<Dictionary<String, Any>>()
+                    infoList.forEach { e in
+                        var map = ["formatRate":e.formatRate,"index":e.index,"name":e.name ?? "","status":e.status] as [String : Any]
+                        mapList.append(map)
+                    }
+                    print(">>>>>>maplist==\(mapList)")
+                    
+                    
+                    
                     do {
-                        let jsonData = try JSONSerialization.data(withJSONObject: infoList, options: .prettyPrinted)
+                        let jsonData = try JSONSerialization.data(withJSONObject: mapList, options: .prettyPrinted)
+                        print(">>>>>>jsonData==\(jsonData)")
+
                         let jsonString = String(data: jsonData, encoding: .utf8)
                         result(jsonString)
                     } catch {
