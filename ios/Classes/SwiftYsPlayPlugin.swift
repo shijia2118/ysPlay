@@ -362,7 +362,8 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
 
                 
                 if let infoList = info as? [EZStorageInfo] {
-                    result(self.arrayToJsonString(array: info))
+                    print(">>>>>>>>list==\(infoList)")
+                    result(self.arrayToJsonString(array: infoList))
                 } else {
                     result(nil)
                 }
