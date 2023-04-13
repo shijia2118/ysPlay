@@ -384,7 +384,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             }
             
             EZOpenSDK.formatStorage(deviceSerial!, storageIndex: partitionIndex!) { error in
-                print(">>>>>>error==\(error)")
+                result(error == nil)
             }
            
 
