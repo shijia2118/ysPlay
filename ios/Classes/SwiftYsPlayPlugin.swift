@@ -360,7 +360,8 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let deviceSerial:String? = data?["deviceSerial"] as? String
             EZOpenSDK.getStorageStatus(deviceSerial!, completion: {d,error in
                 print(">>>>>>d==\(d)")
-                if error != nil {
+                print(">>>>>>e==\(error.localizedDescription)")
+                if error.localizedDescription.isEmpty {
                     print(">>>>>>e==\(error)")
                 }
                
