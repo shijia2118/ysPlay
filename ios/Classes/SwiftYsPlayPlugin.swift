@@ -468,8 +468,9 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             print(">>>>>>>1==\(array)")
 
             let jsonData = try JSONSerialization.data(withJSONObject: array, options: .prettyPrinted)
+            print(">>>>>>>2==")
+
             let jsonString = String(data: jsonData, encoding: .utf8)
-            print(">>>>>>>2==\(jsonString)")
             return jsonString
         } catch {
             print("Error converting array to JSON string: \(error.localizedDescription)")
