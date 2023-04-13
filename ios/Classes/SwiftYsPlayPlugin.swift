@@ -368,17 +368,6 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
                     }
                     let jsonString = self.convertDictionaryArrayToJson(mapList)
                     result(jsonString)
-         
-//                    do {
-//                        let jsonData = try JSONSerialization.data(withJSONObject: mapList, options: .prettyPrinted)
-//                        print(">>>>>>jsonData==\(jsonData)")
-//
-//                        let jsonString = String(data: jsonData, encoding: .utf8)
-//                        result(jsonString)
-//                    } catch {
-//                        print(error.localizedDescription)
-//                        result(nil)
-//                    }
                 } else {
                     result(nil)
                 }
