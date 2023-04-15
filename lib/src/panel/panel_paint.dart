@@ -25,9 +25,11 @@ class PanelPaint extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    Color panelColor = color ?? Colors.grey;
+
     Paint paint = Paint()
       ..strokeWidth = .5
-      ..color = color ?? Colors.grey
+      ..color = panelColor
       ..style = PaintingStyle.stroke;
 
     Offset center = Offset(size.width / 2, size.height / 2); //中心点
@@ -61,7 +63,7 @@ class PanelPaint extends CustomPainter {
     );
     bool inLeftPie = left.contains(offset) || left2.contains(offset);
     Color leftPieColor = Colors.transparent;
-    Color leftArrColor = color ?? Colors.grey;
+    Color leftArrColor = panelColor;
 
     if (inLeftPie) {
       leftPieColor = Colors.grey;
@@ -93,7 +95,7 @@ class PanelPaint extends CustomPainter {
     );
     bool inRightPie = right.contains(offset);
     Color rightPieColor = Colors.transparent;
-    Color rightArrColor = Colors.grey;
+    Color rightArrColor = panelColor;
 
     if (inRightPie) {
       rightPieColor = Colors.grey;
@@ -117,7 +119,7 @@ class PanelPaint extends CustomPainter {
     );
     bool inTopPie = top.contains(offset);
     Color topPieColor = Colors.transparent;
-    Color topArrColor = Colors.grey;
+    Color topArrColor = panelColor;
 
     if (inTopPie) {
       topPieColor = Colors.grey;
@@ -141,7 +143,7 @@ class PanelPaint extends CustomPainter {
     );
     bool inBottomPie = bottom.contains(offset);
     Color bottomPieColor = Colors.transparent;
-    Color bottomArrColor = Colors.grey;
+    Color bottomArrColor = panelColor;
 
     if (inBottomPie) {
       bottomPieColor = Colors.grey;
