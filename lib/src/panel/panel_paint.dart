@@ -61,7 +61,7 @@ class PanelPaint extends CustomPainter {
     );
     bool inLeftPie = left.contains(offset) || left2.contains(offset);
     Color leftPieColor = Colors.transparent;
-    Color leftArrColor = Colors.grey;
+    Color leftArrColor = color ?? Colors.grey;
 
     if (inLeftPie) {
       leftPieColor = Colors.grey;
