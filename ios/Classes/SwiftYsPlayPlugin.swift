@@ -155,6 +155,7 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             print("\(TAG)停止回放\(bool ? "成功" : "失败")")
             result(bool)
         } else if call.method == "startRealPlay" {
+            /// 开始直播
             if(ezPlayer != nil){
                 // 先停止
                 ezPlayer!.stopRealPlay();

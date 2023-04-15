@@ -10,6 +10,7 @@ class PanelPaint extends CustomPainter {
   final Function()? onBottomTap;
   final double innerRadius;
   final double outerRadius;
+  final Color color;
 
   PanelPaint({
     required this.offset,
@@ -19,20 +20,22 @@ class PanelPaint extends CustomPainter {
     this.onTopTap,
     this.innerRadius = 40,
     this.outerRadius = 100,
+    this.color = Colors.grey,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
       ..strokeWidth = .5
-      ..color = Colors.grey
+      ..color = color
       ..style = PaintingStyle.stroke;
 
     Offset center = Offset(size.width / 2, size.height / 2); //中心点
 
     // 外圆
     Rect outCircle = Rect.fromCircle(center: center, radius: outerRadius);
-    canvas.drawArc(outCircle, 0.0, 2 * pi, false, paint..style = PaintingStyle.stroke);
+    canvas.drawArc(
+        outCircle, 0.0, 2 * pi, false, paint..style = PaintingStyle.stroke);
 
     // 内圆
     Rect innerCircle = Rect.fromCircle(center: center, radius: innerRadius);
