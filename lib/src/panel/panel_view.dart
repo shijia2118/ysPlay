@@ -11,6 +11,7 @@ class PanelView extends StatefulWidget {
   final double innerRadius;
   final double outerRadius;
   final Widget? innerIcon;
+  final Color? color;
 
   const PanelView({
     super.key,
@@ -23,6 +24,7 @@ class PanelView extends StatefulWidget {
     this.innerRadius = 40,
     this.outerRadius = 100,
     this.innerIcon,
+    this.color,
   });
 
   @override
@@ -61,6 +63,7 @@ class _PanelViewState extends State<PanelView> {
                 onRightTap: widget.onRightTap,
                 onTopTap: widget.onTopTap,
                 onBottomTap: widget.onBottomTap,
+                color: widget.color,
               ),
             ),
           ),

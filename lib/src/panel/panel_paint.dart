@@ -10,7 +10,7 @@ class PanelPaint extends CustomPainter {
   final Function()? onBottomTap;
   final double innerRadius;
   final double outerRadius;
-  final Color color;
+  final Color? color;
 
   PanelPaint({
     required this.offset,
@@ -20,14 +20,14 @@ class PanelPaint extends CustomPainter {
     this.onTopTap,
     this.innerRadius = 40,
     this.outerRadius = 100,
-    this.color = Colors.grey,
+    this.color,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
       ..strokeWidth = .5
-      ..color = color
+      ..color = color ?? Colors.grey
       ..style = PaintingStyle.stroke;
 
     Offset center = Offset(size.width / 2, size.height / 2); //中心点
