@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:ys_play_example/home_page.dart';
 
-String appKey = '9ddc4fb7c0ef4996b04dd90156368f7c';
-String accessToken =
-    'ra.663svyt908uvwe5e3p9pkc9133rtasiu-9694fsoo4p-0d7nm8c-hv107l2gj';
-String deviceSerial = 'C63167422';
-String verifyCode = 'PDSWCZ';
+String appKey = '';
+String accessToken = '';
+String deviceSerial = '';
+String verifyCode = '';
 int cameraNo = 1;
 
 void main() {
