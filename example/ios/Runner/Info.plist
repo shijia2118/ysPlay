@@ -24,10 +24,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>11</string>
-	<key>MinimumOSVersion</key>
-	<string>13.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>11.0</string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME)需要使用手机照相机</string>
 	<key>NSLocalNetworkUsageDescription</key>
