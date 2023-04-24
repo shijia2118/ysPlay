@@ -283,8 +283,10 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
             let password:String? = data?["password"] as? String
             let verifyCode:String? = data?["verifyCode"] as? String
 
-            EZOpenSDK.startAPConfigWifi(withSsid: ssid ?? "", password: password ?? "",
-                                        deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", deviceStatus: wifiConfigStatus)
+//            EZOpenSDK.startAPConfigWifi(withSsid: ssid ?? "", password: password ?? "",
+//                                        deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", deviceStatus: wifiConfigStatus)
+            
+            EZOpenSDK.startAPConfigWifi(withSsid: ssid ?? "", password: password ?? "", deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", result:apWifiConfigResult)
             
         } else if call.method == "start_config_wifi" {
             /// SmartConfig & 声波配网
@@ -535,12 +537,23 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     private func createEzPlayer(deviceSerial:String,cameraNo:Int?,verifyCode:String?) -> EZPlayer {
         let player = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial, cameraNo: cameraNo ?? 1)
         if verifyCode != nil {
-            player.setPlayVerifyCode(verifyCode)
+            player!.setPlayVerifyCode(verifyCode)
         }
-        player.delegate = self
-        player.setPlayerView(self.playerView)
+        player!.delegate = self
+        player!.setPlayerView(self.playerView)
         print("\(TAG)注册播放器成功")
-        return player
+        return player!
+    }
+    
+    /**
+     * AP(热点)配网回调
+     */
+    lazy var apWifiConfigResult = { (isSuccess:Bool) in
+        let entity:PeiwangResultEntity = PeiwangResultEntity()
+        entity.isSuccess = isSuccess
+        entity.msg = isSuccess ? "AP配网成功" : "AP配网失败"
+        self.pwResult?.sendMessage(entity.getString())
+        EZOpenSDK.stopConfigWifi()
     }
     
     /**
@@ -565,20 +578,20 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
          case .DEVICE_ACCOUNT_BINDED:
              print("\(self.TAG)已绑定设备")
              break
-         case .DEVICE_WIFI_SENT_SUCCESS:
-             print("\(self.TAG)向设备发送WiFi信息成功")
-             break
-         case .DEVICE_WIFI_SENT_FAILED:
-             print("\(self.TAG)向设备发送WiFi信息失败")
-             entity.isSuccess = false
-             entity.msg = "向设备发送WiFi信息失败"
-             self.pwResult?.sendMessage(entity.getString())
-             break
-        case .DEVICE_PLATFORM_REGIST_FAILED:
-            entity.isSuccess = false
-            entity.msg = "注册平台失败"
-            self.pwResult?.sendMessage(entity.getString())
-            break
+//         case .DEVICE_WIFI_SENT_SUCCESS:
+//             print("\(self.TAG)向设备发送WiFi信息成功")
+//             break
+//         case .DEVICE_WIFI_SENT_FAILED:
+//             print("\(self.TAG)向设备发送WiFi信息失败")
+//             entity.isSuccess = false
+//             entity.msg = "向设备发送WiFi信息失败"
+//             self.pwResult?.sendMessage(entity.getString())
+//             break
+//        case .DEVICE_PLATFORM_REGIST_FAILED:
+//            entity.isSuccess = false
+//            entity.msg = "注册平台失败"
+//            self.pwResult?.sendMessage(entity.getString())
+//            break
         default:
             break
         }
