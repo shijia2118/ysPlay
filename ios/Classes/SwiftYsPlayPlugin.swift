@@ -537,12 +537,12 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     private func createEzPlayer(deviceSerial:String,cameraNo:Int?,verifyCode:String?) -> EZPlayer {
         let player = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial, cameraNo: cameraNo ?? 1)
         if verifyCode != nil {
-            player.setPlayVerifyCode(verifyCode)
+            player!.setPlayVerifyCode(verifyCode)
         }
-        player.delegate = self
-        player.setPlayerView(self.playerView)
+        player!.delegate = self
+        player!.setPlayerView(self.playerView)
         print("\(TAG)注册播放器成功")
-        return player
+        return player!
     }
     
     /**
