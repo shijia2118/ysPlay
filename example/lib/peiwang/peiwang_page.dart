@@ -46,6 +46,8 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
 
   bool goSelectWifi = false;
 
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +73,7 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
     verifyCodeController.dispose();
     ssidController.dispose();
     pwdController.dispose();
+    timer?.cancel();
     YsPlay.stopConfigPw(mode: mode);
     WidgetsBinding.instance.removeObserver(this);
   }
@@ -278,6 +281,7 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
             verifyCode: verifyCode,
           );
         } else {
+          dismissAfter30s();
           //wifi配网和声波配网
           await YsPlay.startConfigWifi(
             deviceSerial: deviceSerialController.text,
@@ -286,12 +290,25 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
             mode: mode,
           );
         }
+      },
+    );
+  }
 
-        //尝试查询设备信息（用于添加设备之前, 简单查询设备信息，如是否在线，是否添加等）
-        // await YsPlay.probeDeviceInfo(deviceSerial: deviceSerial)
-        //     .then((value) async {
-
-        // });
+  /// 30s后停止配网
+  void dismissAfter30s() async {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (t) {
+        if (t.tick >= 30) {
+          timer?.cancel();
+          if (LoadingHelper.isLoading) {
+            LoadingHelper.dismiss(context);
+            showToast("配网失败");
+          }
+        }
       },
     );
   }
