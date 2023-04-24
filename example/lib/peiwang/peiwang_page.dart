@@ -296,11 +296,10 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
 
   /// 30s后，如果未接收到配网(除ap)回调，则配网失败
   void dismissAfter30s() async {
+    if (_timer != null) _timer!.cancel();
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (t) {
-        if (_timer != null) _timer!.cancel();
-        print('>>>>>>>>>tick==${t.tick}');
         if (t.tick >= 30) {
           if (LoadingHelper.isLoading) {
             LoadingHelper.dismiss(context);

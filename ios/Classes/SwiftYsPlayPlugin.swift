@@ -557,12 +557,11 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     }
     
     /**
-     * 配网回调
+     *  配网回调
+     *  由于4.20.1版本没有失败回调，需要用户在项目中自行配置，比如可以设置一个倒计时。
      */
     lazy var wifiConfigStatus = { (status:EZWifiConfigStatus,result:String?)  in
         let entity:PeiwangResultEntity = PeiwangResultEntity()
-        print("\(self.TAG)1==\(status.rawValue)")
-        print("\(self.TAG)2==\(status)")
 
         switch(status){
         case .DEVICE_PLATFORM_REGISTED:
