@@ -17,7 +17,7 @@ A new Flutter project.
   s.dependency 'EZOpenSDK' ,'5.1.3'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.platform = :ios, '12.0'
+  s.platform = :ios, '11.0'
   s.static_framework = true
 
 
