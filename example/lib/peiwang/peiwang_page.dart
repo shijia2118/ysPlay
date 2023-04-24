@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -281,7 +282,9 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
             verifyCode: verifyCode,
           );
         } else {
-          dismissAfter30s();
+          if (Platform.isIOS) {
+            dismissAfter30s();
+          }
           //wifi配网和声波配网
           await YsPlay.startConfigWifi(
             deviceSerial: deviceSerialController.text,
@@ -296,16 +299,15 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
 
   /// 30s后，如果未接收到配网(除ap)回调，则配网失败
   void dismissAfter30s() async {
-    if (_timer != null) _timer!.cancel();
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (t) {
         if (t.tick >= 30) {
+          _timer?.cancel();
           if (LoadingHelper.isLoading) {
             LoadingHelper.dismiss(context);
             showToast('配网失败');
             YsPlay.stopConfigPw(mode: mode);
-            _timer?.cancel();
           }
         }
       },
