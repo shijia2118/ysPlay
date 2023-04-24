@@ -15,7 +15,7 @@ A new Flutter project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   # s.dependency 'EZOpenSDK' ,'5.1.3'
-  s.dependency 'EZOpenSDK' ,'4.20.1'
+  s.dependency 'EZOpenSDK' ,'5.0.1'
 
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
