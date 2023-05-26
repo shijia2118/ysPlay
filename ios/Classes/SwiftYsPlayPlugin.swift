@@ -286,7 +286,8 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
 //            EZOpenSDK.startAPConfigWifi(withSsid: ssid ?? "", password: password ?? "",
 //                                        deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", deviceStatus: wifiConfigStatus)
             
-            EZOpenSDK.startAPConfigWifi(withSsid: ssid ?? "", password: password ?? "", deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", result:apWifiConfigResult)
+            EZOpenSDK.startAPConfigWifi(withSsid: ssid ?? "", password: password ?? "",
+                                        deviceSerial: deviceSerial ?? "", verifyCode: verifyCode ?? "", result: apWifiConfigResult)
             
         } else if call.method == "start_config_wifi" {
             /// SmartConfig & 声波配网
@@ -537,12 +538,12 @@ public class SwiftYsPlayPlugin: NSObject, FlutterPlugin,EZPlayerDelegate{
     private func createEzPlayer(deviceSerial:String,cameraNo:Int?,verifyCode:String?) -> EZPlayer {
         let player = EZOpenSDK.createPlayer(withDeviceSerial: deviceSerial, cameraNo: cameraNo ?? 1)
         if verifyCode != nil {
-            player!.setPlayVerifyCode(verifyCode)
+            player.setPlayVerifyCode(verifyCode)
         }
-        player!.delegate = self
-        player!.setPlayerView(self.playerView)
+        player.delegate = self
+        player.setPlayerView(self.playerView)
         print("\(TAG)注册播放器成功")
-        return player!
+        return player
     }
     
     /**

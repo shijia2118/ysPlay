@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +46,7 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
 
   bool goSelectWifi = false;
 
-  Timer? _timer;
+  Timer? timer;
 
   @override
   void initState() {
@@ -74,7 +73,7 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
     verifyCodeController.dispose();
     ssidController.dispose();
     pwdController.dispose();
-    _timer?.cancel();
+    timer?.cancel();
     YsPlay.stopConfigPw(mode: mode);
     WidgetsBinding.instance.removeObserver(this);
   }
@@ -124,8 +123,7 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
     );
 
     /// 底部提示文字
-    Widget reminderText =
-        Text('提示:\n若设备指示灯红蓝交替闪烁，请选择WiFi配网。\n若设备指示灯蓝色闪烁，请选择设备热点配网。');
+    Widget reminderText = Text('提示:\n若设备指示灯红蓝交替闪烁，请选择WiFi配网。\n若设备指示灯蓝色闪烁，请选择设备热点配网。');
 
     /// 选择网络按钮
     Widget selectWifiWidget = TextButton(
@@ -282,9 +280,7 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
             verifyCode: verifyCode,
           );
         } else {
-          if (Platform.isIOS) {
-            dismissAfter30s();
-          }
+          dismissAfter30s();
           //wifi配网和声波配网
           await YsPlay.startConfigWifi(
             deviceSerial: deviceSerialController.text,
@@ -297,17 +293,19 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
     );
   }
 
-  /// 30s后，如果未接收到配网(除ap)回调，则配网失败
+  /// 30s后停止配网
   void dismissAfter30s() async {
-    _timer = Timer.periodic(
+    if (timer != null) {
+      timer!.cancel();
+    }
+    timer = Timer.periodic(
       const Duration(seconds: 1),
       (t) {
         if (t.tick >= 30) {
-          _timer?.cancel();
+          timer?.cancel();
           if (LoadingHelper.isLoading) {
             LoadingHelper.dismiss(context);
-            showToast('配网失败');
-            YsPlay.stopConfigPw(mode: mode);
+            showToast("配网失败");
           }
         }
       },
