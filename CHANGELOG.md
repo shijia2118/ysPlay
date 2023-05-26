@@ -10,4 +10,4 @@
 
 
 ## 0.0.6
-# 手动修改EZOpenSDK的minimumOSVersion
+# ios升级SDK
