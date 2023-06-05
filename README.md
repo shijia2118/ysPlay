@@ -17,7 +17,7 @@ Flutter萤石云直播插件，支持Android和IOS
 
 ## 安装
     dependencies: 
-        ys_play: ^0.0.6
+        ys_play: ^0.1.0
 
 ## 工程配置
 ### Android端

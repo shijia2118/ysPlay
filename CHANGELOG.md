@@ -10,4 +10,8 @@
 
 
 ## 0.0.6
-# ios升级SDK
+* ios升级SDK
+
+## 0.1.0
+* Android和IOS端SDK升级
+* 修复已知问题
