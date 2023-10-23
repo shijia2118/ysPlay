@@ -33,9 +33,9 @@
     },
     {
       "name": "dio",
-      "rootUri": "file:///Users/jiashi/.pub-cache/hosted/pub.dev/dio-4.0.6",
+      "rootUri": "file:///Users/jiashi/.pub-cache/hosted/pub.dev/dio-5.3.3",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.15"
     },
     {
       "name": "fake_async",
@@ -51,9 +51,9 @@
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///Users/jiashi/.pub-cache/hosted/pub.dev/flutter_lints-2.0.1",
+      "rootUri": "file:///Users/jiashi/.pub-cache/hosted/pub.dev/flutter_lints-2.0.3",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "2.19"
     },
     {
       "name": "flutter_test",
@@ -105,9 +105,9 @@
     },
     {
       "name": "plugin_platform_interface",
-      "rootUri": "file:///Users/jiashi/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.4",
+      "rootUri": "file:///Users/jiashi/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.6",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "2.19"
     },
     {
       "name": "sky_engine",
@@ -170,7 +170,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-06-05T08:27:21.791580Z",
+  "generated": "2023-10-23T10:31:58.625544Z",
   "generator": "pub",
   "generatorVersion": "2.19.6"
 }
