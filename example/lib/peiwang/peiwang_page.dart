@@ -96,6 +96,8 @@ class _PeiwangPageState extends State<PeiwangPage> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.detached:
         break;
+      case AppLifecycleState.hidden:
+        break;
     }
   }
 
